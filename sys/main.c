@@ -48,6 +48,8 @@ void boot(void)
   init_pic();
   init_pit();
   
+    __asm__ __volatile__ ("int $0x20":::);
+  
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
     (uint64_t*)&physbase,
