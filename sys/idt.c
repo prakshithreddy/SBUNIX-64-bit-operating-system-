@@ -47,7 +47,7 @@ void _fault(){
     kprintf("\n\n\n\n %d",a);
     
     
-    kprintf("hi");
+   // kprintf("hi");
     outb(0x20,0x20);
     outb(0x20,0xA0);
 }
