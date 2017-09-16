@@ -1,5 +1,6 @@
 #include <sys/defs.h>
 #include <sys/gdt.h>
+#include <sys/idt.h>
 #include <sys/kprintf.h>
 #include <sys/tarfs.h>
 #include <sys/ahci.h>
@@ -39,6 +40,7 @@ void boot(void)
     :"r"(&initial_stack[INITIAL_STACK_SIZE])
   );
   init_gdt();
+    init_idt();
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
     (uint64_t*)&physbase,
@@ -49,5 +51,6 @@ void boot(void)
     *temp1;
     temp1 += 1, temp2 += 2
   ) *temp2 = *temp1;
+    
   while(1) __asm__ volatile ("hlt");
 }
