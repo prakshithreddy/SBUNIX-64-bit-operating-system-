@@ -40,7 +40,7 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
 
 void _fault(){
     
-    unsigned char a;
+    uint8_t a;
     
     a = inb(0x60);
     
