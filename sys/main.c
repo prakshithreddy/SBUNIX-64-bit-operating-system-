@@ -45,7 +45,9 @@ void boot(void)
 //    ?kprintf("Loading 999999\n");
   init_idt();
     int a =0 , b = 1;
+    printf("asd");
     a=b/a;
+    printf("asd");
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
     (uint64_t*)&physbase,
