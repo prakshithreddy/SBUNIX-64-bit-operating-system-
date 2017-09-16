@@ -47,8 +47,8 @@ void boot(void)
     //__asm__ __volatile__("int $0":::);
     kprintf("here1\n");
     int a=0;
-    int b = 1/a;
-    kprintf("%d",b);
+    b = 1/a;
+    //kprintf("%d",b);
     kprintf("here2");
     
   start(
