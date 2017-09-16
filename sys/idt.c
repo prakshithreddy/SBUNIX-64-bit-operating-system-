@@ -1,5 +1,6 @@
 #include <sys/defs.h>
 #include <sys/idt.h>
+#include <sys/pic.h>
 #include <sys/kprintf.h>
 
 struct idt_descriptor {
