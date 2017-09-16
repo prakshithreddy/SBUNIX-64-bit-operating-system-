@@ -42,7 +42,7 @@ void boot(void)
     :"r"(&initial_stack[INITIAL_STACK_SIZE])
   );
   init_gdt();
-    kprintf("Loading 999999\n");
+//    ?kprintf("Loading 999999\n");
   init_idt();
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
