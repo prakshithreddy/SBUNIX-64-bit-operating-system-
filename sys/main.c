@@ -4,6 +4,7 @@
 #include <sys/kprintf.h>
 #include <sys/tarfs.h>
 #include <sys/ahci.h>
+#include <sys/pit.h>
 #include <sys/pic.h>
 
 #define INITIAL_STACK_SIZE 4096
@@ -45,6 +46,7 @@ void boot(void)
   init_gdt();
   init_idt();
   init_pic();
+  init_pit();
   
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
