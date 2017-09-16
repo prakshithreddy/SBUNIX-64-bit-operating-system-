@@ -40,7 +40,7 @@ void boot(void)
     :"r"(&initial_stack[INITIAL_STACK_SIZE])
   );
   init_gdt();
-    kprintf("Loading IDT\n");
+    kprintf("Loading IDT12123123\n");
   init_idt();
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
