@@ -36,7 +36,9 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
     
 }
 
-void _div0();
+void _div0(){
+    kprintf("asd");
+}
 
 void init_idt()
 {
