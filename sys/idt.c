@@ -58,6 +58,7 @@ void init_idt()
 {
     //for(int i=0;i<256;i++)
     id_set_gate(33,(uint64_t)_div0,8,0x8E);
+     id_set_gate(32,(uint64_t)_div0,8,0x8E);
     //kprintf("Loading IDT prashanth 123123123\n");
     __asm__ __volatile__("lidt %0" : : "m" (idtp));
     
