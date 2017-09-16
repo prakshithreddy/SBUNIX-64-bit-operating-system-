@@ -42,16 +42,9 @@ void boot(void)
     :"r"(&initial_stack[INITIAL_STACK_SIZE])
   );
   init_gdt();
-//    ?kprintf("Loading 999999\n");
   init_idt();
-    //__asm__ __volatile__("int $0":::);
-    kprintf("here1\n");
-    int a=0;
-    int b = 1;
-    b= b/a;
-    //kprintf("%d",b);
-    kprintf("here2");
-    
+  init_pic();
+  __asm__ __volatile__("int $33":::);
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
     (uint64_t*)&physbase,

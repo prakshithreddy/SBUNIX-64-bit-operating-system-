@@ -37,6 +37,10 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
     
 }
 
+void _fault(){
+    kprintf("hi");
+}
+
 void _div0();
 
 void init_idt()

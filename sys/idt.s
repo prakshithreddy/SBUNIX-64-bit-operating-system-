@@ -2,6 +2,7 @@
 
 
 .global _div0
+.extern _fault
 
 
 _div0:
@@ -17,6 +18,8 @@ _div0:
     pushq %fs
     pushq %gs
     pushq %rsp
+
+    call _fault
 
     movl $0x07690748,0xb8000
 
