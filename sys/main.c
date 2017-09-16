@@ -44,7 +44,10 @@ void boot(void)
   init_gdt();
 //    ?kprintf("Loading 999999\n");
   init_idt();
-    __asm__ __volatile__("int $0":::);
+    //__asm__ __volatile__("int $0":::);
+    int a=0;
+    int b=1;
+    b = b/a;
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),
     (uint64_t*)&physbase,
