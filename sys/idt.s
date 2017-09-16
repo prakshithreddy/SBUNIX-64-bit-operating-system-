@@ -2,7 +2,6 @@
 
 
 .global _div0
-.extern _fault_handler
 
 
 _div0:
