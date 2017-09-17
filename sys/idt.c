@@ -86,7 +86,11 @@ void _key_press_handler(){
     k++;
     unsigned char a;
     
+
+    
     a = inb(0x60);
+    
+    kprintf("%c ",a);
     
     if(a==54)
     {
