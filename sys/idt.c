@@ -44,7 +44,6 @@ static int shift=0,control=0;
 
 void _key_press_handler(){
     
-    k++;
     unsigned char a;
     
     a = inb(0x60);
@@ -68,9 +67,9 @@ void _key_press_handler(){
             if (shift == 1)
             {
                 shift = 0;
-                kprintf("SHIFT+%c (%c)",kbdus[a],CAPS_kdbus[a]);
+                kprintf("SHIFT+%c (%c)",kbdus[a],CAPS_kbdus[a]);
             }
-            else if (control =1)
+            else if (control ==1)
             {
                 control=0;
                 kprintf("Control+%c",kbdus[a]);
