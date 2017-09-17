@@ -194,7 +194,7 @@ void _rtc_intr_hndlr(){
         rtc_hour = ((rtc_hour & 0x7F) + 12) % 24;
     }
     
-    kprintf("%d:%d:%d",rtc_hour,rtc_minute,rtc_second);
+    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
     
     time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
     
