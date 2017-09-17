@@ -152,25 +152,6 @@ void _timer_intr_hdlr(){
         
         boot_time_bar(hour,minute,seconds,0XF0);
         
-        //check_if_cmos_is updating if yes then wait
-        
-        unsigned char rtc_second;
-        outb(0x00,0x70);
-        rtc_second = inb(0x71);
-        rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
-        
-        unsigned char rtc_minute;
-        outb(0x02,0x70);
-        rtc_minute = inb(0x71);
-        
-        unsigned char rtc_hour;
-        outb(0x04,0x70);
-        rtc_hour = inb(0x71);
-        
-        time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
-        
-        
-        
     }
    
     //send EOI to PIC
