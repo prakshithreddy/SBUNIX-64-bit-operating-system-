@@ -88,6 +88,11 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
+    if(a==(int)54)
+    {
+        kprintf("shift was pressed");
+    }
+    
     if(k%2==1)
     {kprintf("%c %d",kbdus[a],a);}
     
