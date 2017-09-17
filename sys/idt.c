@@ -70,9 +70,8 @@ void _timer_intr_hdlr(){
 
 void _key_board_intr();
 
-static int a = 0;
 
-void _timer_intr(a);
+void _timer_intr(0);
 
 void init_idt()
 {
