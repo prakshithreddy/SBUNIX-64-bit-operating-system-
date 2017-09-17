@@ -90,7 +90,7 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    kprintf("%c ",a);
+    kprintf("%d ",a);
     
     if(a==54)
     {
