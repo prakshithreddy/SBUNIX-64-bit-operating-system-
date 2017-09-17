@@ -179,7 +179,7 @@ void _timer_intr_hdlr(){
 }
 
 void _rtc_intr_hndlr(){
-    kprintf("asdasdasd");
+    kprintf("PPP");
 }
 
 
