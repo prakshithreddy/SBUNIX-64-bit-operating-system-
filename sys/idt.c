@@ -164,7 +164,7 @@ void _rtc_intr_hndlr(){
     
     outb(0x0A,0x70);
     
-    unsigned char rtc_second,rtc_minute,regb,rtc_hour;
+    unsigned char rtc_second=NULL,rtc_minute=NULL,regb,rtc_hour=NULL;
     
     //check if update in progress
     
