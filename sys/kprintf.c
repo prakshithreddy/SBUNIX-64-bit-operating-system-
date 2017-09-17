@@ -98,7 +98,7 @@ void kprintf(const char *fmt, ...)
              //n_args++;
              }*/
             else if(*fmt == 'c'){
-                char c = va_arg(valist,uint8_t);
+                char c = va_arg(valist,short int);
                 *vm_adr = c;
                 vm_adr+=2;
                 check_if_line_full(present_line_ptr,next_line_ptr);
