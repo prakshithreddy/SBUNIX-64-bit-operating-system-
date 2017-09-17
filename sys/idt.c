@@ -158,7 +158,7 @@ void _timer_intr_hdlr(){
     outb(0x00,0x70);
     c = inb(0x71);
     
-    kprintf("%d",c);
+    //("%d",c);
     
     
     // kprintf("hi");
