@@ -48,40 +48,37 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    kprintf("%d\n",a);
+    //kprintf("%d\n",a);
     
     if(a<128) {
         
-        //shift
-        if(a == 42)
+        switch(a)
         {
-            shift =1;
-        }
-        //control
-        else if ( a == 29 )
-        {
-            control = 1;
-        }
-        else {
-        
-            if (shift==1)
-            {
-                shift = 0;
-                kprintf("shift+'%c'->'%c'",kbdus[a],CAPS_kbdus[a]);
-            }
-            else if (control==1)
-            {
-                control=0;
-                kprintf("ctrl^%c",kbdus[a]);
-                
-            }
-            else
-            {
-                kprintf("%c",kbdus[a]);
-            }
-        
+            case 42:
+                shift=1;
+                break;
+            case 29:
+                control = 1;
+                break;
+            default:
+                if (shift==1)
+                {
+                    shift = 0;
+                    kprintf("shift+'%c'->'%c'",kbdus[a],CAPS_kbdus[a]);
+                }
+                else if (control==1)
+                {
+                    control=0;
+                    kprintf("ctrl^%c",kbdus[a]);
+                    
+                }
+                else
+                {
+                    kprintf("%c",kbdus[a]);
+                }
         }
     }
+}
     
     
     outb(0x20,0x20);
