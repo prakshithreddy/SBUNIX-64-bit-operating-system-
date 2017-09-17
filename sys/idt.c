@@ -48,7 +48,7 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    kprintf("\n%d\n",a);
+    //kprintf("\n%d\n",a);
     
     if(a<128) {
         
