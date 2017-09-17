@@ -170,6 +170,11 @@ void _rtc_intr_hndlr(){
     outb(0x02,0x70);
     rtc_minute = inb(0x71);
     
+    unsigned char regb;
+    
+    outb(0x0B,0x70);
+    regb = inb(0x71);
+    
     unsigned char rtc_hour;
     outb(0x04,0x70);
     rtc_hour = inb(0x71);
@@ -180,10 +185,7 @@ void _rtc_intr_hndlr(){
     outb(0x0C,0x70);	// select register C
     inb(0x71);
     
-    unsigned char regb;
     
-    outb(0x0B,0x70);
-    regb = inb(0x71);
     
     if (!(regb & 0x04)) {
         rtc_second=(rtc_second & 0x0F)+((rtc_second/16)*10);
