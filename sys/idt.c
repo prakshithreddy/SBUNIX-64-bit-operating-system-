@@ -134,7 +134,7 @@ void _timer_intr_hdlr(){
     
     i++;
     
-    if(i%19==0) { i = 0; kprintf("%d ",j); j++;}
+    if(i%19==0) { i = 0; boot_time_bar(0,0,j,0XF0); j++;}
     
     
     // kprintf("hi");
