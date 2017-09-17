@@ -178,8 +178,11 @@ void _timer_intr_hdlr(){
     outb(0x20,0xA0);
 }
 
+static int rtc =0;
+
 void _rtc_intr_hndlr(){
-    kprintf("\nPPP\n");
+    rtc++;
+    kprintf("%d",rtc);
     // kprintf("hi");
     outb(0x20,0x20);
     outb(0x20,0xA0);
