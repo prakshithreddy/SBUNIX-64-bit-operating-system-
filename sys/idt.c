@@ -53,12 +53,13 @@ void _key_press_handler(){
 }
 
 static int i = 0;
+static int j =0;
 
 void _timer_intr_hdlr(){
     
     i++;
     
-    if(i%19==0) { i = 0; kprintf("one second over"); }
+    if(i%19==0) { i = 0; kprintf("%d ",j); j++;}
     
     
     // kprintf("hi");
