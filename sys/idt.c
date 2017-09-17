@@ -59,63 +59,63 @@ void _key_press_handler(){
             case 29:
                 control = 1;break;
             case 28:
-                kprintf("Enter");break;
+                keypress_bar("Enter",0x0F);break;
             case 77:
-                kprintf("Right Arrow");break;
+                keypress_bar("Right Arrow",0x0F);break;
             case 75:
-                kprintf("Left Arrow");break;
+                keypress_bar("Left Arrow",0x0F);break;
             case 72:
-                kprintf("Up Arrow");break;
+                keypress_bar("Up Arrow",0x0F);break;
             case 80:
-                kprintf("Down Arrow");break;
+                keypress_bar("Down Arrow",0x0F);break;
             case 57:
-                kprintf("Space");break;
+                keypress_bar("Space",0x0F);break;
             case 58:
-                kprintf("Alt");break;
+                keypress_bar("Alt",0x0F);break;
             case 15:
-                kprintf("Tab");break;
+                keypress_bar("Tab",0x0F);break;
             case 1:
-                kprintf("Esc");break;
+                keypress_bar("Esc",0x0F);break;
             case 59:
-                kprintf("F1");break;
+                keypress_bar("F1",0x0F);break;
             case 60:
-                kprintf("F2");break;
+                keypress_bar("F2",0x0F);break;
             case 61:
-                kprintf("F3");break;
+                keypress_bar("F3",0x0F);break;
             case 62:
-                kprintf("F4");break;
+                keypress_bar("F4",0x0F);break;
             case 63:
-                kprintf("F5");break;
+                keypress_bar("F5",0x0F);break;
             case 64:
-                kprintf("F6");break;
+                keypress_bar("F6",0x0F);break;
             case 65:
-                kprintf("F7");break;
+                keypress_bar("F7",0x0F);break;
             case 66:
-                kprintf("F8");break;
+                keypress_bar("F8",0x0F);break;
             case 67:
-                kprintf("F9");break;
+                keypress_bar("F9",0x0F);break;
             case 68:
-                kprintf("F10");break;
+                keypress_bar("F10",0x0F);break;
             case 69:
-                kprintf("F11");break;
+                keypress_bar("F11",0x0F);break;
             case 70:
-                kprintf("F12");break;
+                keypress_bar("F12",0x0F);break;
                 
             default:
                 if (shift==1)
                 {
                     shift = 0;
-                    kprintf("shift+'%c'='%c'",kbdus[a],CAPS_kbdus[a]);
+                    keypress_bar("shift+'%c'='%c'",kbdus[a],CAPS_kbdus[a],0x0F);
                 }
                 else if (control==1)
                 {
                     control=0;
-                    kprintf("ctrl^%c",kbdus[a]);
+                    keypress_bar("ctrl^%c",kbdus[a],0x0F);
                     
                 }
                 else
                 {
-                    kprintf("%c",kbdus[a]);
+                    keypress_bar("%c",kbdus[a],0x0F);
                 }
         }
     }

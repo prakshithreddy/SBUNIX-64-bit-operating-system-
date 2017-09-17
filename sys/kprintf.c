@@ -12,10 +12,10 @@ void check_if_line_full(char **vm_adr,char **next_line_adr){
     if(*vm_adr==*next_line_adr){
         v_line_count++;
         //kprintf("     Line Number: %d",v_line_count);
-        if(v_line_count > 25){
+        if(v_line_count > 24){
             //kprintf("     Line Number: %d",v_line_count);
-            for(char * temp2 = (char*)0xb8000; temp2 < (char*)0xb8000+160*24; temp2 += 1) *temp2 = *(temp2+160);
-            for(char * temp2 = (char*)0xb8000+160*24; temp2 < (char*)0xb8000+160*25; temp2 += 1) *temp2 = '\0';
+            for(char * temp2 = (char*)0xb8000; temp2 < (char*)0xb8000+160*23; temp2 += 1) *temp2 = *(temp2+160);
+            for(char * temp2 = (char*)0xb8000+160*23; temp2 < (char*)0xb8000+160*24; temp2 += 1) *temp2 = '\0';
             //v_line_count++;
             *vm_adr = *next_line_adr-160;
         }
@@ -24,7 +24,134 @@ void check_if_line_full(char **vm_adr,char **next_line_adr){
         }
     }
 }
+char * time_concatenate(char *s,char *s1,char *hours,char *minutes,char *seconds){
+    //static char s[35];
+    int z=0;
+    while(*s1 != '\0'){
+        s[z] = *s1;
+        z++;
+        s1++;
+    }
+    while(*hours != '\0'){
+        s[z] = *hours;
+        z++;
+        hours++;
+    }
+    s[z] = ':';
+    z++;
+    while(*minutes != '\0'){
+        s[z] = *minutes;
+        z++;
+        minutes++;
+    }
+    s[z] = ':';
+    z++;
+    while(*seconds != '\0'){
+        s[z] = *seconds;
+        z++;
+        seconds++;
+    }
+    s[z] = '\0';
+    return s;
+}
 
+char * itoa(char *s,int x){
+    int z = 0;
+    //static char s[6];
+    int y = x;
+    int dig_count = 1;
+    while(x>=10){
+        x = x/10;
+        dig_count*=10;
+    }
+    if(dig_count == 1){
+        s[z] = '0';
+        z++;
+    }
+    while(dig_count>0){
+        int c = y/dig_count;
+        s[z] = c+'0';
+        z++;
+        y=y%dig_count;
+        dig_count/=10;
+    }
+    s[z] = '\0';
+    return s;
+}
+
+void time_bar(int hours,int minutes,int seconds,int color){
+    char *pointer = (char*) 0xb8F00;
+    char *c_pointer = (char*) 0xb8F01;
+    char h_pointer[6];
+    char *h_pointer1 = itoa(h_pointer,hours);
+    char m_pointer[6];
+    char *m_pointer1 = itoa(m_pointer,minutes);
+    char s_pointer[6];
+    char *s_pointer1 = itoa(s_pointer,seconds);
+    char *string = "CURRENT TIME:- ";
+    char s1[35];
+    char *s = time_concatenate(s1,string,h_pointer1,m_pointer1,s_pointer1);
+    //int z=0;
+    while(pointer < (char*)0xb8F32){
+        if(*s != '\0'){
+            *pointer = *s;
+            *c_pointer = color;
+            s++;
+        }
+        else{
+            *pointer = 0x20;
+            *c_pointer = color;
+        }
+        pointer+=2;
+        c_pointer+=2;
+    }
+}
+
+void keypress_bar(char *s,int color){
+    char *pointer = (char*) 0xb8F32;
+    char *c_pointer = (char*) 0xb8F33;
+    while(pointer < (char*)0xb8F6E){
+        if(*s != '\0'){
+            *pointer = *s;
+            *c_pointer = color;
+            s++;
+        }
+        else{
+            *pointer = 0x20;
+            *c_pointer = color;
+        }
+        pointer+=2;
+        c_pointer+=2;
+    }
+}
+
+void boot_time_bar(int hours,int minutes,int seconds,int color){
+    char *pointer = (char*) 0xb8F6E;
+    char *c_pointer = (char*) 0xb8F6F;
+    char h_pointer[6];
+    char *h_pointer1 = itoa(h_pointer,hours);
+    char m_pointer[6];
+    char *m_pointer1 = itoa(m_pointer,minutes);
+    char s_pointer[6];
+    char *s_pointer1 = itoa(s_pointer,seconds);
+    char *string = "TIME SINCE BOOT:-";
+    char s1[35];
+    char *s = time_concatenate(s1,string,h_pointer1,m_pointer1,s_pointer1);
+    //int z=0;
+    while(pointer < (char*)0xb8FA0){
+        if(*s != '\0'){
+            *pointer = *s;
+            *c_pointer = color;
+            s++;
+        }
+        else{
+            *pointer = 0x20;
+            *c_pointer = color;
+        }
+        pointer+=2;
+        c_pointer+=2;
+    }
+}
 
 void kprintf(const char *fmt, ...)
 {
@@ -38,10 +165,17 @@ void kprintf(const char *fmt, ...)
     while(*fmt != '\0'){
         if(*fmt == '\n'){
             while(vm_adr != next_line_adr){
-                *vm_adr = 0x20;
+                //*vm_adr = 0x20;
                 vm_adr+=2;
             }
             check_if_line_full(present_line_ptr,next_line_ptr);
+            fmt+=1;
+        }
+        else if(*fmt == '\r'){
+            while(vm_adr != next_line_adr-160){
+                //*vm_adr = 0x20;
+                vm_adr-=2;
+            }
             fmt+=1;
         }
         else if(*fmt != '%'){
@@ -78,27 +212,42 @@ void kprintf(const char *fmt, ...)
                     dig_count/=10;
                 }
             }
-            /*else if(*fmt == 'd'){
-             unsigned long long x = va_arg(valist,unsigned long long);
-             unsigned long long y = x;
-             unsigned long long dig_count = 1;
-             while(x>=10){
-             x = x/10;
-             dig_count*=10;
-             }
-             while(dig_count>0){
-             
-             int c = y/dig_count;
-             *vm_adr = c+'0';
-             vm_adr+=2;
-             check_if_line_full(vm_adr,next_line_ptr);
-             y=y%dig_count;
-             dig_count/=10;
-             }
-             //n_args++;
-             }*/
+            else if(*fmt == 'l' && *(fmt+1) == 'd'){
+                unsigned long long x = va_arg(valist,unsigned long long);
+                unsigned long long y = x;
+                unsigned long long dig_count = 1;
+                while(x>=10){
+                    x = x/10;
+                    dig_count*=10;
+                }
+                while(dig_count>0){
+                    int c = y/dig_count;
+                    *vm_adr = c+'0';
+                    vm_adr+=2;
+                    check_if_line_full(present_line_ptr,next_line_ptr);
+                    y=y%dig_count;
+                    dig_count/=10;
+                }
+            }
             else if(*fmt == 'c'){
                 char c = va_arg(valist,int);
+                if(c == '\n'){
+                    while(vm_adr != next_line_adr){
+                        //*vm_adr = 0x20;
+                        vm_adr+=2;
+                    }
+                    check_if_line_full(present_line_ptr,next_line_ptr);
+                    fmt+=1;
+                    continue;
+                }
+                else if(*fmt == '\r'){
+                    while(vm_adr != next_line_adr-160){
+                        //*vm_adr = 0x20;
+                        vm_adr-=2;
+                    }
+                    fmt+=1;
+                    continue;
+                }
                 *vm_adr = c;
                 vm_adr+=2;
                 check_if_line_full(present_line_ptr,next_line_ptr);
@@ -106,6 +255,23 @@ void kprintf(const char *fmt, ...)
             else if(*fmt == 's'){
                 char *c = va_arg(valist,char *);
                 while(*c != '\0'){
+                    if(*c == '\n'){
+                        while(vm_adr != next_line_adr){
+                            //*vm_adr = 0x20;
+                            vm_adr+=2;
+                        }
+                        check_if_line_full(present_line_ptr,next_line_ptr);
+                        c+=1;
+                        continue;
+                    }
+                    else if(*c == '\r'){
+                        while(vm_adr != next_line_adr-160){
+                            //*vm_adr = 0x20;
+                            vm_adr-=2;
+                        }
+                        c+=1;
+                        continue;
+                    }
                     *vm_adr = *c;
                     c+=1;
                     vm_adr+=2;
