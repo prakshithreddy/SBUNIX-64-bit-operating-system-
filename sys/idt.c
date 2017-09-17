@@ -53,7 +53,7 @@ void _key_press_handler(){
 }
 
 
-void _timer_intr(){
+void _timer_intr_hdlr(){
     
     uint8_t a;
     
@@ -72,7 +72,7 @@ void _key_board_intr();
 
 static int a = 0;
 
-void _timer_intr_hdlr(a);
+void _timer_intr(a);
 
 void init_idt()
 {
