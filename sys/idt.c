@@ -79,7 +79,7 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
     
 }
 
-static int k =0;
+//static int k =0;
 
 void _key_press_handler(){
     
