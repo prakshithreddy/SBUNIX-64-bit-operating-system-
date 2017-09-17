@@ -81,7 +81,7 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
 
 void _key_press_handler(){
     
-    uint8_t a;
+    unsigned char a;
     
     a = inb(0x60);
     
