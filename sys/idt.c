@@ -141,7 +141,7 @@ void _timer_intr_hdlr(){
         seconds++;
         
         if(seconds%60==0) {
-            second%=60;
+            seconds%=60;
             minute+=1;
             if(minute%60==0)
             {
