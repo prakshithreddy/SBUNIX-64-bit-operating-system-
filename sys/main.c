@@ -48,7 +48,7 @@ void boot(void)
   init_pic();
   init_pit();
     
- keypress_bar("",0XF0);
+ keypress_bar("LAST PRESSED: ",0XF0);
  boot_time_bar(0,0,0,0XF0);
     time_bar(0,0,0,0XF0);
 
