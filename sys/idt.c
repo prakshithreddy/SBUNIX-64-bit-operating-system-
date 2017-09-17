@@ -164,24 +164,23 @@ void _rtc_intr_hndlr(){
     
     outb(0x0A,0x70);
     
+    unsigned char rtc_second,rtc_minute,regb,rtc_hour;
+    
     //check if update in progress
     
     while(inb(0x71) & 0x80){
        
-        unsigned char rtc_second;
+        
         outb(0x00,0x70);
         rtc_second = inb(0x71);
         rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
     
-        unsigned char rtc_minute;
         outb(0x02,0x70);
         rtc_minute = inb(0x71);
     
-        unsigned char regb;
         outb(0x0B,0x70);
         regb = inb(0x71);
     
-        unsigned char rtc_hour;
         outb(0x04,0x70);
         rtc_hour = inb(0x71);
     }
