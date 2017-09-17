@@ -89,7 +89,7 @@ void _key_press_handler(){
     a = inb(0x60);
     
     if(k%2==1)
-    {kprintf("%c %d",kbdus[a],a);
+    {kprintf("%c %d",kbdus[a],a);}
     
     
     outb(0x20,0x20);
