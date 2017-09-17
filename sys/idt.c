@@ -63,62 +63,62 @@ void _key_press_handler(){
             case 77:
                 keypress_bar("LAST PRESSED : Right Arrow",0xF0);break;
             case 75:
-                keypress_bar("LAST PRESSED : Left Arrow",0x0F);break;
+                keypress_bar("LAST PRESSED : Left Arrow",0xF0);break;
             case 72:
-                keypress_bar("LAST PRESSED : Up Arrow",0x0F);break;
+                keypress_bar("LAST PRESSED : Up Arrow",0xF0);break;
             case 80:
-                keypress_bar("LAST PRESSED : Down Arrow",0x0F);break;
+                keypress_bar("LAST PRESSED : Down Arrow",0xF0);break;
             case 57:
-                keypress_bar("LAST PRESSED : Space",0x0F);break;
+                keypress_bar("LAST PRESSED : Space",0xF0);break;
             case 58:
-                keypress_bar("LAST PRESSED : Alt",0x0F);break;
+                keypress_bar("LAST PRESSED : Alt",0xF0);break;
             case 15:
-                keypress_bar("LAST PRESSED : Tab",0x0F);break;
+                keypress_bar("LAST PRESSED : Tab",0xF0);break;
             case 1:
-                keypress_bar("LAST PRESSED : Esc",0x0F);break;
+                keypress_bar("LAST PRESSED : Esc",0xF0);break;
             case 59:
-                keypress_bar("LAST PRESSED : F1",0x0F);break;
+                keypress_bar("LAST PRESSED : F1",0xF0);break;
             case 60:
-                keypress_bar("LAST PRESSED : F2",0x0F);break;
+                keypress_bar("LAST PRESSED : F2",0xF0);break;
             case 61:
-                keypress_bar("LAST PRESSED : F3",0x0F);break;
+                keypress_bar("LAST PRESSED : F3",0xF0);break;
             case 62:
-                keypress_bar("LAST PRESSED : F4",0x0F);break;
+                keypress_bar("LAST PRESSED : F4",0xF0);break;
             case 63:
-                keypress_bar("LAST PRESSED : F5",0x0F);break;
+                keypress_bar("LAST PRESSED : F5",0xF0);break;
             case 64:
-                keypress_bar("LAST PRESSED : F6",0x0F);break;
+                keypress_bar("LAST PRESSED : F6",0xF0);break;
             case 65:
-                keypress_bar("LAST PRESSED : F7",0x0F);break;
+                keypress_bar("LAST PRESSED : F7",0xF0);break;
             case 66:
-                keypress_bar("LAST PRESSED : F8",0x0F);break;
+                keypress_bar("LAST PRESSED : F8",0xF0);break;
             case 67:
-                keypress_bar("LAST PRESSED : F9",0x0F);break;
+                keypress_bar("LAST PRESSED : F9",0xF0);break;
             case 68:
-                keypress_bar("LAST PRESSED : F10",0x0F);break;
+                keypress_bar("LAST PRESSED : F10",0xF0);break;
             case 69:
-                keypress_bar("LAST PRESSED : F11",0x0F);break;
+                keypress_bar("LAST PRESSED : F11",0xF0);break;
             case 70:
-                keypress_bar("LAST PRESSED : F12",0x0F);break;
+                keypress_bar("LAST PRESSED : F12",0xF0);break;
                 
             default:
                 if (shift==1)
                 {
                     shift = 0;
                     char s[] = {'L','A','S','T',' ','P','R','E','S','S','E','D',' ',':',' ','s','h','i','f','t','+','\'',kbdus[a],'\'','=','\'',CAPS_kbdus[a],'\'','\0'};
-                    keypress_bar(s,0x0F);
+                    keypress_bar(s,0xF0);
                 }
                 else if (control==1)
                 {
                     control=0;
                     char s[] = {'L','A','S','T',' ','P','R','E','S','S','E','D',' ',':',' ','c','t','r','l','^',kbdus[a],'\0'};
-                    keypress_bar(s,0x0F);
+                    keypress_bar(s,0xF0);
                     
                 }
                 else
                 {
                     char s[]={kbdus[a],'\0'};
-                    keypress_bar(s,0x0F);
+                    keypress_bar(s,0xF0);
                 }
         }
     }
