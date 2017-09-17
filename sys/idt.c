@@ -55,14 +55,52 @@ void _key_press_handler(){
         switch(a)
         {
             case 42:
-                shift=1;
-                break;
+                shift=1;break;
             case 29:
-                control = 1;
-                break;
+                control = 1;break;
             case 28:
-                kprintf("Enter");
-                break;
+                kprintf("Enter");break;
+            case 77:
+                kprintf("Right Arrow");break;
+            case 75:
+                kprintf("Left Arrow");break;
+            case 72:
+                kprintf("Up Arrow");break;
+            case 80:
+                kprintf("Down Arrow");break;
+            case 57:
+                kprintf("Space");break;
+            case 58:
+                kprintf("Alt");break;
+            case 15:
+                kprintf("Tab");break;
+            case 1:
+                kprintf("Esc");break;
+            case 59:
+                kprintf("F1");break;
+            case 60:
+                kprintf("F2");break;
+            case 61:
+                kprintf("F3");break;
+            case 62:
+                kprintf("F4");break;
+            case 63:
+                kprintf("F5");break;
+            case 64:
+                kprintf("F6");break;
+            case 65:
+                kprintf("F7");break;
+            case 66:
+                kprintf("F8");break;
+            case 67:
+                kprintf("F9");break;
+            case 68:
+                kprintf("F10");break;
+            case 69:
+                kprintf("F11");break;
+            case 70:
+                kprintf("F12");break;
+                
             default:
                 if (shift==1)
                 {
