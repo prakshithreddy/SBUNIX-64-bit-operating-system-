@@ -70,7 +70,7 @@ void _key_press_handler(){
             else if (control==1)
             {
                 control=0;
-                kprintf("Ctrl+%c",kbdus[a]);
+                kprintf("Ctrl^%c",kbdus[a]);
                 
             }
             else
