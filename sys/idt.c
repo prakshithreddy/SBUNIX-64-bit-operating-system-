@@ -194,8 +194,7 @@ void _rtc_intr();
 
 void init_idt()
 {
-    for (int i=32;i<256;i++)
-    id_set_gate(i,(uint64_t)_rtc_intr,8,0x8E);
+    id_set_gate(40,(uint64_t)_rtc_intr,8,0x8E);
     id_set_gate(33,(uint64_t)_key_board_intr,8,0x8E);
     id_set_gate(32,(uint64_t)_timer_intr,8,0x8E);
    // id_set_gate(70,(uint64_t)_rtc_intr,8,0x8E);
