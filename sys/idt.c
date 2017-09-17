@@ -65,12 +65,12 @@ void _key_press_handler(){
             if (shift==1)
             {
                 shift = 0;
-                kprintf("Shift+%c = %c",kbdus[a],CAPS_kbdus[a]);
+                kprintf("shift+'%c' = '%c'",kbdus[a],CAPS_kbdus[a]);
             }
             else if (control==1)
             {
                 control=0;
-                kprintf("Ctrl^%c",kbdus[a]);
+                kprintf("ctrl^%c",kbdus[a]);
                 
             }
             else
