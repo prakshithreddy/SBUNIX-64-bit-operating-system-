@@ -85,7 +85,7 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    kprintf("%c ",kbdus[a]);
+    kprintf("%c",kbdus[a]);
     
     
    // kprintf("hi");
