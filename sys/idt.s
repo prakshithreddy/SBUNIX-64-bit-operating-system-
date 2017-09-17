@@ -85,7 +85,7 @@ pushq %fs
 pushq %gs
 pushq %rsp
 
-call _timer_intr_hdlr
+call _rtc_intr_hndlr
 
 pop %rsp
 
