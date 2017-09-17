@@ -48,8 +48,6 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    kprintf("\n%d \n",a);
-
     if(a<128) {
         
         //shift
@@ -67,7 +65,7 @@ void _key_press_handler(){
             if (shift==1)
             {
                 shift = 0;
-                kprintf("Shift+%c (%c)",kbdus[a],CAPS_kbdus[a]);
+                kprintf("Shift+%c = %c",kbdus[a],CAPS_kbdus[a]);
             }
             else if (control==1)
             {
