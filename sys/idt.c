@@ -58,7 +58,7 @@ void _timer_intr_hdlr(){
     
     i++;
     
-    if(i%18==0) { i = 0; kprintf("one second over"); }
+    if(i%19==0) { i = 0; kprintf("one second over"); }
     
     
     // kprintf("hi");
