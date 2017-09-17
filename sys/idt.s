@@ -21,8 +21,6 @@ _key_board_intr:
 
     call _key_press_handler
 
-    movl $0x07690748,0xb8000
-
     pop %rsp
 
     popq %gs
@@ -55,8 +53,6 @@ _timer_intr:
     pushq %rsp
 
     call _timer_intr_hdlr
-
-    movl $20,0xb8000
 
     pop %rsp
 
