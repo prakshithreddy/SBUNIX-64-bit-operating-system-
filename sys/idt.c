@@ -154,6 +154,12 @@ void _timer_intr_hdlr(){
         
     }
     
+    unsigned char c;
+    outb(0x00,0x70);
+    c = inb(0x71);
+    
+    kprinft("%d",c);
+    
     
     // kprintf("hi");
     outb(0x20,0x20);
