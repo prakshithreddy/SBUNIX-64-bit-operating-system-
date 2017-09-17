@@ -152,14 +152,23 @@ void _timer_intr_hdlr(){
         
         boot_time_bar(hour,minute,seconds,0XF0);
         
+        unsigned char rtc_second;
+        outb(0x00,0x70);
+        rtc_second = inb(0x71);
+        
+        unsigned char rtc_minute;
+        outb(0x02,0x70);
+        rtc_second = inb(0x71);
+        
+        unsigned char rtc_hour;
+        outb(0x04,0x70);
+        rtc_second = inb(0x71);
+        
+        time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
+        
+        
+        
     }
-    
-    unsigned char c;
-    outb(0x00,0x70);
-    c = inb(0x71);
-    
-    kprintf("%d",c);
-    
     
     // kprintf("hi");
     outb(0x20,0x20);
