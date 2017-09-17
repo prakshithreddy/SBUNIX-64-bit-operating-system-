@@ -81,6 +81,7 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
 
 void _key_press_handler(){
     
+    
     unsigned char a;
     
     a = inb(0x60);
@@ -116,6 +117,7 @@ void _timer_intr();
 
 void init_idt()
 {
+    kprintf("%c",'a');kprintf("%c",'a');kprintf("%c",'a');kprintf("%c",'a');kprintf("%c",'a');
     //for(int i=0;i<256;i++)
     id_set_gate(33,(uint64_t)_key_board_intr,8,0x8E);
      id_set_gate(32,(uint64_t)_timer_intr,8,0x8E);
