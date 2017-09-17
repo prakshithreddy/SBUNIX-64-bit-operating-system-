@@ -78,8 +78,6 @@ void _key_press_handler(){
                 }
         }
     }
-}
-    
     
     outb(0x20,0x20);
     outb(0x20,0xA0);
