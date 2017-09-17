@@ -185,7 +185,8 @@ void _rtc_intr_hndlr(){
     outb(0x0C,0x70);	// select register C
     inb(0x71);
     
-    
+    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
+
     
     if (!(regb & 0x04)) {
         rtc_second=(rtc_second & 0x0F)+((rtc_second/16)*10);
