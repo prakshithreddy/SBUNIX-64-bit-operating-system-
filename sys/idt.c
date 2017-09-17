@@ -179,7 +179,7 @@ void _timer_intr_hdlr(){
 }
 
 void _rtc_intr_hndlr(){
-    kprintf("PPP\n");
+    kprintf("\nPPP\n");
     // kprintf("hi");
     outb(0x20,0x20);
     outb(0x20,0xA0);
