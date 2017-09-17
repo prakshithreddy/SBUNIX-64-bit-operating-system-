@@ -117,7 +117,8 @@ void _key_press_handler(){
                 }
                 else
                 {
-                    keypress_bar("%c",kbdus[a],0x0F);
+                    char s[]={kbdus[a],'\0'};
+                    keypress_bar(kbdus[a],0x0F);
                 }
         }
     }
