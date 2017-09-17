@@ -92,7 +92,7 @@ void _key_press_handler(){
     
     kprintf("\n%d \n",a);
     
-    if(a==54)
+    if(a==42)
     {
         kprintf("shift was pressed");
     }
