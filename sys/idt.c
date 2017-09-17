@@ -60,6 +60,9 @@ void _key_press_handler(){
             case 29:
                 control = 1;
                 break;
+            case 28:
+                kprintf("Enter");
+                break;
             default:
                 if (shift==1)
                 {
