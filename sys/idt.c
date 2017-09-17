@@ -48,7 +48,7 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    //kprintf("%d\n",a);
+    kprintf("\n%d\n",a);
     
     if(a<128) {
         
@@ -64,7 +64,7 @@ void _key_press_handler(){
                 if (shift==1)
                 {
                     shift = 0;
-                    kprintf("shift+'%c'->'%c'",kbdus[a],CAPS_kbdus[a]);
+                    kprintf("shift+'%c'='%c'",kbdus[a],CAPS_kbdus[a]);
                 }
                 else if (control==1)
                 {
