@@ -83,12 +83,12 @@ static int k =0;
 
 void _key_press_handler(){
     
-    k++;
+    //k++;
     unsigned char a;
     
     a = inb(0x60);
     
-    if(k%2==1)
+   // if(k%2==1)
     kprintf("%c",kbdus[a]);
     
     
