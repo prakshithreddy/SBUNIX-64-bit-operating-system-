@@ -6,6 +6,7 @@
 #include <sys/ahci.h>
 #include <sys/pit.h>
 #include <sys/pic.h>
+#include <sys/rtc.h>
 
 #define INITIAL_STACK_SIZE 4096
 uint8_t initial_stack[INITIAL_STACK_SIZE]__attribute__((aligned(16)));
@@ -47,6 +48,7 @@ void boot(void)
   init_idt();
   init_pic();
   init_pit();
+  init_rtc();
     
  keypress_bar("LAST PRESSED: ",0XF0);
  boot_time_bar(0,0,0,0XF0);
