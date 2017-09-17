@@ -99,6 +99,8 @@ void kprintf(const char *fmt, ...)
              }*/
             else if(*fmt == 'c'){
                 char c = va_arg(valist,int);
+                
+                kprinft(" %d ",sizeof(c));
                 *vm_adr = c;
                 vm_adr+=2;
                 check_if_line_full(present_line_ptr,next_line_ptr);
