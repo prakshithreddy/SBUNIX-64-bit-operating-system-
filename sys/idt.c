@@ -79,6 +79,8 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
     
 }
 
+static int k =1;
+
 void _key_press_handler(){
     
     
@@ -86,6 +88,7 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
+    if(k%2==1)
     kprintf("%c",kbdus[a]);
     
     
