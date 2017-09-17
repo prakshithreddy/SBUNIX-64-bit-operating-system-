@@ -38,7 +38,7 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
     
 }
 
-void _fault(){
+void _key_press_handler(){
     
     uint8_t a;
     
@@ -52,13 +52,33 @@ void _fault(){
     outb(0x20,0xA0);
 }
 
-void _div0();
+
+void _timer_intr(){
+    
+    uint8_t a;
+    
+    a = inb(0x60);
+    
+    kprintf("%c",a);
+    
+    
+    // kprintf("hi");
+    outb(0x20,0x20);
+    outb(0x20,0xA0);
+}
+
+
+void _key_board_intr();
+
+static int a = 0;
+
+void _timer_intr_hdlr(a);
 
 void init_idt()
 {
     //for(int i=0;i<256;i++)
-    id_set_gate(33,(uint64_t)_div0,8,0x8E);
-     id_set_gate(32,(uint64_t)_div0,8,0x8E);
+    id_set_gate(33,(uint64_t)_key_board_intr,8,0x8E);
+     id_set_gate(32,(uint64_t)_timer_intr,8,0x8E);
     //kprintf("Loading IDT prashanth 123123123\n");
     __asm__ __volatile__("lidt %0" : : "m" (idtp));
     
