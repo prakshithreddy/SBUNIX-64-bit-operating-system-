@@ -161,35 +161,31 @@ void _timer_intr_hdlr(){
 
 void _rtc_intr_hndlr(){
     
+    unsigned char rtc_second;
+    outb(0x00,0x70);
+    rtc_second = inb(0x71);
+    rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
     
-    outb(0x0A,0x70);
+    unsigned char rtc_minute;
+    outb(0x02,0x70);
+    rtc_minute = inb(0x71);
     
-    unsigned char rtc_second='T',rtc_minute='T',regb='T',rtc_hour='T';
+    unsigned char rtc_hour;
+    outb(0x04,0x70);
+    rtc_hour = inb(0x71);
     
-    //check if update in progress
+    unsigned char regb;
     
-    while(inb(0x71) & 0x80){
-       
-        
-        outb(0x00,0x70);
-        rtc_second = inb(0x71);
-        rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
-    
-        outb(0x02,0x70);
-        rtc_minute = inb(0x71);
-    
-        outb(0x0B,0x70);
-        regb = inb(0x71);
-    
-        outb(0x04,0x70);
-        rtc_hour = inb(0x71);
-    }
+    outb(0x0B,0x70);
+    regb = inb(0x71);
     
     outb(0x20,0x20);
     outb(0x20,0xA0);
     
     outb(0x0C,0x70);	// select register C
     inb(0x71);
+    
+    
     
     if (!(regb & 0x04)) {
         rtc_second=(rtc_second & 0x0F)+((rtc_second/16)*10);
