@@ -40,6 +40,7 @@ _key_board_intr:
     iretq
 
 _timer_intr:
+
     push %rax
     push %rbx
     push %rcx
@@ -55,7 +56,7 @@ _timer_intr:
 
     call _timer_intr_hdlr
 
-    movl %rdi,0xb8f9e
+    movl $20,0xb8f9e
 
     pop %rsp
 

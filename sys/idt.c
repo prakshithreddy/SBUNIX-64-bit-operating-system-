@@ -71,7 +71,7 @@ void _timer_intr_hdlr(){
 void _key_board_intr();
 
 
-void _timer_intr(0);
+void _timer_intr();
 
 void init_idt()
 {
