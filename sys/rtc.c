@@ -7,7 +7,7 @@ void init_rtc()
     outb(0x8B,0x70);
     unsigned char prev=inb(0x71);
     outb(0x8B,0x70);
-    outportb(0x71, prev | 0x40);
+    outb(prev | 0x40,0x71);
     __asm__ __volatile__("sti":::);
     
 }
