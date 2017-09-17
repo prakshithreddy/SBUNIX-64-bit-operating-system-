@@ -105,12 +105,14 @@ void _key_press_handler(){
                 if (shift==1)
                 {
                     shift = 0;
-                    keypress_bar("shift+'%c'='%c'",kbdus[a],CAPS_kbdus[a],0x0F);
+                    char s[] = {'s','h','i','f','t','+','\'',kbdus[a],'\'','=','\'',CAPS_kbdus[a],'\'','\0'};
+                    keypress_bar(s,0x0F);
                 }
                 else if (control==1)
                 {
                     control=0;
-                    keypress_bar("ctrl^%c",kbdus[a],0x0F);
+                    char s[] = {'c','t','r','l','^',kbdus[a],'\0'};
+                    keypress_bar(s,0x0F);
                     
                 }
                 else
