@@ -59,66 +59,66 @@ void _key_press_handler(){
             case 29:
                 control = 1;break;
             case 28:
-                keypress_bar("LAST PRESSED : Enter",4);break;
+                keypress_bar("LAST PRESSED : Enter",9);break;
             case 77:
-                keypress_bar("LAST PRESSED : Right Arrow",4);break;
+                keypress_bar("LAST PRESSED : Right Arrow",9);break;
             case 75:
-                keypress_bar("LAST PRESSED : Left Arrow",4);break;
+                keypress_bar("LAST PRESSED : Left Arrow",9);break;
             case 72:
-                keypress_bar("LAST PRESSED : Up Arrow",4);break;
+                keypress_bar("LAST PRESSED : Up Arrow",9);break;
             case 80:
-                keypress_bar("LAST PRESSED : Down Arrow",4);break;
+                keypress_bar("LAST PRESSED : Down Arrow",9);break;
             case 57:
-                keypress_bar("LAST PRESSED : Space",4);break;
+                keypress_bar("LAST PRESSED : Space",9);break;
             case 58:
-                keypress_bar("LAST PRESSED : Alt",4);break;
+                keypress_bar("LAST PRESSED : Alt",9);break;
             case 15:
-                keypress_bar("LAST PRESSED : Tab",4);break;
+                keypress_bar("LAST PRESSED : Tab",9);break;
             case 1:
-                keypress_bar("LAST PRESSED : Esc",4);break;
+                keypress_bar("LAST PRESSED : Esc",9);break;
             case 59:
-                keypress_bar("LAST PRESSED : F1",4);break;
+                keypress_bar("LAST PRESSED : F1",9);break;
             case 60:
-                keypress_bar("LAST PRESSED : F2",4);break;
+                keypress_bar("LAST PRESSED : F2",9);break;
             case 61:
-                keypress_bar("LAST PRESSED : F3",4);break;
+                keypress_bar("LAST PRESSED : F3",9);break;
             case 62:
-                keypress_bar("LAST PRESSED : F4",4);break;
+                keypress_bar("LAST PRESSED : F4",9);break;
             case 63:
-                keypress_bar("LAST PRESSED : F5",4);break;
+                keypress_bar("LAST PRESSED : F5",9);break;
             case 64:
-                keypress_bar("LAST PRESSED : F6",4);break;
+                keypress_bar("LAST PRESSED : F6",9);break;
             case 65:
-                keypress_bar("LAST PRESSED : F7",4);break;
+                keypress_bar("LAST PRESSED : F7",9);break;
             case 66:
-                keypress_bar("LAST PRESSED : F8",4);break;
+                keypress_bar("LAST PRESSED : F8",9);break;
             case 67:
-                keypress_bar("LAST PRESSED : F9",4);break;
+                keypress_bar("LAST PRESSED : F9",9);break;
             case 68:
-                keypress_bar("LAST PRESSED : F10",4);break;
+                keypress_bar("LAST PRESSED : F10",9);break;
             case 69:
-                keypress_bar("LAST PRESSED : F11",4);break;
+                keypress_bar("LAST PRESSED : F11",9);break;
             case 70:
-                keypress_bar("LAST PRESSED : F12",4);break;
+                keypress_bar("LAST PRESSED : F12",9);break;
                 
             default:
                 if (shift==1)
                 {
                     shift = 0;
                     char s[] = {'L','A','S','T',' ','P','R','E','S','S','E','D',' ',':',' ','s','h','i','f','t','+','\'',kbdus[a],'\'','=','\'',CAPS_kbdus[a],'\'','\0'};
-                    keypress_bar(s,4);
+                    keypress_bar(s,9);
                 }
                 else if (control==1)
                 {
                     control=0;
                     char s[] = {'L','A','S','T',' ','P','R','E','S','S','E','D',' ',':',' ','c','t','r','l','^',kbdus[a],'\0'};
-                    keypress_bar(s,4);
+                    keypress_bar(s,9);
                     
                 }
                 else
                 {
                     char s[]={'L','A','S','T',' ','P','R','E','S','S','E','D',' ',':',' ',kbdus[a],'\0'};
-                    keypress_bar(s,4);
+                    keypress_bar(s,9);
                 }
         }
     }
