@@ -59,7 +59,7 @@ void _key_press_handler(){
             case 29:
                 control = 1;break;
             case 28:
-                keypress_bar("(" Enter",0x0F);break;
+                keypress_bar("Enter",0xF0);break;
             case 77:
                 keypress_bar("Right Arrow",0xF0);break;
             case 75:
