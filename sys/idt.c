@@ -155,7 +155,7 @@ void _timer_intr_hdlr(){
         unsigned char rtc_second;
         outb(0x00,0x70);
         rtc_second = inb(0x71);
-        rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf)
+        rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
         
         unsigned char rtc_minute;
         outb(0x02,0x70);
