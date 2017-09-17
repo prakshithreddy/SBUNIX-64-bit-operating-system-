@@ -203,10 +203,6 @@ void _rtc_intr_hndlr(){
     
     time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
     
-
-    
-    
-    
 }
 
 
