@@ -178,18 +178,34 @@ void _timer_intr_hdlr(){
     outb(0x20,0xA0);
 }
 
-static int rtc =0;
-
 void _rtc_intr_hndlr(){
-    rtc++;
-    kprintf("%d",rtc);
-    // kprintf("hi");
+    
+    //check_if_cmos_is updating if yes then wait
+    
+    unsigned char rtc_second;
+    outb(0x00,0x70);
+    rtc_second = inb(0x71);
+    rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
+    
+    unsigned char rtc_minute;
+    outb(0x02,0x70);
+    rtc_minute = inb(0x71);
+    
+    unsigned char rtc_hour;
+    outb(0x04,0x70);
+    rtc_hour = inb(0x71);
     
     outb(0x20,0x20);
     outb(0x20,0xA0);
     
     outb(0x0C,0x70);	// select register C
     inb(0x71);
+    
+    time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
+    
+
+    
+    
     
 }
 
