@@ -56,8 +56,6 @@ static int i = 0;
 
 void _timer_intr_hdlr(){
     
-    uint8_t a;
-    
     i++;
     
     if(i%18==0) { i = 0; kprintf("one second over"); }
