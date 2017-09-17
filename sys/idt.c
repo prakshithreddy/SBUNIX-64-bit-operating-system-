@@ -88,7 +88,7 @@ void _key_press_handler(){
     
     a = inb(0x60);
     
-    if(a==(int)54)
+    if(a==54)
     {
         kprintf("shift was pressed");
     }
