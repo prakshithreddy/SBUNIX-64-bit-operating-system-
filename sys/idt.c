@@ -152,6 +152,8 @@ void _timer_intr_hdlr(){
         
         boot_time_bar(hour,minute,seconds,0XF0);
         
+        //check_if_cmos_is updating if yes then wait
+        
         unsigned char rtc_second;
         outb(0x00,0x70);
         rtc_second = inb(0x71);
