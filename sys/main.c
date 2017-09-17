@@ -47,6 +47,8 @@ void boot(void)
   init_idt();
   init_pic();
   init_pit();
+    
+ keypress_bar("",0XF0);
   
    // __asm__ __volatile__ ("int $0x20":::);
   
