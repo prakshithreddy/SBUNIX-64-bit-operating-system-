@@ -64,15 +64,15 @@ void _key_press_handler(){
         }
         else {
         
-            if (shift == 1)
+            if (shift==1)
             {
                 shift = 0;
-                kprintf("SHIFT+%c (%c)",kbdus[a],CAPS_kbdus[a]);
+                kprintf("Shift+%c (%c)",kbdus[a],CAPS_kbdus[a]);
             }
-            else if (control ==1)
+            else if (control==1)
             {
                 control=0;
-                kprintf("Control+%c",kbdus[a]);
+                kprintf("Ctrl+%c",kbdus[a]);
                 
             }
             else
