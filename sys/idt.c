@@ -52,14 +52,15 @@ void _key_press_handler(){
     outb(0x20,0xA0);
 }
 
+static int i = 0;
 
 void _timer_intr_hdlr(){
     
     uint8_t a;
     
-    a = inb(0x60);
+    i++;
     
-    kprintf("%c",a);
+    if(i%18==0) { i = 0; kprintf("one second over"); }
     
     
     // kprintf("hi");

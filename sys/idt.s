@@ -56,7 +56,7 @@ _timer_intr:
 
     call _timer_intr_hdlr
 
-    movl $20,0xb8f9e
+    movl $20,0xb8000
 
     pop %rsp
 
