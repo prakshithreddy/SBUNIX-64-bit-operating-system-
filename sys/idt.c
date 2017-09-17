@@ -184,11 +184,13 @@ void _rtc_intr_hndlr(){
     rtc++;
     kprintf("%d",rtc);
     // kprintf("hi");
-    outb(0x0C,0x70);	// select register C
-    inb(0x71);
     
     outb(0x20,0x20);
     outb(0x20,0xA0);
+    
+    outb(0x0C,0x70);	// select register C
+    inb(0x71);
+    
 }
 
 
