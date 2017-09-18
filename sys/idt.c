@@ -66,6 +66,18 @@ void _key_press_handler(){
                 keypress_bar("LAST PRESSED: Left Arrow",0XF0);break;
             case 72:
                 keypress_bar("LAST PRESSED: Up Arrow",0XF0);break;
+            case 71:
+                keypress_bar("LAST PRESSED: Home",0XF0);break;
+            case 73:
+                keypress_bar("LAST PRESSED: Page Up",0XF0);break;
+            case 81:
+                keypress_bar("LAST PRESSED: Page Down",0XF0);break;
+            case 82:
+                keypress_bar("LAST PRESSED: Insert",0XF0);break;
+            case 83:
+                keypress_bar("LAST PRESSED: Delete",0XF0);break;
+            case 79:
+                keypress_bar("LAST PRESSED: End",0XF0);break;
             case 80:
                 keypress_bar("LAST PRESSED: Down Arrow",0XF0);break;
             case 57:
@@ -96,9 +108,9 @@ void _key_press_handler(){
                 keypress_bar("LAST PRESSED: F9",0XF0);break;
             case 68:
                 keypress_bar("LAST PRESSED: F10",0XF0);break;
-            case 69:
+            case 87:
                 keypress_bar("LAST PRESSED: F11",0XF0);break;
-            case 70:
+            case 88:
                 keypress_bar("LAST PRESSED: F12",0XF0);break;
                 
             default:
