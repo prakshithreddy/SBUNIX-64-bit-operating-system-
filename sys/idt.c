@@ -159,7 +159,15 @@ void _timer_intr_hdlr(){
     outb(0x20,0xA0);
 }
 
+
+static int rtc_read_timeout = 0;
+
 void _rtc_intr_hndlr(){
+    rtc_read_timeout++;
+    
+    if(rtc_read_timeout%19==0){
+        
+        rtc_read_timeout=0;
     
     unsigned char rtc_second;
     outb(0x00,0x70);
@@ -178,28 +186,34 @@ void _rtc_intr_hndlr(){
     
     outb(0x0B,0x70);
     regb = inb(0x71);
+        
+        
+        
+    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
+        
+        
+    if (!(regb & 0x04)) {
+        rtc_second=(rtc_second & 0x0F)+((rtc_second/16)*10);
+        rtc_minute=(rtc_minute & 0x0F)+ ((rtc_minute/16)*10);
+        rtc_hour=((rtc_hour & 0x0F) +(((rtc_hour & 0x70)/16)*10));
+    }
+    
+    if (!(regb & 0x02) && (rtc_hour & 0x80)) {
+            rtc_hour = ((rtc_hour & 0x7F) + 12) % 24;
+    }
+        
+    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
+        
+    time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
+        
+    }
     
     outb(0x20,0x20);
     outb(0x20,0xA0);
     
     outb(0x0C,0x70);	// select register C
     inb(0x71);
-    
-    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
-
-    
-    if (!(regb & 0x04)) {
-        rtc_second=(rtc_second & 0x0F)+((rtc_second/16)*10);
-        rtc_minute=(rtc_minute & 0x0F)+ ((rtc_minute/16)*10);
-        rtc_hour=((rtc_hour & 0x0F) +(((rtc_hour & 0x70)/16)*10));
-    }
-    if (!(regb & 0x02) && (rtc_hour & 0x80)) {
-        rtc_hour = ((rtc_hour & 0x7F) + 12) % 24;
-    }
-    
-    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
-    
-    time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
+   
     
 }
 
