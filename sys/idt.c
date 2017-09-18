@@ -203,9 +203,10 @@ void _rtc_intr_hndlr(){
     }
         
     kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
-        
+       
+    rtc_hour=rtc_hour-4<0?rtc_hour-4+24:rtc_hour;
     //NYC Time
-    time_bar(rtc_hour-4,rtc_minute,rtc_second,0XF0);
+    time_bar(,rtc_minute,rtc_second,0XF0);
         
     }
     
