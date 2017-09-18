@@ -204,7 +204,8 @@ void _rtc_intr_hndlr(){
         
     kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
         
-    time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
+    //NYC Time
+    time_bar(rtc_hour-4,rtc_minute,rtc_second,0XF0);
         
     }
     
