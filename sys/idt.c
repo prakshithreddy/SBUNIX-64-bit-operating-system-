@@ -187,10 +187,7 @@ void _rtc_intr_hndlr(){
     outb(0x0B,0x70);
     regb = inb(0x71);
         
-        
-        
-    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
-        
+    //kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
         
     if (!(regb & 0x04)) {
         //rtc_second=(rtc_second & 0x0F)+((rtc_second/16)*10);
@@ -202,10 +199,10 @@ void _rtc_intr_hndlr(){
             rtc_hour = ((rtc_hour & 0x7F) + 12) % 24;
     }
         
-    kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
-       
+    //kprintf("\n%d:%d:%d\n",rtc_hour,rtc_minute,rtc_second);
+    //NYC Time   
     rtc_hour=rtc_hour-4<0?rtc_hour-4+24:rtc_hour;
-    //NYC Time
+    
     time_bar(rtc_hour,rtc_minute,rtc_second,0XF0);
         
     }
