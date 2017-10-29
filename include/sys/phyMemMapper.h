@@ -23,5 +23,7 @@ static uint64_t isFrameUsed(uint64_t frameNum);
 static u64int getFirstFrame();
 static void initBitmap(uint64_t start,uint64_t end);
 static void allocateBitmapMem();
+void* pageAllocator();
+void pageDeAllocator(void* pageAddr);
 
 #endif

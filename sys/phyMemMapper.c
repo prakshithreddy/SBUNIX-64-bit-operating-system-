@@ -81,4 +81,25 @@ static uint64_t getFirstFrame(){
             }
         }
     }
+    return -1;
 }
+
+void* pageAllocator(){
+  uint64_t frameNum=getFirstFrame();
+  if (frameNum==-1){
+    return NULL;
+  }
+  else{
+    markasUsed(frameNum);
+    uint64_t pageAddr = frameNum*0x1000;
+    return (void*)pageAddr;
+  }
+}
+
+void pageDeAllocator(void* pageAddr){
+  uint64_t frameNum=((uint64_t*)pageAddr)/0x1000;
+  markasFree(frameNum);
+}
+
+
+

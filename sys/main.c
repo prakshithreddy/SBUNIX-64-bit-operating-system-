@@ -8,6 +8,7 @@
 #include <sys/pic.h>
 #include <sys/rtc.h>
 #include<sys/physMemMapper.h>
+#include<sys/virtualMemory.h>
 
 #define INITIAL_STACK_SIZE 4096
 uint8_t initial_stack[INITIAL_STACK_SIZE]__attribute__((aligned(16)));
@@ -18,6 +19,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
 {
 
   initPhys(physbase,physfree);
+  allocateBitmapMem();
   struct smap_t {
     uint64_t base, length;
     uint32_t type;
@@ -26,13 +28,13 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   for(smap = (struct smap_t*)(modulep+2); smap < (struct smap_t*)((char*)modulep+modulep[1]+2*4); ++smap) {
     if (smap->type == 1 /* memory */ && smap->length != 0) {
       kprintf("Available Physical Memory [%p-%p]\n", smap->base, smap->base + smap->length);
-        //kprintf("Init this mem");
-        
+      initBitmap(smap->base,smap->base + smap->length);
     }
   }
+  mapKernelMemory();
   kprintf("physfree %p\n", (uint64_t)physfree);
   kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
-
+  
     while(1);
 }
 
