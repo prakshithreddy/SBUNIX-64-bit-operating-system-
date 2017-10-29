@@ -7,6 +7,7 @@
 #include <sys/pit.h>
 #include <sys/pic.h>
 #include <sys/rtc.h>
+#include<sys/physMemMapper.h>
 
 #define INITIAL_STACK_SIZE 4096
 uint8_t initial_stack[INITIAL_STACK_SIZE]__attribute__((aligned(16)));
@@ -15,6 +16,8 @@ extern char kernmem, physbase;
 
 void start(uint32_t *modulep, void *physbase, void *physfree)
 {
+
+  initPhys(physbase,physfree);
   struct smap_t {
     uint64_t base, length;
     uint32_t type;
