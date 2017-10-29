@@ -27,7 +27,20 @@ static uint64_t isFrameUsed(uint64_t frameNum){
     return (availFrames[row] & (0x1UL << col));
 }
 
-static uint64_t initBitmap(uint64_t start,uint64_t end)
+static void allocateBitmapMem()
+{
+    availFrames = (uint64_t*)KER_PHYSFREE;
+    
+    for (i=0;i<256;i++)
+    {
+        availFrames[i] = 0;
+    }
+    
+    KER_PHYSFREE+=(256*64)/8;
+    
+}
+
+static void initBitmap(uint64_t start,uint64_t end)
 {
     uint64_t startFrameNum = start/0x1000;
     uint64_t endFrameNum = start/0x1000;

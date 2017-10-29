@@ -3,8 +3,6 @@
 
 #include<sys/defs.h>
 
-
-
 struct PML4 {
     uint64_t entries[512];
 };

@@ -21,6 +21,7 @@ static void markasUsed(uint64_t frameNum);
 static void markasFree(uint64_t frameNum);
 static uint64_t isFrameUsed(uint64_t frameNum);
 static u64int getFirstFrame();
-static uint64_t initBitmap(uint64_t start,uint64_t end);
+static void initBitmap(uint64_t start,uint64_t end);
+static void allocateBitmapMem();
 
 #endif
