@@ -7,7 +7,7 @@
 #include <sys/pit.h>
 #include <sys/pic.h>
 #include <sys/rtc.h>
-#include<sys/physMemMapper.h>
+#include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 
 #define INITIAL_STACK_SIZE 4096
@@ -18,7 +18,7 @@ extern char kernmem, physbase;
 void start(uint32_t *modulep, void *physbase, void *physfree)
 {
 
-  initPhys(physbase,physfree);
+  initPhys((uint64_t)physbase,(uint64_t)physfree);
   allocateBitmapMem();
   struct smap_t {
     uint64_t base, length;
@@ -32,8 +32,9 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
     }
   }
   mapKernelMemory();
-  kprintf("physfree %p\n", (uint64_t)physfree);
-  kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
+  enablePaging();
+  //kprintf("physfree %p\n", (uint64_t)physfree);
+  //kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
   
     while(1);
 }
@@ -62,7 +63,7 @@ void boot(void)
     time_bar(0,0,0,0XF0);
 
   
-   // __asm__ __volatile__ ("int $0x20":::);
+    //__asm__ __volatile__ ("int $0x10":::);
   
   start(
     (uint32_t*)((char*)(uint64_t)loader_stack[3] + (uint64_t)&kernmem - (uint64_t)&physbase),

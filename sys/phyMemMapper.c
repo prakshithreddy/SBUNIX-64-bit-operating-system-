@@ -1,37 +1,47 @@
 #include<sys/phyMemMapper.h>
 
+static uint64_t* availFrames;
+static uint64_t KER_PHYSBASE;
+static uint64_t KER_PHYSFREE;
 
-static void initPhys(uint64_t base,uint64_t limit)
+uint64_t get_ker_physbase(){
+  return KER_PHYSBASE;
+}
+
+uint64_t get_ker_physfree(){
+  return KER_PHYSFREE;
+}
+void initPhys(uint64_t base,uint64_t limit)
 {
     KER_PHYSBASE = base;
     KER_PHYSFREE = limit;
     
 }
-static void markasFree(uint64_t frameNum)
+void markasFree(uint64_t frameNum)
 {
     uint64_t row = ROW(frameNum);
     uint64_t col = COL(frameNum);
-    availFrames[row] |= (0x1UL << col);
+    availFrames[row] |= (0x1ULL << col);
 }
 
-static void markasUsed(uint64_t frameNum)
+void markasUsed(uint64_t frameNum)
 {
     uint64_t row = ROW(frameNum);
     uint64_t col = COL(frameNum);
-    availFrames[row] &= ~(0x1UL << col);
+    availFrames[row] &= ~(0x1ULL << col);
 }
 
-static uint64_t isFrameUsed(uint64_t frameNum){
+uint64_t isFrameUsed(uint64_t frameNum){
     uint64_t row = ROW(frameNum);
     uint64_t col = COL(frameNum);
-    return (availFrames[row] & (0x1UL << col));
+    return (availFrames[row] & (0x1ULL << col));
 }
 
-static void allocateBitmapMem()
+void allocateBitmapMem()
 {
     availFrames = (uint64_t*)KER_PHYSFREE;
     
-    for (i=0;i<256;i++)
+    for (int i=0;i<256;i++)
     {
         availFrames[i] = 0;
     }
@@ -40,14 +50,14 @@ static void allocateBitmapMem()
     
 }
 
-static void initBitmap(uint64_t start,uint64_t end)
+void initBitmap(uint64_t start,uint64_t end)
 {
     uint64_t startFrameNum = start/0x1000;
-    uint64_t endFrameNum = start/0x1000;
+    uint64_t endFrameNum = end/0x1000;
     while(startFrameNum<=endFrameNum)
     {
-        if ((startFrameNum * PAGE_SIZE) <= KER_PHYSFREE
-            && (startFrameNum * PAGE_SIZE) >= KER_PHYSBASE);
+        if ((startFrameNum <= (KER_PHYSFREE/0x1000))
+            && (startFrameNum >= (KER_PHYSBASE/0x1000));
         else
         {
             markasFree(startFrameNum);
@@ -65,7 +75,7 @@ static void initBitmap(uint64_t start,uint64_t end)
 }
 
 //returns the first free avail frame
-static uint64_t getFirstFrame(){
+uint64_t getFirstFrame(){
     
     for(uint64_t row=0;row<256;row++)
     {
@@ -73,7 +83,7 @@ static uint64_t getFirstFrame(){
         {
             for(uint64_t col=0;col<64;col++)
             {
-                uint64_t temp = 0x1UL << col;
+                uint64_t temp = 0x1ULL << col;
                 if(!(availFrames[row]&temp))
                 {
                     return row*64+col;
@@ -97,7 +107,7 @@ void* pageAllocator(){
 }
 
 void pageDeAllocator(void* pageAddr){
-  uint64_t frameNum=((uint64_t*)pageAddr)/0x1000;
+  uint64_t frameNum=((uint64_t)(pageAddr))/(0x1000ul);
   markasFree(frameNum);
 }
 

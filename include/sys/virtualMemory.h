@@ -10,29 +10,30 @@
 #define WRITEABLE 0x2
 #define USER 0x4
 #define FRAME 0xFFFFFFFFFFFFF000
+void mapKernelMemory();
+void enablePaging();
+void mapPage(uint64_t v_addr, uint64_t phy_addr);
 
-extern char kernmem
+extern char kernmem;
 
 
-typedef struct PT
+struct PT
 {
   uint64_t entries[512];
 };
 
-typedef struct PDT
+struct PDT
 {
   uint64_t entries[512];
 };
 
-typedef struct PDPT
+struct PDPT
 {
   uint64_t entries[512];
 };
 
-typedef struct PML4
+struct PML4
 {
   uint64_t entries[512];
 };
-
-struct PML4 *pml4;
 #endif
