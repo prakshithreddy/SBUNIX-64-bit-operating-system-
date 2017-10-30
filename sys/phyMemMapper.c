@@ -57,7 +57,7 @@ void initBitmap(uint64_t start,uint64_t end)
     while(startFrameNum<=endFrameNum)
     {
         if ((startFrameNum <= (KER_PHYSFREE/0x1000))
-            && (startFrameNum >= (KER_PHYSBASE/0x1000));
+            && (startFrameNum >= (KER_PHYSBASE/0x1000)));
         else
         {
             markasFree(startFrameNum);
