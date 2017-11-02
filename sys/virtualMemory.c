@@ -1,6 +1,7 @@
 #include<sys/virtualMemory.h>
 #include<sys/phyMemMapper.h>
-#define VGA_ADRESS 0xb8000
+#include<sys/kprintf.h>
+#define VGA_ADDRESS 0xb8000
 static uint64_t vga_virtual_address;
 static uint64_t vga_end_virtual_address;
 static struct PML4 *pml4;
@@ -34,7 +35,7 @@ void mapKernelMemory(){
   pt_e|=USER;
   pdt->entries[get_PDT_INDEX((uint64_t)&kernmem)]=pt_e;
   
-  physfree+=0x4800; //TODO: no idea why additonal memory is added.. need to verify
+  physfree+=0x5000; //TODO: no idea why additonal memory is added.. need to verify
   uint64_t v_addr=(uint64_t)&kernmem;
   while(physbase<physfree){
     uint64_t entry=physbase;
@@ -46,9 +47,10 @@ void mapKernelMemory(){
     v_addr+=0x1000;
   }
   
-  vga_virtual_address = v_addr;
+  vga_virtual_address=v_addr;
   vga_end_virtual_address = v_addr+0x3000;
-  //mapPage(vga_virtual_address,VGA_ADDRESS);
+  mapPage(vga_virtual_address,VGA_ADDRESS);
+  mapVGA(vga_virtual_address);
 
 }
 
@@ -106,4 +108,13 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
 
 void enablePaging(){
   __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)pml4));
+  /*uint64_t temp=0;
+  __asm__ __volatile__("mov %%cr0,%0":"=a"(temp):);
+  temp|=1<<31;
+  kprintf("CR0:- %p",temp);
+  __asm__ __volatile__("mov %0,%%cr0":: "b"((uint64_t)temp));*/
+  
 }
+
+
+

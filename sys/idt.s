@@ -103,34 +103,4 @@ pop  %rax
 
 iretq
 
-_common_interrupt:
-push %rax
-push %rbx
-push %rcx
-push %rdx
-push %rsi
-push %rdi
-push %rbp
-
-
-pushq %fs
-pushq %gs
-pushq %rsp
-
-call _common_interrupt_hndlr
-
-pop %rsp
-
-popq %gs
-popq %fs
-
-
-pop  %rbp
-pop  %rdi
-pop  %rsi
-pop  %rdx
-pop  %rcx
-pop  %rbx
-pop  %rax
-
 
