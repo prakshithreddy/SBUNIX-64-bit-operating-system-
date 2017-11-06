@@ -13,9 +13,10 @@
 void mapKernelMemory();
 void enablePaging();
 void mapPage(uint64_t v_addr, uint64_t phy_addr);
+void identityMapping();
+void mapVideoMemory(uint64_t vga_virtual_address);
 
-extern char kernmem;
-
+extern char kernmem, physbase;
 
 struct PT
 {

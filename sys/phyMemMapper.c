@@ -3,6 +3,7 @@
 static uint64_t* availFrames;
 static uint64_t KER_PHYSBASE;
 static uint64_t KER_PHYSFREE;
+static uint64_t PHYSEND;
 
 //Using references from http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html
 
@@ -12,6 +13,10 @@ uint64_t get_ker_physbase(){
 
 uint64_t get_ker_physfree(){
   return KER_PHYSFREE;
+}
+
+uint64_t get_physend(){
+  return PHYSEND;
 }
 void initPhys(uint64_t base,uint64_t limit)
 {
@@ -81,6 +86,7 @@ void initBitmap(uint64_t start,uint64_t end)
         markasUsed(temp);
         temp++;
     }
+    PHYSEND=end;
 }
 
 //returns the first free avail frame
@@ -110,7 +116,8 @@ void* pageAllocator(){
   }
   else{
     markasUsed(frameNum);
-    uint64_t pageAddr = frameNum*0x1000;
+    uint64_t pageAddr = frameNum*0x1000;//TODO: memset when page is allocated, otherwise might contain garbage.
+    memset(pageAddr);
     return (void*)pageAddr;
   }
 }
@@ -118,6 +125,16 @@ void* pageAllocator(){
 void pageDeAllocator(void* pageAddr){
   uint64_t frameNum=((uint64_t)(pageAddr))/(0x1000ull);
   markasFree(frameNum);
+}
+
+void memset(uint64_t pageaddr){
+  int i=0;
+  uint64_t *pointer=(uint64_t *)pageaddr;
+  while(i<512){
+    *pointer=0;
+    pointer+=1;
+    i+=1;
+  }
 }
 
 

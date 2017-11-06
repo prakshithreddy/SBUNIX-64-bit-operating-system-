@@ -23,5 +23,9 @@ void* pageAllocator();
 void pageDeAllocator(void* pageAddr);
 uint64_t get_ker_physbase();
 uint64_t get_ker_physfree();
+uint64_t get_physend();
+void memset(uint64_t pageaddr);
+
+#define PHYSSTART 0x100000;
 
 #endif
