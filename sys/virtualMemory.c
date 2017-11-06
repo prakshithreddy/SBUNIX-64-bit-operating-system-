@@ -140,3 +140,9 @@ void mapVideoMemory(uint64_t vga_virtual_address){
   mapVGA(vga_virtual_address);
 }
 
+void* kmalloc(){
+  void *ptr=pageAllocator();
+  ptr= (void*)((uint64_t)ptr+kernbase);
+  return ptr;
+}
+
