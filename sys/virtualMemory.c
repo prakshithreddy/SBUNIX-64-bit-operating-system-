@@ -14,9 +14,13 @@ void mapKernelMemory(){
   //uint64_t physfree = get_ker_physfree();
   kernbase=virtual_physbase - phys_base;
   pml4 = (struct PML4*)pageAllocator();
+  memset((uint64_t)pml4);
   struct PDPT *pdpt = (struct PDPT*)pageAllocator();
+  memset((uint64_t)pdpt);
   struct PDT *pdt = (struct PDT*)pageAllocator();
+  memset((uint64_t)pdt);
   struct PT *pt = (struct PT*)pageAllocator();
+  memset((uint64_t)pt);
   
   //creating pdpt to map to pml4
   uint64_t pdpt_e = (uint64_t)pdpt;
@@ -70,6 +74,7 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
   }
   else{
     pdpt = (struct PDPT*)pageAllocator();
+    memset((uint64_t)pdpt);
     pml_entry = (uint64_t)pdpt;
     pml_entry|=PRESENT;
     pml_entry|=WRITEABLE;
@@ -83,6 +88,7 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
   }
   else{
     pdt = (struct PDT*)pageAllocator();
+    memset((uint64_t)pdt);
     pdpt_entry = (uint64_t)pdt;
     pdpt_entry|=PRESENT;
     pdpt_entry|=WRITEABLE;
@@ -96,6 +102,7 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
   }
   else{
     pt = (struct PT*)pageAllocator();
+    memset((uint64_t)pt);
     pdt_entry = (uint64_t)pt;
     pdt_entry|=PRESENT;
     pdt_entry|=WRITEABLE;
@@ -120,7 +127,7 @@ void enablePaging(){
   temp|=1<<31;
   kprintf("CR0:- %p",temp);
   __asm__ __volatile__("mov %0,%%cr0":: "b"((uint64_t)temp));*/
-  
+  set_availFrames(kernbase);
 }
 
 void identityMapping(){
@@ -143,6 +150,7 @@ void mapVideoMemory(uint64_t vga_virtual_address){
 void* kmalloc(){
   void *ptr=pageAllocator();
   ptr= (void*)((uint64_t)ptr+kernbase);
+  memset((uint64_t)ptr);
   return ptr;
 }
 

@@ -9,6 +9,7 @@
 #include <sys/rtc.h>
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
+#include<sys/task.h>
 
 #define INITIAL_STACK_SIZE 4096
 uint8_t initial_stack[INITIAL_STACK_SIZE]__attribute__((aligned(16)));
@@ -36,7 +37,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   mapKernelMemory();
   enablePaging();
   kprintf("***************************Paging Enabled***************************\n");
-  
+  initMultiTasking();
     while(1);
 }
 

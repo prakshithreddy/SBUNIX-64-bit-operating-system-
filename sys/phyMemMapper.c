@@ -18,6 +18,11 @@ uint64_t get_ker_physfree(){
 uint64_t get_physend(){
   return PHYSEND;
 }
+
+void set_availFrames(uint64_t kern_base){
+  uint64_t temp=(uint64_t)availFrames+kern_base;
+  availFrames=(uint64_t*)temp;
+}
 void initPhys(uint64_t base,uint64_t limit)
 {
     KER_PHYSBASE = base;
@@ -116,8 +121,7 @@ void* pageAllocator(){
   }
   else{
     markasUsed(frameNum);
-    uint64_t pageAddr = frameNum*0x1000;//TODO: memset when page is allocated, otherwise might contain garbage.
-    memset(pageAddr);
+    uint64_t pageAddr = frameNum*0x1000;//TODO: memset is done in kmalloc after paging, before paging needs to done after calling this function.
     return (void*)pageAddr;
   }
 }

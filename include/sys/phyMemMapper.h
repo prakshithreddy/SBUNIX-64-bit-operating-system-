@@ -25,6 +25,7 @@ uint64_t get_ker_physbase();
 uint64_t get_ker_physfree();
 uint64_t get_physend();
 void memset(uint64_t pageaddr);
+void set_availFrames(uint64_t kern_base);
 
 #define PHYSSTART 0x100000;
 
