@@ -23,7 +23,12 @@ void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uin
 }
 
 static void multitaskMain() {
+  static int i=0;
   kprintf("Enabling multithreaded Kernel.....");
+  //while(1);
+  yield();
+  i+=1;
+  kprintf("%d",i);
   yield();
 }
 
@@ -31,11 +36,13 @@ void initMultiTasking() {
   __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(mainThread.regs.cr3)::"%rax");
   __asm__ __volatile__("pushfq; movq (%%rsp), %%rax; movq %%rax, %0; popfq;":"=m"(mainThread.regs.rflags)::"%rax");
   createThread(&otherThread, multitaskMain, mainThread.regs.rflags, (uint64_t*)mainThread.regs.cr3);
+  //mainThread.regs.rip=(uint64_t)start;
   mainThread.next = &otherThread;
   otherThread.next = &mainThread;
   runningThread = &mainThread;
   yield();
   kprintf("Success\n");
+  yield();
 }
 
 void yield() {

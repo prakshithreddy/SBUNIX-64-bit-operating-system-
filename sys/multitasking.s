@@ -4,6 +4,8 @@
 
 _switchThread_:
 	movq %rax,(%rdi)
+	popq %rax
+	movq %rax,64(%rdi)
 	movq %rbx,8(%rdi)
 	movq %rcx,16(%rdi)
 	movq %rdx,24(%rdi)
@@ -33,7 +35,10 @@ _switchThread_:
 	mov 80(%rsi),%rax
 	mov %rax,%cr3
 	
+	mov 64(%rsi),%rax
+	push %rax
+	
 	/*movq 64(%rsi),%rip*/
 	
 	movq (%rsi),%rax	/*reloading the registers with other tasks left over register values*/
-	retq
+	ret
