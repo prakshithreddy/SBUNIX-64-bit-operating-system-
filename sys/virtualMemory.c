@@ -6,7 +6,7 @@ static uint64_t virtual_physbase=(uint64_t)&kernmem; //virtual_kernel_address ->
 static uint64_t phys_base=(uint64_t)&physbase;
 static uint64_t kernbase;
 static uint64_t vga_virtual_address;
-static uint64_t vga_end_virtual_address;
+//static uint64_t vga_end_virtual_address;
 static struct PML4 *pml4;
 
 void mapKernelMemory(){
