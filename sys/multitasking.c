@@ -27,9 +27,9 @@ static void multitaskMain() {
   kprintf("Enabling multithreaded Kernel.....");
   //while(1);
   yield();
-  i+=1;
-  kprintf("%d",i);
-  yield();
+//  i+=1;
+//  kprintf("%d",i);
+//  yield();
 }
 
 void initMultiTasking() {
@@ -42,7 +42,7 @@ void initMultiTasking() {
   runningThread = &mainThread;
   yield();
   kprintf("Success\n");
-  yield();
+  //yield();
 }
 
 void yield() {
