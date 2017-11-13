@@ -3,5 +3,5 @@
 .global switchToUserMode
 
 switchToUserMode:
-    
+    ret
 
