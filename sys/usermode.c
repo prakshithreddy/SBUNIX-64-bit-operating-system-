@@ -1,5 +1,6 @@
 #include<sys/usermode.h>
 #include<sys/defs.h>
+#include<sys/kprintf.h>
 
 #define GDT_CS        (0x00180000000000)  /*** code segment descriptor ***/
 #define GDT_DS        (0x00100000000000)  /*** data segment descriptor ***/
