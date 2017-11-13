@@ -15,7 +15,5 @@ switchToUserMode:
     pushq %rax
     pushfq
     pushq %rsi
-    pushq $1f
+    pushq %rdx
     iret
-    1:
-
