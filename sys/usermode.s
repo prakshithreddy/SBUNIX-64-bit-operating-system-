@@ -13,7 +13,7 @@ switchToUserMode:
     pushq %rax
     pushfq
     popq %rax
-    or %rax,$0x0000000000000200
+    orq %rax,$0x200
     pushq %rax
     pushq %rsi
     pushq %rdx
