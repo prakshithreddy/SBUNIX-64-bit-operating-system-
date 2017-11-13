@@ -10,6 +10,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 #include<sys/task.h>
+#include<sys/usermode.h>
 
 #define INITIAL_STACK_SIZE 4096
 uint8_t initial_stack[INITIAL_STACK_SIZE]__attribute__((aligned(16)));
@@ -36,8 +37,10 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
   mapKernelMemory();
   enablePaging();
+
   kprintf("***************************Paging Enabled***************************\n");
   initMultiTasking();
+    initUserMode();
     while(1);
 }
 
