@@ -21,6 +21,7 @@ void switchToUserMode();
 
 void initUserMode()
 {
-    kprintf("%x",GDT_CS | P | DPL3 | L);
-    kprintf("DATA SEG : %x",GDT_DS | P | W | DPL3);
+    uint64_t temp = GDT_DS | P | W | DPL3;
+    //kprintf("%x",GDT_CS | P | DPL3 | L);
+    kprintf("DATA SEG : %x",temp);
 }
