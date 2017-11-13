@@ -4,7 +4,6 @@
 
 switchToUserMode:
     cli
-    sti
     movq %rdi, %es
     movq %rdi, %fs
     movq %rdi, %gs
