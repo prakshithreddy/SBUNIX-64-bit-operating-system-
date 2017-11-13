@@ -16,6 +16,11 @@
 #define W             (0x00020000000000)  /*** writable data segment ***/
 
 
+void inUserMode()
+{
+    kprintf("INUSERMODE");
+}
+
 void switchToUserMode(uint64_t userModeDataSel,uint64_t userModeCodeSel,void(*function)());
 
 void initUserMode()
@@ -23,7 +28,4 @@ void initUserMode()
     switchToUserMode((GDT_DS|P|W|DPL3),(GDT_CS | P | DPL3 | L),inUserMode);
 }
 
-void inUserMode()
-{
-    kprintf("INUSERMODE");
-}
+
