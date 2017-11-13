@@ -16,9 +16,9 @@
 #define W             (0x00020000000000)  /*** writable data segment ***/
 
 
-void switchToUserMode(uint64_t userModeDataSel);
+void switchToUserMode(uint64_t userModeDataSel,uint64_t userModeCodeSel);
 
 void initUserMode()
 {
-    switchToUserMode((GDT_DS|P|W|DPL3));
+    switchToUserMode((GDT_DS|P|W|DPL3),(GDT_CS | P | DPL3 | L));
 }
