@@ -12,6 +12,9 @@ switchToUserMode:
     pushq %rdi
     pushq %rax
     pushfq
+    popq %rax
+    or %rax, $0x200
+    pushq %rax
     pushq %rsi
     pushq %rdx
     iret
