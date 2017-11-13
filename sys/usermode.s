@@ -17,5 +17,5 @@ switchToUserMode:
     pushq %rsi
     pushq $1f
     iret
-    1
+    1:
 
