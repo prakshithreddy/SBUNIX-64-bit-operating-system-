@@ -1,5 +1,5 @@
 #include<sys/usermode.h>
-#include<sys/gdt.c>
+#include<sys/gdt.h>
 
 
 void switchToUserMode();
