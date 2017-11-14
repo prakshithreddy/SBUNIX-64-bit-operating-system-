@@ -4,6 +4,7 @@
 .extern _inUserMode
 
 _switchToUserMode:
+    cli
     movq %rdi, %es
     movq %rdi, %fs
     movq %rdi, %gs
@@ -14,4 +15,5 @@ _switchToUserMode:
     pushfq
     pushq %rsi
     pushq _inUserMode
+    sti
     iret
