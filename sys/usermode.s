@@ -16,4 +16,4 @@ _switchToUserMode:
     pushq %rsi
     pushq _inUserMode
     sti
-    iret
+    iretq
