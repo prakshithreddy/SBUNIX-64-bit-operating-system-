@@ -11,19 +11,16 @@ _switchToUserMode:
     movq %rax, %gs
     movq %rax, %ds
     movq %rax,%rax
+    movq %rsp,%rax
     pushq $0x23
-    pushq %rsp
+    pushq %rax
     pushfq
-//    popq %rax
-//    or $0x200,%rax
-//    pushq %rax
+    popq %rax
+    or $0x200,%rax
+    pushq %rax
     pushq $0x1B
-    //pushq _inUserMode
-    //lea [a],%rax
-    //pushq %rax
     pushq $1f;
 //sti
     iretq
 1:
-    add $8,%rsp
-
+    
