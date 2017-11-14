@@ -19,8 +19,8 @@ _switchToUserMode:
     or $0x200,%rax
     pushq %rax
     pushq $0x1B
-    pushq $1f;
+    pushq _inUserMode;
 //sti
     iretq
 1:
-    
+
