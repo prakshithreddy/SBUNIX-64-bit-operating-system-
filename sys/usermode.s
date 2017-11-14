@@ -1,6 +1,9 @@
-.text
 
 DSIDX equ 0x23
+
+.text
+
+
 
 .global _switchToUserMode
 .extern _inUserMode
