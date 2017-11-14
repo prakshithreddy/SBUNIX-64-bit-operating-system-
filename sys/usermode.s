@@ -1,8 +1,9 @@
 .text
 
-.global switchToUserMode
+.global _switchToUserMode
+.extern _inUserMode
 
-switchToUserMode:
+_switchToUserMode:
     cli
     movq %rdi, %es
     movq %rdi, %fs
@@ -13,6 +14,6 @@ switchToUserMode:
     pushq %rax
     pushfq
     pushq %rsi
-    pushq %rdx
+    pushq _inUserMode
     sti
     iret
