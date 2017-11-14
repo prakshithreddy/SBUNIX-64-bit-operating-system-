@@ -258,7 +258,7 @@ void _rtc_intr_hndlr(){
 
 
 void _hndlr_isr0(registers_t regs){
-    kprintf("divide by 0");
+    kprintf("0x0 divide by 0");
     while(1);
 }
 void _hndlr_isr1(registers_t regs){
