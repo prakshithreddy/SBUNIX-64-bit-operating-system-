@@ -6,13 +6,13 @@
 
 
 _key_board_intr:
-    push %rax
-    push %rbx
-    push %rcx
-    push %rdx
-    push %rsi
-    push %rdi
-    push %rbp
+    pushq %rax
+    pushq %rbx
+    pushq %rcx
+    pushq %rdx
+    pushq %rsi
+    pushq %rdi
+    pushq %rbp
 
 
     pushq %fs
@@ -21,31 +21,31 @@ _key_board_intr:
 
     call _key_press_handler
 
-    pop %rsp
+    popq %rsp
 
     popq %gs
     popq %fs
 
 
-    pop  %rbp
-    pop  %rdi
-    pop  %rsi
-    pop  %rdx
-    pop  %rcx
-    pop  %rbx
-    pop  %rax
+    popq  %rbp
+    popq  %rdi
+    popq  %rsi
+    popq  %rdx
+    popq  %rcx
+    popq  %rbx
+    popq  %rax
 
     iretq
 
 _timer_intr:
 
-    push %rax
-    push %rbx
-    push %rcx
-    push %rdx
-    push %rsi
-    push %rdi
-    push %rbp
+    pushq %rax
+    pushq %rbx
+    pushq %rcx
+    pushq %rdx
+    pushq %rsi
+    pushq %rdi
+    pushq %rbp
 
 
     pushq %fs
@@ -54,31 +54,31 @@ _timer_intr:
 
     call _timer_intr_hdlr
 
-    pop %rsp
+    popq %rsp
 
     popq %gs
     popq %fs
 
 
-    pop  %rbp
-    pop  %rdi
-    pop  %rsi
-    pop  %rdx
-    pop  %rcx
-    pop  %rbx
-    pop  %rax
+    popq  %rbp
+    popq  %rdi
+    popq  %rsi
+    popq  %rdx
+    popq  %rcx
+    popq  %rbx
+    popq  %rax
 
     iretq
 
 _generic_intr:
 
-    push %rax
-    push %rbx
-    push %rcx
-    push %rdx
-    push %rsi
-    push %rdi
-    push %rbp
+    pushq %rax
+    pushq %rbx
+    pushq %rcx
+    pushq %rdx
+    pushq %rsi
+    pushq %rdi
+    pushq %rbp
 
 
     pushq %fs
@@ -87,31 +87,31 @@ _generic_intr:
 
     call _generic_intr_hndlr
 
-    pop %rsp
+    popq %rsp
 
     popq %gs
     popq %fs
 
 
-    pop  %rbp
-    pop  %rdi
-    pop  %rsi
-    pop  %rdx
-    pop  %rcx
-    pop  %rbx
-    pop  %rax
+    popq  %rbp
+    popq  %rdi
+    popq  %rsi
+    popq  %rdx
+    popq  %rcx
+    popq  %rbx
+    popq  %rax
 
 
 
 _rtc_intr:
 
-push %rax
-push %rbx
-push %rcx
-push %rdx
-push %rsi
-push %rdi
-push %rbp
+pushq %rax
+pushq %rbx
+pushq %rcx
+pushq %rdx
+pushq %rsi
+pushq %rdi
+pushq %rbp
 
 
 pushq %fs
@@ -120,19 +120,19 @@ pushq %rsp
 
 call _rtc_intr_hndlr
 
-pop %rsp
+popq %rsp
 
 popq %gs
 popq %fs
 
 
-pop  %rbp
-pop  %rdi
-pop  %rsi
-pop  %rdx
-pop  %rcx
-pop  %rbx
-pop  %rax
+popq  %rbp
+popq  %rdi
+popq  %rsi
+popq  %rdx
+popq  %rcx
+popq  %rbx
+popq  %rax
 
 iretq
 
