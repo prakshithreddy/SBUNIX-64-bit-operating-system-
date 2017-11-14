@@ -26,4 +26,4 @@ _switchToUserMode:
     iretq
 1:
     add $8,%rsp
-'['
+
