@@ -16,7 +16,7 @@
 #define L             (0x20000000000000)  /*** long mode ***/
 #define D             (0x40000000000000)  /*** default op size ***/
 #define W             (0x00020000000000)  /*** writable data segment ***/
-
+#define KERNEL_STACK_VIRTUAL_ADDRESS 0xFFFFFFFFFFF00000UL
 #define MAX_GDT 32
 
 struct tss_t {
@@ -84,7 +84,7 @@ void init_gdt() {
   //uint64_t* kernelStackAddress;
   //__asm__ volatile ("cli;""movq %%rsp, %0;":"=g"(kernelStackAddress):);
   //kprintf("Task State Segment init\n");
-  //set_tss_rsp(initialStackPtr);
+  set_tss_rsp((void*)KERNEL_STACK_VIRTUAL_ADDRESS);
   //
 
   _x86_64_asm_lgdt(&gdtr, 8, 16);
