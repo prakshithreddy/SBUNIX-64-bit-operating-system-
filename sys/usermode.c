@@ -21,11 +21,11 @@ void _inUserMode()
     kprintf("INUSERMODE");
 }
 
-void switchToUserMode(uint64_t userModeDataSel,uint64_t userModeCodeSel);
+void _switchToUserMode(uint64_t userModeDataSel,uint64_t userModeCodeSel);
 
 void initUserMode()
 {
-    switchToUserMode((GDT_DS|P|W|DPL3),(GDT_CS|P|DPL3|L));
+    _switchToUserMode((GDT_DS|P|W|DPL3),(GDT_CS|P|DPL3|L));
 }
 
 
