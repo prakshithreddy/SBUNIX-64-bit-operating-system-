@@ -70,7 +70,7 @@ static struct tss_t tss;
 
 void _x86_64_asm_lgdt(struct gdtr_t *gdtr, uint64_t cs_idx, uint64_t ds_idx);
 void _x86_64_asm_ltr(uint64_t tss_idx);
-void init_gdt(void* initialStackPtr) {
+void init_gdt() {
   struct sys_segment_descriptor *sd = (struct sys_segment_descriptor*)&gdt[5]; // 6th&7th entry in GDT
   sd->sd_lolimit = sizeof(struct tss_t) - 1;
   sd->sd_lobase = ((uint64_t)&tss);
@@ -83,8 +83,8 @@ void init_gdt(void* initialStackPtr) {
 
   //uint64_t* kernelStackAddress;
   //__asm__ volatile ("cli;""movq %%rsp, %0;":"=g"(kernelStackAddress):);
-  kprintf("Task State Segment init\n");
-  set_tss_rsp(initialStackPtr);
+  //kprintf("Task State Segment init\n");
+  //set_tss_rsp(initialStackPtr);
   //
 
   _x86_64_asm_lgdt(&gdtr, 8, 16);
