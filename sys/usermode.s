@@ -19,10 +19,11 @@ _switchToUserMode:
 //    pushq %rax
     pushq $0x1B
     //pushq _inUserMode
-    lea [a],%rax
-    pushq %rax
+    //lea [a],%rax
+    //pushq %rax
+    pushq $1f;
 //sti
     iretq
-a:
+1:
     add $8,%rsp
-
+'['
