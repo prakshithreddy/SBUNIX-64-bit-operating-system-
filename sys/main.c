@@ -37,9 +37,10 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
   mapKernelMemory();
   enablePaging();
+    initUserMode();
 
   kprintf("***************************Paging Enabled***************************\n");
-  initMultiTasking();
+  //initMultiTasking();
   
   while(1);
 }
@@ -59,7 +60,7 @@ void boot(void)
   );
   init_gdt();
   init_idt();
-  initUserMode();
+  
 //  init_pic();
 //  init_pit();
 //  init_rtc();
