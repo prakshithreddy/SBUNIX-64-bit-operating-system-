@@ -14,8 +14,8 @@ _switchToUserMode:
     pushq %rax
     pushfq
     popq %rax
-    or %rax,0x200
-    pushq %rax ;
+    or %rax,$0x200
+    pushq %rax
     pushq %rsi
     pushq _inUserMode
 //sti
