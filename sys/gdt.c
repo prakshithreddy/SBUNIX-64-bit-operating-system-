@@ -84,7 +84,7 @@ void init_gdt() {
   uint64_t* kernelStackAddress;
   __asm__ volatile ("movq %%rsp, %0;":"=g"(kernelStackAddress):);
   
-    //kprintf("Task State Segment init\n");
+  kprintf("Task State Segment init : ");
   set_tss_rsp((void*)kernelStackAddress);
   //
 
