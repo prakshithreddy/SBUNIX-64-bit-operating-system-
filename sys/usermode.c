@@ -18,7 +18,7 @@
 
 void _inUserMode()
 {
-    //kprintf("INUSERMODE");
+    //kprintf("INUSERMOD
 }
 
 void _switchToUserMode(uint64_t userModeDataSel,uint64_t userModeCodeSel);
