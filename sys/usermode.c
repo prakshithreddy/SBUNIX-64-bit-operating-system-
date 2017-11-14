@@ -18,6 +18,8 @@
 
 void _inUserMode()
 {
+    int i=0;
+    i+=1;
     //kprintf("INUSERMOD
 }
 
