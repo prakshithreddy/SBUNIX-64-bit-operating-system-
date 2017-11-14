@@ -250,6 +250,7 @@ void _rtc_intr_hndlr(){
 
 void _generic_intr_hndlr(){
     kprintf("Caught an Interrupt");
+    while(1);
 }
 
 void _key_board_intr();
