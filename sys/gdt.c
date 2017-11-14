@@ -16,7 +16,7 @@
 #define L             (0x20000000000000)  /*** long mode ***/
 #define D             (0x40000000000000)  /*** default op size ***/
 #define W             (0x00020000000000)  /*** writable data segment ***/
-#define KERNEL_STACK_VIRTUAL_ADDRESS 0xFFFFFFFFFFF00000UL
+
 #define MAX_GDT 32
 
 struct tss_t {
@@ -70,7 +70,7 @@ static struct tss_t tss;
 
 void _x86_64_asm_lgdt(struct gdtr_t *gdtr, uint64_t cs_idx, uint64_t ds_idx);
 void _x86_64_asm_ltr(uint64_t tss_idx);
-void init_gdt(void* rsp) {
+void init_gdt() {
   struct sys_segment_descriptor *sd = (struct sys_segment_descriptor*)&gdt[5]; // 6th&7th entry in GDT
   sd->sd_lolimit = sizeof(struct tss_t) - 1;
   sd->sd_lobase = ((uint64_t)&tss);
@@ -81,10 +81,10 @@ void init_gdt(void* rsp) {
   sd->sd_gran = 0;
   sd->sd_hibase = ((uint64_t)&tss) >> 24;
 
-  //uint64_t* kernelStackAddress;
-  //__asm__ volatile ("cli;""movq %%rsp, %0;":"=g"(kernelStackAddress):);
+  uint64_t* kernelStackAddress;
+  __asm__ volatile ("cli;""movq %%rsp, %0;":"=g"(kernelStackAddress):);
   //kprintf("Task State Segment init\n");
-  set_tss_rsp(rsp);
+  set_tss_rsp((void*)kernelStackAddress);
   //
 
   _x86_64_asm_lgdt(&gdtr, 8, 16);

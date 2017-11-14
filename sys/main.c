@@ -57,7 +57,7 @@ void boot(void)
     :"=g"(loader_stack)
     :"r"(&initial_stack[INITIAL_STACK_SIZE])
   );
-  init_gdt((void*)&initial_stack[INITIAL_STACK_SIZE]);
+  init_gdt();
   init_idt();
   init_pic();
   init_pit();
