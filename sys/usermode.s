@@ -9,9 +9,9 @@ _switchToUserMode:
     movq %rdi, %fs
     movq %rdi, %gs
     movq %rdi, %ds
-    //movq %rsp,%rax
+    movq %rsp,%rax
     pushq %rdi
-    pushq 8(%rsp)
+    pushq %rax
     pushfq
     popq %rax
     or $0x200,%rax
