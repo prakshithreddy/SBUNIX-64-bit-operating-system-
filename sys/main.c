@@ -36,7 +36,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   kprintf("physfree %p\n", (uint64_t)physfree);
   kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
   mapKernelMemory();
-  enablePaging();
+  //enablePaging();
 
   kprintf("***************************Paging Enabled***************************\n");
   initMultiTasking();
@@ -57,7 +57,7 @@ void boot(void)
     :"=g"(loader_stack)
     :"r"(&initial_stack[INITIAL_STACK_SIZE])
   );
-  init_gdt();
+  init_gdt((void*)&initial_stack[INITIAL_STACK_SIZE]);
   init_idt();
   init_pic();
   init_pit();
