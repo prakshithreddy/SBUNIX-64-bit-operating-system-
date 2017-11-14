@@ -5,18 +5,24 @@
 
 _switchToUserMode:
     cli
-    movq %rdi, %es
-    movq %rdi, %fs
-    movq %rdi, %gs
-    movq %rdi, %ds
-    movq %rsp,%rax
-    pushq %rdi
-    pushq %rax
+    mov $0x23,%rax
+    movq %rax, %es
+    movq %rax, %fs
+    movq %rax, %gs
+    movq %rax, %ds
+    movq %rax,%rax
+    pushq $0x23
+    pushq %rsp
     pushfq
-    popq %rax
-    or $0x200,%rax
+//    popq %rax
+//    or $0x200,%rax
+//    pushq %rax
+    pushq $0x1B
+    //pushq _inUserMode
+    lea [a],%rax
     pushq %rax
-    pushq %rsi
-    pushq _inUserMode
 //sti
     iretq
+a:
+    add $8,%rsp
+
