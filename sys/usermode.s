@@ -1,20 +1,22 @@
 .text
 
+DSIDX equ 0x23
+
 .global _switchToUserMode
 .extern _inUserMode
 
 _switchToUserMode:
   cli
-    movq %rdi, %es
-    movq %rdi, %fs
-    movq %rdi, %gs
-    movq %rdi, %ds
+    movq DSIDX, %es
+    movq DSIDX, %fs
+    movq DSIDX, %gs
+    movq DSIDX, %ds
     movq %rsp,%rax
-    pushq %rdi
+    pushq DSIDX
     pushq %rax
     pushfq
     popq %rax
-    or %rax, $0x200
+    or %rax,0x200
     pushq %rax ;
     pushq %rsi
     pushq _inUserMode
