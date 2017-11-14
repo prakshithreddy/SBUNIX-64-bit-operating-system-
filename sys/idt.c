@@ -325,6 +325,9 @@ void _hndlr_isr13(registers_t regs){
 
 void _hndlr_isr14(registers_t regs){
     kprintf("0x0E    Page fault");
+    uint64_t pagefaultAt;
+    __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
+    kprintf("%x",pagefaultAt);
     while(1);
 }
 
