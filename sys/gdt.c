@@ -83,7 +83,7 @@ void init_gdt(void* initialStackPtr) {
 
   //uint64_t* kernelStackAddress;
   //__asm__ volatile ("cli;""movq %%rsp, %0;":"=g"(kernelStackAddress):);
-  set_tss_rsp(initialStackPtr)
+    set_tss_rsp(initialStackPtr);
   //
 
   _x86_64_asm_lgdt(&gdtr, 8, 16);
