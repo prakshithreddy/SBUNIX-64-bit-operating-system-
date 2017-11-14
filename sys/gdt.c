@@ -75,7 +75,7 @@ void init_gdt() {
   sd->sd_lolimit = sizeof(struct tss_t) - 1;
   sd->sd_lobase = ((uint64_t)&tss);
   sd->sd_type = 9; // TSS
-  sd->sd_dpl = 3;
+  sd->sd_dpl = 0;
   sd->sd_p = 1;
   sd->sd_hilimit = 0;
   sd->sd_gran = 0;
