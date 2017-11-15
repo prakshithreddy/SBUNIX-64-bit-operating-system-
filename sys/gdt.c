@@ -80,7 +80,13 @@ void init_gdt() {
   sd->sd_hilimit = 0;
   sd->sd_gran = 0;
   sd->sd_hibase = ((uint64_t)&tss) >> 24;
-
+  
+  uint64_t* kernelStackAddress;
+  __asm__ volatile ("movq %%rsp, %0;":"=g"(kernelStackAddress):);
+  
+  //kprintf("Task State Segment init : ");
+  set_tss_rsp((void*)(kernelStackAddress));
+  
   _x86_64_asm_lgdt(&gdtr, 8, 16);
   _x86_64_asm_ltr(0x30);
 }
