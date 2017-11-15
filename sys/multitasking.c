@@ -58,12 +58,7 @@ void _switchThread_(Registers *from, Registers *to);
 
 static kernelThread mainThread;
 
-uint64_t getCr3()
-{
-    uint64_t cr3;
-    __asm__ __volatile__("movq %%cr3,%0" : "=r" (saved_cr3));
-    return cr3;
-}
+
 
 static void userProcess() {
     //static int i=0;

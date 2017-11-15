@@ -159,7 +159,7 @@ void* kmalloc(){
 uint64_t getCr3()
 {
     uint64_t cr3;
-    __asm__ __volatile__("movq %%cr3,%0" : "=r" (saved_cr3));
+    __asm__ __volatile__("movq %%cr3,%0" : "=r"(cr3));
     return cr3;
 }
 
