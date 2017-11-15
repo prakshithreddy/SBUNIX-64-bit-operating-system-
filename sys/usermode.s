@@ -16,7 +16,7 @@ _switchToUserMode:
     pushq $0x2B
     pushq $1f
 //sti
-    iretq
+    iret
 1:
     add $8,%rsp
 
