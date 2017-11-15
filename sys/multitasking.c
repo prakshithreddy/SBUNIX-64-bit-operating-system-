@@ -56,10 +56,6 @@ void yield() {
 void _switchThread_(Registers *from, Registers *to);
 
 
-static kernelThread mainThread;
-
-
-
 static void userProcess() {
     //static int i=0;
     kprintf("Enabling mulawdstithreaded Kernel.....");
@@ -85,6 +81,13 @@ void createUserProcess(kernelThread *kthread, void(*function)(), uint64_t rflags
     kthread->next=0;
 }
 
+void switchToUserMode()
+{
+    kernelThread *last = runningThread;
+    runningThread = runningThread->next;
+    _switchToRingThree(&last->regs, &runningThread->regs);
+    
+}
 void initUserProcess()
 {
     
@@ -92,6 +95,6 @@ void initUserProcess()
     createUserProcess(userThread,userProcess,mainThread.regs.rflags);
     mainThread.next = userThread;
     userThread->next = &mainThread;
-    yield();
+    switchToUserMode();
     
 }

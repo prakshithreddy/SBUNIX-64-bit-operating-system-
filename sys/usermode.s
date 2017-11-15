@@ -1,9 +1,8 @@
 .text
 
-.global _switchToUserMode
-.extern _inUserMode
+.global _switchToRingThree
 
-_switchToUserMode:
+_switchToRingThree:
     cli
     mov $0x23,%rax
     movq %rax, %es
