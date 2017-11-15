@@ -21,5 +21,4 @@ _switchToUserMode:
     pushq _inUserMode;
 //sti
     iretq
-1:
 
