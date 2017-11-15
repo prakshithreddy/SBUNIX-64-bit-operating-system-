@@ -43,7 +43,7 @@ void mainFunction()
 void initMultiTasking() {
   mainThread = (kernelThread*)kmalloc();
   Registers *regTemp = (Registers *)kmalloc();
-  mainThread->reg = regTemp;
+  mainThread->regs = regTemp;
     uint64_t a;
     uint64_t b;
   __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(a)::"%rax");
