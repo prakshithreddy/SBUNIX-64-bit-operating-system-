@@ -28,7 +28,7 @@ void _switchToUserMode(uint64_t userModeDataSel,uint64_t userModeCodeSel);
 void initUserMode()
 {
     //kprintf("%p ",(GDT_DS|P|W|DPL3));
-    _switchToUserMode(0x23,0x1B);
+    _switchToUserMode();
 }
 
 
