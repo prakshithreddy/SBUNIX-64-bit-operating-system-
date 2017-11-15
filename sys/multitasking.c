@@ -2,6 +2,7 @@
 #include<sys/kprintf.h>
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
+#include<sys/gdt.h>
 
 static kernelThread *runningThread;
 static kernelThread mainThread;
