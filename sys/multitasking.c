@@ -107,7 +107,7 @@ void initUserProcess()
 {
     
     kernelThread *userThread = (kernelThread*)kmalloc();
-    createUserProcess(userThread,userProcess,mainThread.regs.rflags);
+    createUserProcess(userThread,userProcess,mainThread->regs->rflags);
     mainThread->next = userThread;
     userThread->next = mainThread;
     switchToUserMode();
