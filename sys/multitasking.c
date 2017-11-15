@@ -94,6 +94,9 @@ void switchToUserMode()
 void initUserProcess()
 {
     
+    set_tss_rsp((void*)(kmalloc()));
+    
+    
     kernelThread *userThread = (kernelThread*)kmalloc();
     createUserProcess(userThread,userProcess,mainThread.regs.rflags);
     mainThread.next = userThread;
