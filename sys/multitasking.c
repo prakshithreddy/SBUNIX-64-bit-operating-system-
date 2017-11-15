@@ -90,8 +90,8 @@ void initUserProcess()
     
     kernelThread *userThread = (kernelThread*)kmalloc();
     createUserProcess(userThread,userProcess,mainThread.regs.rflags);
-    mainThread.next = &userThread;
-    userThread.next = &mainThread;
-    yeild();
+    mainThread.next = userThread;
+    userThread->next = &mainThread;
+    yield();
     
 }

@@ -16,6 +16,9 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr);
 void identityMapping();
 void mapVideoMemory(uint64_t vga_virtual_address);
 void* kmalloc();//returns virtual address, to be called only after paging only by kernel.
+uint64_t getCr3();
+
+void* getNewPML4ForUser();
 
 extern char kernmem, physbase;
 
