@@ -52,3 +52,65 @@ void yield() {
 }
 
 void _switchThread_(Registers *from, Registers *to);
+
+
+static kernelThread mainThread;
+
+uint64_t getCr3()
+{
+    uint64_t cr3;
+    __asm__ __volatile__("movq %%cr3,%0" : "=r" (saved_cr3));
+    return cr3;
+}
+
+void* getNewPML4ForUser()
+{
+    struct PML4 *newPML4=(struct PML4*)pageAllocator();
+    struct PML4 *currPML4=(struct PML4*)getCr3();
+    //get the current pml4 virtual address to copy the kernel page table
+    currPML4=(struct PML4*)((uint64_t)currPML4+kernbase);
+    ((struct PML4*)((uint64_t)newPML4+kernbase))->entries[511]=currPML4->entries[511];
+    return (void*)newPML4;
+}
+
+void setCr3(struct PML4* cr3Addr)
+{
+    uint64_t temp = (uint64_t)cr3Addr;
+    __asm__ __volatile__("movq %0,%%cr3"::"b"(temp));
+}
+
+static void userProcess() {
+    //static int i=0;
+    kprintf("Enabling mulawdstithreaded Kernel.....");
+    //while(1);
+    yield();
+    //  i+=1;
+    //  kprintf("%d",i);
+    //  yield();
+}
+
+void createUserProcess(kernelThread *kthread, void(*function)(), uint64_t rflags){
+    kthread->regs.rax=0;
+    kthread->regs.rbx=0;
+    kthread->regs.rcx=0;
+    kthread->regs.rdx=0;
+    kthread->regs.rsi=0;
+    kthread->regs.rdi=0;
+    kthread->regs.rflags=rflags;
+    kthread->regs.rip=(uint64_t)function;
+    kthread->regs.cr3=(uint64_t)getNewPML4ForUser();
+    kthread->regs.rsp=(uint64_t)kmalloc()+0x1000;
+    kthread->regs.rbp=kthread->regs.rsp; //doing this because rbp is base pointer of stack.
+    kthread->next=0;
+}
+
+void initUserProcess()
+{
+    
+    kernelThread userThread = (kernelThread*)kmalloc();
+    createUserProcess(userThread,userProcess,mainThread.regs.rflags);
+    mainThread.next = &userThread;
+    userThread.next = &mainThread;
+    yeild();
+    
+}
