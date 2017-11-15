@@ -60,7 +60,9 @@ void _switchThread_(Registers *from, Registers *to);
 static void userProcess() {
     //static int i=0;
     kprintf("In User Space........");
-    __asm__ __volatile__ ("int $0x00":::);
+    int i=0;
+    int j;
+    int j=i/0;
     while(1);
     //yield();
     //  i+=1;
