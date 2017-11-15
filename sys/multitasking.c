@@ -63,6 +63,7 @@ static void userProcess() {
     int i=0;
     int j;
      j=i/0;
+    kprintf("%d",j);
     while(1);
     //yield();
     //  i+=1;
