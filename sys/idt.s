@@ -443,7 +443,6 @@ popq  %rcx
 popq  %rbx
 popq  %rax
 
-iretq
 
 _isr12:
 
