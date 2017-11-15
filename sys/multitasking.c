@@ -37,6 +37,7 @@ static void multitaskMain() {
 void mainFunction()
 {
     kprintf("MAIN MEI HOOOO>>!");
+    //writeSchedule();
     while(1);
 }
 
@@ -47,7 +48,7 @@ void initMultiTasking() {
   __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(a)::"%rax");
   __asm__ __volatile__("pushfq; movq (%%rsp), %%rax; movq %%rax, %0; popfq;":"=m"(b)::"%rax");
   createThread(&otherThread, multitaskMain, a, (uint64_t*)b);
-  //createThread(&mainThread, mainThread, mainThread->regs->rflags, (uint64_t*)mainThread->regs->cr3);
+  createThread(mainThread, mainFunction, a, (uint64_t*)b);
   //mainThread.regs.rip=(uint64_t)start;
   mainThread->next = &otherThread;
   otherThread.next = mainThread;
