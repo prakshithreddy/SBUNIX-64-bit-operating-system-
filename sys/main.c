@@ -61,10 +61,10 @@ void boot(void)
   init_gdt();
   init_idt();
   
-//  init_pic();
-//  init_pit();
-//  init_rtc();
-//    
+  init_pic();
+  init_pit();
+  init_rtc();
+    
   keypress_bar("Last Pressed: ",0XF0);
   boot_time_bar(0,0,0,0XF0);
   time_bar(0,0,0,0XF0);
