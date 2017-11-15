@@ -34,7 +34,7 @@ static void multitaskMain() {
 //  yield();
 }
 
-void mainThread()
+void mainFunction()
 {
     kprintf("MAIN MEI HOOOO>>!");
     while(1);
