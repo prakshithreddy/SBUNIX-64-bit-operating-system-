@@ -10,15 +10,13 @@ _switchToUserMode:
     movq %rax, %fs
     movq %rax, %gs
     movq %rax, %ds
-    movq %rsp,%rax
     pushq $0x23
-    pushq %rax
+    pushq %rsp
     pushfq
-    popq %rax
-    or $0x200,%rax
-    pushq %rax
     pushq $0x2B
-    pushq _inUserMode;
+    pushq $1f
 //sti
     iretq
+1:
+    add $8,%rsp`
 
