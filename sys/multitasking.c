@@ -58,8 +58,9 @@ void _switchThread_(Registers *from, Registers *to);
 
 static void userProcess() {
     //static int i=0;
-    kprintf("Enabling mulawdstithreaded Kernel.....");
-    while(1);
+    kprintf("In User Space........");
+    __asm__ __volatile__ ("cli":::);
+    
     //yield();
     //  i+=1;
     //  kprintf("%d",i);
