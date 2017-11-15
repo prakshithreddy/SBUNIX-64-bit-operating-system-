@@ -6,7 +6,9 @@
 typedef struct {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, rsp, rbp, rip, rflags, cr3;
 } Registers;
- 
+
+void initUserProcess();
+
 typedef struct kernelThread {
   /*int  priority;
   int  state;*/  //TODO: these two variables might be used later.
