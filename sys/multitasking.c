@@ -62,7 +62,7 @@ static void userProcess() {
     kprintf("In User Space........");
     int i=0;
     int j;
-     j=i/0;
+     j=i/i;
     kprintf("%d",j);
     while(1);
     //yield();
