@@ -42,10 +42,12 @@ void mainThread()
 
 void initMultiTasking() {
   mainThread = (kernelThread*)kmalloc();
+  Registers *regTemp = (Registers *)kmalloc();
+    mainThread->reg = regTemp;
   __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(mainThread->regs->cr3)::"%rax");
   __asm__ __volatile__("pushfq; movq (%%rsp), %%rax; movq %%rax, %0; popfq;":"=m"(mainThread->regs->rflags)::"%rax");
   createThread(&otherThread, multitaskMain, mainThread->regs->rflags, (uint64_t*)mainThread->regs->cr3);
-  createThread(&mainThread, mainThread, mainThread->regs->rflags, (uint64_t*)mainThread->regs->cr3);
+  //createThread(&mainThread, mainThread, mainThread->regs->rflags, (uint64_t*)mainThread->regs->cr3);
   //mainThread.regs.rip=(uint64_t)start;
   mainThread->next = &otherThread;
   otherThread.next = mainThread;
