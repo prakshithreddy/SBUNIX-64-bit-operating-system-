@@ -60,6 +60,7 @@ static void userProcess() {
     //static int i=0;
     kprintf("In User Space........");
     __asm__ __volatile__ ("cli":::);
+    while(1);
     
     //yield();
     //  i+=1;
