@@ -59,8 +59,8 @@ void _switchThread_(Registers *from, Registers *to);
 static void userProcess() {
     //static int i=0;
     kprintf("Enabling mulawdstithreaded Kernel.....");
-    //while(1);
-    yield();
+    while(1);
+    //yield();
     //  i+=1;
     //  kprintf("%d",i);
     //  yield();
