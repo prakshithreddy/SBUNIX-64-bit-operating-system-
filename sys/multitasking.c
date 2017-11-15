@@ -81,7 +81,7 @@ void createUserProcess(kernelThread *kthread, void(*function)(), uint64_t rflags
     kthread->next=0;
 }
 
-void _switchToRingThree(&last->regs, &runningThread->regs);
+void _switchToRingThree(Registers *from, Registers *to);
 
 void switchToUserMode()
 {
