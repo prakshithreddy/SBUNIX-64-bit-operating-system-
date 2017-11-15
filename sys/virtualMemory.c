@@ -9,6 +9,7 @@ static uint64_t vga_virtual_address;
 //static uint64_t vga_end_virtual_address;
 static struct PML4 *pml4;
 
+
 void mapKernelMemory(){
   //uint64_t physbase = get_ker_physbase();
   //uint64_t physfree = get_ker_physfree();
@@ -152,5 +153,16 @@ void* kmalloc(){
   ptr= (void*)((uint64_t)ptr+kernbase);
   memset((uint64_t)ptr);
   return ptr;
+}
+
+
+void* getNewPML4ForUser()
+{
+    struct PML4 *newPML4=(struct PML4*)pageAllocator();
+    struct PML4 *currPML4=(struct PML4*)getCr3();
+    //get the current pml4 virtual address to copy the kernel page table
+    currPML4=(struct PML4*)((uint64_t)currPML4+kernbase);
+    ((struct PML4*)((uint64_t)newPML4+kernbase))->entries[511]=currPML4->entries[511];
+    return (void*)newPML4;
 }
 

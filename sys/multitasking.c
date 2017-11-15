@@ -7,6 +7,8 @@ static kernelThread *runningThread;
 static kernelThread mainThread;
 static kernelThread otherThread;
 
+extern
+
 void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
   kthread->regs.rax=0;
   kthread->regs.rbx=0;
@@ -63,22 +65,6 @@ uint64_t getCr3()
     return cr3;
 }
 
-void* getNewPML4ForUser()
-{
-    struct PML4 *newPML4=(struct PML4*)pageAllocator();
-    struct PML4 *currPML4=(struct PML4*)getCr3();
-    //get the current pml4 virtual address to copy the kernel page table
-    currPML4=(struct PML4*)((uint64_t)currPML4+kernbase);
-    ((struct PML4*)((uint64_t)newPML4+kernbase))->entries[511]=currPML4->entries[511];
-    return (void*)newPML4;
-}
-
-void setCr3(struct PML4* cr3Addr)
-{
-    uint64_t temp = (uint64_t)cr3Addr;
-    __asm__ __volatile__("movq %0,%%cr3"::"b"(temp));
-}
-
 static void userProcess() {
     //static int i=0;
     kprintf("Enabling mulawdstithreaded Kernel.....");
@@ -107,7 +93,7 @@ void createUserProcess(kernelThread *kthread, void(*function)(), uint64_t rflags
 void initUserProcess()
 {
     
-    kernelThread userThread = (kernelThread*)kmalloc();
+    kernelThread *userThread = (kernelThread*)kmalloc();
     createUserProcess(userThread,userProcess,mainThread.regs.rflags);
     mainThread.next = &userThread;
     userThread.next = &mainThread;
