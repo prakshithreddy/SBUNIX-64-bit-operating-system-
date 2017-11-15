@@ -42,8 +42,6 @@ void mainFunction()
 
 void initMultiTasking() {
   mainThread = (kernelThread*)kmalloc();
-  Registers *regTemp = (Registers *)kmalloc();
-  mainThread->regs = regTemp;
     uint64_t a;
     uint64_t b;
   __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(a)::"%rax");
@@ -107,7 +105,7 @@ void initUserProcess()
 {
     
     kernelThread *userThread = (kernelThread*)kmalloc();
-    createUserProcess(userThread,userProcess,mainThread->regs->rflags);
+    createUserProcess(userThread,userProcess,mainThread->regs.rflags);
     mainThread->next = userThread;
     userThread->next = mainThread;
     switchToUserMode();
