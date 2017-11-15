@@ -44,22 +44,22 @@ _switchThread_:
 	ret
 
 _switchToRingThree:
-    movq %rax,(%rdi)
-    popq %rax
-    movq %rax,64(%rdi)
-    movq %rbx,8(%rdi)
-    movq %rcx,16(%rdi)
-    movq %rdx,24(%rdi)
-    movq %rsi,32(%rdi)
-    movq %rdi,40(%rdi)
-    movq %rbp,56(%rdi)
-    /*movq %rip,64(%rdi)*/
-    pushfq
-    popq %rax
-    movq %rax,72(%rdi)
-    movq %cr3,%rax
-    movq %rax,80(%rdi)
-    movq %rsp,48(%rdi)  /*storing all the registers at the address pointed by rdi*/
+//    movq %rax,(%rdi)
+//    popq %rax
+//    movq %rax,64(%rdi)
+//    movq %rbx,8(%rdi)
+//    movq %rcx,16(%rdi)
+//    movq %rdx,24(%rdi)
+//    movq %rsi,32(%rdi)
+//    movq %rdi,40(%rdi)
+//    movq %rbp,56(%rdi)
+//    /*movq %rip,64(%rdi)*/
+//    pushfq
+//    popq %rax
+//    movq %rax,72(%rdi)
+//    movq %cr3,%rax
+//    movq %rax,80(%rdi)
+//    movq %rsp,48(%rdi)  /*storing all the registers at the address pointed by rdi*/
 
     cli
 
