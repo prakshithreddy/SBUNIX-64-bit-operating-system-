@@ -40,7 +40,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   initUserMode();
 
   kprintf("***************************Paging Enabled***************************\n");
-  initMultiTasking();
+  //initMultiTasking();
   
   while(1);
 }
