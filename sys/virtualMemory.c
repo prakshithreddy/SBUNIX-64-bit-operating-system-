@@ -156,6 +156,13 @@ void* kmalloc(){
 }
 
 
+uint64_t getCr3()
+{
+    uint64_t cr3;
+    __asm__ __volatile__("movq %%cr3,%0" : "=r" (saved_cr3));
+    return cr3;
+}
+
 void* getNewPML4ForUser()
 {
     struct PML4 *newPML4=(struct PML4*)pageAllocator();
