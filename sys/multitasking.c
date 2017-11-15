@@ -24,6 +24,14 @@ void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uin
   kthread->next=0;
 }
 
+void createMainThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
+    kthread->regs.rflags=rflags;
+    kthread->regs.rip=(uint64_t)function;
+    kthread->regs.cr3=(uint64_t)pml4;
+    kthread->regs.rsp=(uint64_t)kmalloc()+0x1000;
+    kthread->regs.rbp=kthread->regs.rsp; //doing this because rbp is base pointer of stack.
+}
+
 static void multitaskMain() {
   //static int i=0;
   kprintf("Enabling multithreaded Kernel.....");
