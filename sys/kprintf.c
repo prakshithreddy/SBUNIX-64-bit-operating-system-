@@ -152,7 +152,7 @@ void boot_time_bar(int hours,int minutes,int seconds,int color){
     char *m_pointer1 = itoa(m_pointer,minutes);
     char s_pointer[6];
     char *s_pointer1 = itoa(s_pointer,seconds);
-    char *string = "TIME SINCE BOOT: ";
+    char *string = "timeSinceBoot: ";
     char s1[35];
     char *s = time_concatenate(s1,string,h_pointer1,m_pointer1,s_pointer1);
     //int z=0;

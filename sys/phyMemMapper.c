@@ -68,14 +68,10 @@ void initBitmap(uint64_t start,uint64_t end)
     uint64_t endFrameNum = end/0x1000;
     uint64_t temp1 = (KER_PHYSBASE/0x1000);
     uint64_t temp2 = (KER_PHYSFREE/0x1000);
-    //kprintf("\ntemp1 %x  %x",temp1,temp2);
-    int i=0;
     while(startFrameNum<=endFrameNum)
     {
         //if(startFrameNum>=512 && startFrameNum<=544) kprintf("\n%d %d %d",startFrameNum,temp1,temp2);
         if ((startFrameNum >= temp1) && (startFrameNum <= temp2)){
-        //if ((startFrameNum <= temp2)){
-          i++;
         }
         else
         {

@@ -4,6 +4,14 @@
 #include <sys/keyboard.h>
 #include <sys/kprintf.h>
 
+typedef struct registers
+{
+    uint64_t ds;                  // Data segment selector
+    uint64_t rdi, rsi, rbp, rsp, rbx, rdx, rcx, rax; // Pushed by pusha.
+    uint64_t int_no, err_code;    // Interrupt number and error code (if applicable)
+    uint64_t rip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
+} registers_t;
+
 
 struct idt_descriptor {
     uint16_t id_base_lo;
@@ -42,8 +50,9 @@ void id_set_gate(uint8_t intr_num,uint64_t base_addr, uint8_t sel,uint8_t flags)
 
 static int shift=0,control=0;
 
-void _key_press_handler(){
+void _key_press_handler(registers_t regs){
     
+    kprintf("%d ",regs.int_no);
     unsigned char a;
     
     a = inb(0x60);
@@ -248,6 +257,137 @@ void _rtc_intr_hndlr(){
 
 
 
+void _hndlr_isr0(registers_t regs){
+    kprintf("0x0 divide by 0");
+    while(1);
+}
+void _hndlr_isr1(registers_t regs){
+    kprintf("0x01    Single-step interrupt (see trap flag)");
+    while(1);
+}
+void _hndlr_isr2(registers_t regs){
+    kprintf("0x02    NMI");
+    while(1);
+}
+void _hndlr_isr3(registers_t regs){
+    kprintf("0x03    Breakpoint (callable by the special 1-byte instruction 0xCC, used by debuggers)");
+    while(1);
+}
+void _hndlr_isr4(registers_t regs){
+    kprintf("0x04    Overflow");
+    while(1);
+}
+
+void _hndlr_isr5(registers_t regs){
+    kprintf("0x05    Bounds");
+    while(1);
+}
+
+void _hndlr_isr6(registers_t regs){
+    kprintf("0x06    Invalid Opcode");
+    while(1);
+}
+
+void _hndlr_isr7(registers_t regs){
+    kprintf("0x07    Coprocessor not available");
+    while(1);
+}
+
+void _hndlr_isr8(registers_t regs){
+    kprintf("0x08    Double fault");
+    while(1);
+}
+
+void _hndlr_isr9(registers_t regs){
+    kprintf("0x09    Coprocessor Segment Overrun (386 or earlier only)");
+    while(1);
+}
+
+void _hndlr_isr10(registers_t regs){
+    kprintf(" 0x0A    Invalid Task State Segment");
+    while(1);
+}
+
+void _hndlr_isr11(registers_t regs){
+    kprintf("0x0B    Segment not present");
+    while(1);
+}
+
+void _hndlr_isr12(registers_t regs){
+    kprintf("0x0C    Stack Fault");
+    while(1);
+}
+
+void _hndlr_isr13(registers_t regs){
+    kprintf("0x0D    General protection fault");
+    while(1);
+}
+
+void _hndlr_isr14(registers_t regs){
+    kprintf("0x0E    Page fault");
+    uint64_t pagefaultAt;
+    __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
+    kprintf("%p",pagefaultAt);
+    while(1);
+}
+
+void _hndlr_isr15(registers_t regs){
+    kprintf("0x0F    reserved");
+    while(1);
+}
+
+void _hndlr_isr16(registers_t regs){
+    kprintf("0x10    Math Fault");
+    while(1);
+}
+
+void _hndlr_isr17(registers_t regs){
+    kprintf("0x11    Alignment Check");
+    while(1);
+}
+
+void _hndlr_isr18(registers_t regs){
+    kprintf("0x12    Machine Check");
+    while(1);
+}
+
+void _hndlr_isr19(registers_t regs){
+    kprintf("0x13    SIMD Floating-Point Exception");
+    while(1);
+}
+
+void _hndlr_isr20(registers_t regs){
+    kprintf("0x14    Virtualization Exception");
+    while(1);
+}
+void _hndlr_isr21(registers_t regs){
+    kprintf("0x15 Control Protection Exception");
+    while(1);
+}
+
+void _isr0();
+void _isr1();
+void _isr2();
+void _isr3();
+void _isr4();
+void _isr5();
+void _isr6();
+void _isr7();
+void _isr8();
+void _isr9();
+void _isr10();
+void _isr11();
+void _isr12();
+void _isr13();
+void _isr14();
+void _isr15();
+void _isr16();
+void _isr17();
+void _isr18();
+void _isr19();
+void _isr20();
+void _isr21();
+
 
 void _key_board_intr();
 
@@ -261,7 +401,29 @@ void init_idt()
     id_set_gate(40,(uint64_t)_rtc_intr,8,0x8E);
     id_set_gate(33,(uint64_t)_key_board_intr,8,0x8E);
     id_set_gate(32,(uint64_t)_timer_intr,8,0x8E);
-   // id_set_gate(70,(uint64_t)_rtc_intr,8,0x8E);
+    
+    id_set_gate(0x00,(uint64_t)_isr0,8,0x8E);
+    id_set_gate(0x01,(uint64_t)_isr1,8,0x8E);
+    id_set_gate(0x02,(uint64_t)_isr2,8,0x8E);
+    id_set_gate(0x03,(uint64_t)_isr3,8,0x8E);
+    id_set_gate(0x04,(uint64_t)_isr4,8,0x8E);
+    id_set_gate(0x05,(uint64_t)_isr5,8,0x8E);
+    id_set_gate(0x06,(uint64_t)_isr6,8,0x8E);
+    id_set_gate(0x07,(uint64_t)_isr7,8,0x8E);
+    id_set_gate(0x08,(uint64_t)_isr8,8,0x8E);
+    id_set_gate(0x09,(uint64_t)_isr9,8,0x8E);
+    id_set_gate(0x0A,(uint64_t)_isr10,8,0x8E);
+    id_set_gate(0x0B,(uint64_t)_isr11,8,0x8E);
+    id_set_gate(0x0C,(uint64_t)_isr12,8,0x8E);
+    id_set_gate(0x0D,(uint64_t)_isr13,8,0x8E);
+    id_set_gate(0x0E,(uint64_t)_isr14,8,0x8E);
+    id_set_gate(0x0F,(uint64_t)_isr15,8,0x8E);
+    id_set_gate(0x10,(uint64_t)_isr16,8,0x8E);
+    id_set_gate(0x11,(uint64_t)_isr17,8,0x8E);
+    id_set_gate(0x12,(uint64_t)_isr18,8,0x8E);
+    id_set_gate(0x13,(uint64_t)_isr19,8,0x8E);
+    id_set_gate(0x14,(uint64_t)_isr20,8,0x8E);
+    id_set_gate(0x15,(uint64_t)_isr21,8,0x8E);
     
     __asm__ __volatile__("lidt %0" : : "m" (idtp));
     

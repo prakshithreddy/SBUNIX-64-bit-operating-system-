@@ -36,9 +36,13 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
   mapKernelMemory();
   enablePaging();
+  //initUserMode();
+
   kprintf("***************************Paging Enabled***************************\n");
   initMultiTasking();
-    while(1);
+  initUserProcess();
+  
+  while(1);
 }
 
 void boot(void)
@@ -56,11 +60,12 @@ void boot(void)
   );
   init_gdt();
   init_idt();
+  
   init_pic();
   init_pit();
   init_rtc();
     
-  keypress_bar("LAST PRESSED: ",0XF0);
+  keypress_bar("Last Pressed: ",0XF0);
   boot_time_bar(0,0,0,0XF0);
   time_bar(0,0,0,0XF0);
 
