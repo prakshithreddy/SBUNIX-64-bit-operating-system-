@@ -4,6 +4,9 @@
 extern char _binary_tarfs_start;
 extern char _binary_tarfs_end;
 
+void initTarfs();
+struct Elf64_Ehdr *findFile(char *file);
+
 struct posix_header_ustar {
   char name[100];
   char mode[8];

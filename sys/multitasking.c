@@ -8,8 +8,6 @@ static kernelThread *runningThread;
 static kernelThread mainThread;
 static kernelThread otherThread;
 
-extern
-
 void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
@@ -27,6 +25,7 @@ void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uin
 
 static void multitaskMain() {
     //while(1);
+    kprintf("Creating Kernel Threads..");
     yield();
     //  i+=1;
     //  kprintf("%d",i);
@@ -42,7 +41,7 @@ void initMultiTasking() {
     otherThread.next = &mainThread;
     runningThread = &mainThread;
     yield();
-    kprintf("Success\n");
+    kprintf("Multitasking Success\n");
     //yield();
 }
 
@@ -58,10 +57,10 @@ void _switchThread_(Registers *from, Registers *to);
 static void userProcess() {
     //static int i=0;
     kprintf("In User Space........");
-    int i=1;
+    /*int i=1;
     int j=0;
      j=i/j;
-    kprintf("%d",j);
+    kprintf("%d",j);*/
     while(1);
     //yield();
     //  i+=1;

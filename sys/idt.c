@@ -52,7 +52,7 @@ static int shift=0,control=0;
 
 void _key_press_handler(registers_t regs){
     
-    kprintf("%d ",regs.int_no);
+    //kprintf("%d ",regs.int_no);
     unsigned char a;
     
     a = inb(0x60);
