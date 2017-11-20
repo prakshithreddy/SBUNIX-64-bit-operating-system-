@@ -1,11 +1,15 @@
 #ifndef _TARFS_H
 #define _TARFS_H
 
+#include<sys/defs.h>
+#include<sys/elf64.h>
+
 extern char _binary_tarfs_start;
 extern char _binary_tarfs_end;
 
 void initTarfs();
-struct Elf64_Ehdr *findFile(char *file);
+uint64_t loadFile(char *file,uint64_t pml4);
+uint64_t validate_elf_file(Elf64_Ehdr *elf_hdr);
 
 struct posix_header_ustar {
   char name[100];

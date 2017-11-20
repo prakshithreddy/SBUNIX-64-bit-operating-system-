@@ -118,6 +118,63 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
   
 }
 
+void mapPageForUser(uint64_t v_addr, uint64_t phy_addr,uint64_t temp){//TODO: This function maps physical and virtual in the given pml4 table.. 
+  struct PDPT *pdpt;
+  struct PDT *pdt;
+  struct PT *pt;
+  
+  struct PML4 *curr_pml4=(struct PML4*)temp;
+  
+  uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
+  if(pml_entry&PRESENT){
+    pdpt = (struct PDPT*)(pml_entry&FRAME);
+  }
+  else{
+    pdpt = (struct PDPT*)pageAllocator();
+    memset((uint64_t)pdpt);
+    pml_entry = (uint64_t)pdpt;
+    pml_entry|=PRESENT;
+    pml_entry|=WRITEABLE;
+    pml_entry|=USER;
+    curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)]=pml_entry;
+  }
+  
+  uint64_t pdpt_entry = pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
+  if(pdpt_entry&PRESENT){
+    pdt = (struct PDT*)(pdpt_entry&FRAME);
+  }
+  else{
+    pdt = (struct PDT*)pageAllocator();
+    memset((uint64_t)pdt);
+    pdpt_entry = (uint64_t)pdt;
+    pdpt_entry|=PRESENT;
+    pdpt_entry|=WRITEABLE;
+    pdpt_entry|=USER;
+    pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)]=pdpt_entry;
+  }
+  
+  uint64_t pdt_entry = pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
+  if(pdt_entry&PRESENT){
+    pt = (struct PT*)(pdt_entry&FRAME);
+  }
+  else{
+    pt = (struct PT*)pageAllocator();
+    memset((uint64_t)pt);
+    pdt_entry = (uint64_t)pt;
+    pdt_entry|=PRESENT;
+    pdt_entry|=WRITEABLE;
+    pdt_entry|=USER;
+    pdt->entries[get_PDT_INDEX((uint64_t)v_addr)]=pdt_entry;
+  }
+  
+  uint64_t pt_entry = phy_addr;
+  pt_entry|=PRESENT;
+  pt_entry|=WRITEABLE;
+  pt_entry|=USER;
+  pt->entries[get_PT_INDEX((uint64_t)v_addr)]=pt_entry;
+  
+}
+
 void enablePaging(){
   __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)pml4));
   //struct PML4 *temp = (struct PML4 *)(kernbase+(uint64_t)pml4);
