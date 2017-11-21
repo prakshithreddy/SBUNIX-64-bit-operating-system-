@@ -60,7 +60,7 @@ static uint64_t gdt[MAX_GDT] = {
   0, /*** NULL descriptor ***/
   GDT_CS | P | DPL0 | L, /*** kernel code segment descriptor ***/
   GDT_DS | P | W | DPL0, /*** kernel data segment descriptor ***/
-  GDT_CS | P | DPL3 | L, /*** user data segment descriptor (32-bit) ***/
+  GDT_CS | P | DPL3 | L, /*** user code segment descriptor (32-bit) ***/
   GDT_DS | P | W | DPL3, /*** user data segment descriptor ***/
   GDT_CS | P | DPL3 | L, /*** user code segment descriptor (64-bit) ***/
   0, 0, /*** TSS ***/
