@@ -6,8 +6,8 @@
 #define MSR_LSTAR 0xC0000082
 #define MSR_SFMASK  0xC0000084
 
-userRSP = 0;
-kernelRSP = 0;
+uint64_t userRSP = 0;
+uint64_t kernelRSP = 0;
 
 uint64_t readMSR(uint32_t msrId)
 {
