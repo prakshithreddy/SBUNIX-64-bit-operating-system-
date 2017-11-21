@@ -13,6 +13,6 @@ void initSyscalls();
 uint64_t readMSR(uint32_t msrId);
 void writeMSR(uint64_t value,uint32_t msrId);
 
-int64_t syscall(int64_t syscallNum,int64_t param1,int64_t param2,int64_t param3,int64_t param4,int64_t param5,int64_t param6);
+uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t param3,uint64_t param4,uint64_t param5,uint64_t param6);
 
 #endif
