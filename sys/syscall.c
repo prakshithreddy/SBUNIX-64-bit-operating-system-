@@ -48,7 +48,7 @@ void initSyscalls()
     sce |= (0x1);
     writeMSR(sce,MSR_EFER);
     
-    writeMSR((uint64_t)0x8<<32|(uint64_t)0x2B<<48,MSR_STAR);
+    writeMSR((uint64_t)0x8<<32|(uint64_t)0x1B<<48,MSR_STAR);
     
     writeMSR((uint64_t)_syscallEntry,MSR_LSTAR);
     
