@@ -11,10 +11,10 @@
 uint64_t* userRSP = 0;
 uint64_t* kernelRSP = 0;
 
-uint64_t readMSR(uint32_t msrId)
+uint64_t readMSR(uint32_t msrAddr)
 {
     uint32_t msrLow, msrHigh;
-    __asm__ __volatile__ ( "rdmsr" : "=a" (msrLow), "=d" (msrHigh) : "c" (msrId));
+    __asm__ __volatile__ ( "rdmsr" : "=a" (msrLow), "=d" (msrHigh) : "c" (msrAddr));
     return (uint64_t)msrHigh<<32|(uint64_t)msrLow;
 }
 
@@ -29,13 +29,13 @@ uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t pa
     return returnValue;
 }
 
-void writeMSR(uint64_t value,uint32_t msrId)
+void writeMSR(uint64_t value,uint32_t msrAddr)
 {
     uint32_t msrLow;
     uint32_t msrHigh;
     msrLow=(uint32_t)value;
     msrHigh=(uint32_t)(value>>32);
-     __asm__ __volatile__ ("wrmsr"::"a"(msrLow),"d"(msrHigh),"c"(msrId));
+     __asm__ __volatile__ ("wrmsr"::"a"(msrLow),"d"(msrHigh),"c"(msrAddr));
 }
 
 void _syscallEntry();
