@@ -1,17 +1,18 @@
 #include<sys/syscall.h>
 #include<sys/defs.h>
+#include<sys/virtualMemory.c>
 
 #define MSR_EFER 0xC0000080
 #define MSR_STAR 0xC0000081
 #define MSR_LSTAR 0xC0000082
 #define MSR_SFMASK  0xC0000084
 
-uint64_t userRSP = 0;
-uint64_t kernelRSP = 0;
+uint64_t* userRSP = 0;
+uint64_t* kernelRSP = 0;
 
 uint64_t readMSR(uint32_t msrId)
 {
-    uint32_t msr_lo, msr_hi;
+    uint32_t msrLow, msrHigh;
     __asm__ __volatile__ ( "rdmsr" : "=a" (msrLow), "=d" (msrHigh) : "c" (msrId));
     return (uint64_t)(msrHigh<<32)|(uint64_t)msrLow;
 }
@@ -19,7 +20,6 @@ uint64_t readMSR(uint32_t msrId)
 int64_t syscallHandler(int64_t paramA,int64_t paramB,int64_t paramC,int64_t paramD,int64_t paramE,int64_t paramF,int64_t syscallNum) {
     kprintf("%d",syscallNum);
     return 0;
-    
 }
 
 int64_t syscall(int64_t syscallNum,int64_t param1,int64_t param2,int64_t param3,int64_t param4,int64_t param5,int64_t param6) {
@@ -28,26 +28,29 @@ int64_t syscall(int64_t syscallNum,int64_t param1,int64_t param2,int64_t param3,
     return returnValue;
 }
 
-void writeMSR(unint64_t value,uint32_t msrId)
+void writeMSR(uint64_t value,uint32_t msrId)
 {
     uint32_t msrLow;
     uint32_t msrHigh;
     msrLow = (uint32_t) value;
     msrHi = (uint32_t)(value>>32);
-     __asm__ __volatile__ ("wrmsr" : : "a"(msrLow), "d"(msrHigh), "c"(msrId));
+     __asm__ __volatile__ ("wrmsr"::"a"(msrLow),"d"(msrHigh),"c"(msrId));
 }
 
 void _syscallEntry();
 
 void initSyscalls()
 {
+    kernelRSP = (uint64_t)kmalloc();
     //STEP1: set the system call extension bit (SCE bit) to 1;
     uint64_t sce = readMSR(MSR_EFER);
     sce | = (0x1);
     writeMSR(sce,MSR_EFER);
     
     writeMSR((uint64_t)(0x8<<32)| (uint64_t)(0x2B <<48),MSR_STAR);
+    
     writeMSR((uint64_t)_syscallEntry,MSR_LSTAR);
+    
     writeMSR((1<<9),MSR_SFMASK);
     
 }
