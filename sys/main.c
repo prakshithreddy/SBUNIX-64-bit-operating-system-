@@ -42,7 +42,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
 
   kprintf("***************************Paging Enabled***************************\n");
   initTarfs();
-  loadFile("bin/hello",0xfffffffff);
+  loadFile("rakshith",0xfffffffff);
   initMultiTasking();
   initUserProcess();
   
