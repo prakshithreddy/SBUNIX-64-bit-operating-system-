@@ -58,7 +58,7 @@ void _switchThread_(Registers *from, Registers *to);
 static void userProcess() {
     //static int i=0;
     kprintf("In User Space........");
-    syscall(1,0,0,0,0,0,0);
+    syscall(10,0,0,0,0,0,0);
     /*int i=1;
     int j=0;
      j=i/j;
