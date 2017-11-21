@@ -1,6 +1,7 @@
 #include<sys/syscall.h>
 #include<sys/defs.h>
 #include<sys/virtualMemory.h>
+#include<sys/kprintf.h>
 
 #define MSR_EFER 0xC0000080
 #define MSR_STAR 0xC0000081
@@ -33,7 +34,7 @@ void writeMSR(uint64_t value,uint32_t msrId)
     uint32_t msrLow;
     uint32_t msrHigh;
     msrLow = (uint32_t) value;
-    msrHi = (uint32_t)(value>>32);
+    msrHigh = (uint32_t)(value>>32);
      __asm__ __volatile__ ("wrmsr"::"a"(msrLow),"d"(msrHigh),"c"(msrId));
 }
 
@@ -44,7 +45,7 @@ void initSyscalls()
     kernelRSP = (uint64_t)kmalloc();
     //STEP1: set the system call extension bit (SCE bit) to 1;
     uint64_t sce = readMSR(MSR_EFER);
-    sce | = (0x1);
+    sce |= (0x1);
     writeMSR(sce,MSR_EFER);
     
     writeMSR((uint64_t)(0x8<<32)| (uint64_t)(0x2B <<48),MSR_STAR);
