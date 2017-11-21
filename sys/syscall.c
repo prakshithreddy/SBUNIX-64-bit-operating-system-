@@ -20,7 +20,7 @@ uint64_t readMSR(uint32_t msrId)
 
 int64_t syscallHandler(int64_t paramA,int64_t paramB,int64_t paramC,int64_t paramD,int64_t paramE,int64_t paramF,int64_t syscallNum) {
     kprintf("%d",syscallNum);
-    return 0;
+    return 100;
 }
 
 int64_t syscall(int64_t syscallNum,int64_t param1,int64_t param2,int64_t param3,int64_t param4,int64_t param5,int64_t param6) {
