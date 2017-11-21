@@ -1,6 +1,6 @@
 #include<sys/syscall.h>
 #include<sys/defs.h>
-#include<sys/virtualMemory.c>
+#include<sys/virtualMemory.h>
 
 #define MSR_EFER 0xC0000080
 #define MSR_STAR 0xC0000081
