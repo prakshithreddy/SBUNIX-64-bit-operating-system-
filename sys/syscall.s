@@ -13,7 +13,7 @@ _syscallEntry:
     pushq (userRSP)
     pushq %rcx
     pushq %r11
-    movq %r10,%rcx
+    //movq %r10,%rcx
     pushq %rbx
     pushq %rdx
     pushq %rsi
@@ -28,7 +28,7 @@ _syscallEntry:
     pushq %rbp
     pushq %rax
     call syscallHandler
-    addq $0x8,%rsp
+    addq $0x8,%rsp // rax contains the returnValue, so not popping
     popq %rbp
     popq %r15
     popq %r14
