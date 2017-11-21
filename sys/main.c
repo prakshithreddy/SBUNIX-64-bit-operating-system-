@@ -10,6 +10,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 #include<sys/task.h>
+#include<sys/syscall.h>
 #include<sys/tarfs.h>
 
 #define INITIAL_STACK_SIZE 4096
@@ -71,6 +72,8 @@ void boot(void)
   keypress_bar("Last Pressed: ",0XF0);
   boot_time_bar(0,0,0,0XF0);
   time_bar(0,0,0,0XF0);
+    
+  initSyscalls();
 
   
     //__asm__ __volatile__ ("int $0x10":::);
