@@ -1,4 +1,4 @@
-#include<sys/syscalls.h>
+#include<sys/syscall.h>
 
 #define MSR_EFER 0xC0000080
 #define MSR_STAR 0xC0000081
