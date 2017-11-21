@@ -13,7 +13,7 @@ _syscallEntry:
     pushq (userRSP)
     pushq %rcx
     pushq %r11
-    //movq %r10,%rcx
+    movq %r10,%rcx
     pushq %rbx
     pushq %rdx
     pushq %rsi
