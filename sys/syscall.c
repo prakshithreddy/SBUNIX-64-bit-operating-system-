@@ -33,8 +33,8 @@ void writeMSR(uint64_t value,uint32_t msrId)
 {
     uint32_t msrLow;
     uint32_t msrHigh;
-    msrLow = (uint32_t) value;
-    msrHigh = (uint32_t)value>>32;
+    msrLow=(uint32_t)value;
+    msrHigh=(uint32_t)(value>>32);
      __asm__ __volatile__ ("wrmsr"::"a"(msrLow),"d"(msrHigh),"c"(msrId));
 }
 
