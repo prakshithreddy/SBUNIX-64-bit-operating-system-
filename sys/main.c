@@ -45,6 +45,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   loadFile("rakshith",0xfffffffff);
   initMultiTasking();
   initUserProcess();
+  initSyscalls();
   
   while(1);
 }
@@ -72,8 +73,7 @@ void boot(void)
   keypress_bar("Last Pressed: ",0XF0);
   boot_time_bar(0,0,0,0XF0);
   time_bar(0,0,0,0XF0);
-    
-  initSyscalls();
+  
 
   
     //__asm__ __volatile__ ("int $0x10":::);
