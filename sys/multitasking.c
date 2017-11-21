@@ -58,7 +58,7 @@ void _switchThread_(Registers *from, Registers *to);
 static void userProcess() {
     //static int i=0;
     kprintf("In User Space........");
-    uint64_t retVal = syscall(10,0,0,0,0,0,0);
+    uint64_t retVal = syscall(10,1,2,3,4,5,6);
     kprintf("%d",retVal);
     /*int i=1;
     int j=0;
