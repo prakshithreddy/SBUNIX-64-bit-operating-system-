@@ -41,7 +41,7 @@ _syscallEntry:
     popq %rsi
     popq %rdx
     popq %rbx
-    popq %rcx
     popq %r11
+    popq %rcx
     popq %rsp
     sysretq
