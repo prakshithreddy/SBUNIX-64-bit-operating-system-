@@ -45,7 +45,7 @@ _syscallEntry:
     popq %r8
     popq %rbp
 
-    // store all general purpose registers
+    // restore all general purpose registers
 
     popq %r10
     popq %r12
