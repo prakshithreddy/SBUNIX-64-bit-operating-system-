@@ -176,7 +176,9 @@ void mapPageForUser(uint64_t v_addr, uint64_t phy_addr,uint64_t temp){//TODO: Th
 }
 
 void enablePaging(){
+  //kprintf("Before Paging\n");
   __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)pml4));
+  //kprintf("After Paging\n");
   //struct PML4 *temp = (struct PML4 *)(kernbase+(uint64_t)pml4);
   //kprintf("PML4 after enabling Paging %p\n",temp->entries[511]);
   /*uint64_t temp=0;
@@ -191,13 +193,21 @@ void identityMapping(){
   kernbase=virtual_physbase - phys_base;
   uint64_t vir_start=kernbase+PHYSSTART;
   uint64_t phys_start=PHYSSTART;
-  uint64_t vir_end=kernbase+get_physend();
+  uint64_t vir_end=0;
+  uint64_t endOfMemory = 0xFFFFFFFFFFFFF000 - kernbase;
+  if(get_physend()>endOfMemory)
+  {
+    vir_end = 0xFFFFFFFF88000000;
+  }
+  else vir_end=kernbase+get_physend();
+  
   kprintf("Identity Mapping %p to %p, till %p\n",phys_start,vir_start,vir_end);
   while(vir_start<=vir_end){
     mapPage(vir_start,phys_start);
     vir_start+=0x1000;
     phys_start+=0x1000;
   }
+  kprintf("Indentity done\n");
 }
 
 void mapVideoMemory(uint64_t vga_virtual_address){
