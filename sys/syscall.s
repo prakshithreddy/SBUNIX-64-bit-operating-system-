@@ -28,7 +28,7 @@ _syscallEntry:
     pushq %rax
     movq %r10,%rcx
     call syscallHandler
-    addq $8,%rsp // rax contains the returnValue, so not popping
+    addq $0x8,%rsp // rax contains the returnValue, so not popping
     pushq %rcx
     popq %rbp
     popq %r14
