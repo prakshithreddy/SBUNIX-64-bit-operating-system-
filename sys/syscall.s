@@ -14,10 +14,10 @@ _syscallEntry:
     pushq %rcx
     pushq %r11
     movq %r10,%rcx
-    pushq %rbx
     pushq %rdx
-    pushq %rsi
+    pushq %rbx
     pushq %rdi
+    pushq %rsi
     pushq %r8
     pushq %r9
     pushq %r10
@@ -37,10 +37,12 @@ _syscallEntry:
     popq %r10
     popq %r9
     popq %r8
-    popq %rdi
+
     popq %rsi
-    popq %rdx
+    popq %rdi
     popq %rbx
+    popq %rdx
+
     popq %r11
     popq %rcx
     popq %rsp
