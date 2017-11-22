@@ -34,7 +34,7 @@ _syscallEntry:
     pushq %r8
     pushq %r9
     pushq %rax
-movq %r10,%rcx
+    movq %r10,%rcx
 
 
     call syscallHandler
@@ -45,15 +45,13 @@ movq %r10,%rcx
     popq %r8
     popq %rbp
 
-   // store all general purpose registers
+    // store all general purpose registers
 
-popq %r10
-popq %r12
-popq %r13
-popq %r14
+    popq %r10
+    popq %r12
+    popq %r13
+    popq %r14
     popq %r15
-
-
 
 
 
