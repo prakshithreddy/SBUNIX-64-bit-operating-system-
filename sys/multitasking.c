@@ -69,7 +69,7 @@ static void userProcess1() {
     kprintf("%p ", temp);
     //__asm__ __volatile__ ("int $0x10":::);
     uint64_t retVal = syscall(10,1,2,3,4,5,6);
-//    kprintf("%d",retVal);
+    kprintf("%d",retVal);
 ////    int i=1;
 ////    int j=0;
 //     j=i/j;
