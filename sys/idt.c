@@ -5,6 +5,8 @@
 #include <sys/keyboard.h>
 #include <sys/kprintf.h>
 
+uint64_t switchRsp=0;
+
 typedef struct registers
 {
     uint64_t ds;                  // Data segment selector

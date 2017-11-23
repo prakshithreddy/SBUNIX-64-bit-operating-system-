@@ -3,6 +3,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 #include<sys/gdt.h>
+#include<sys/idt.h>
 #include<sys/syscall.h>
 
 static Task *runningThread;
@@ -128,6 +129,7 @@ void _moveToNextProcess(Registers* prev,Registers* next);
 
 void runNextTask()
 {
+    runningThread->regs.kernelRsp = switchRsp;
     //update the currentRunning Task
     Task *prev = runningThread;
     runningThread = runningThread->next;
