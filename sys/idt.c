@@ -198,6 +198,7 @@ void _timer_intr_hdlr(){
         boot_time_bar(hour,minute,seconds,14);
         
     }
+    runNextTask();
     
     
 //    //preemptive scheduling // time 1 sec
