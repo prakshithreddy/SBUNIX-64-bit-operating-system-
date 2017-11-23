@@ -137,7 +137,7 @@ void runNextTask()
     }
     else
     {
-        runningThread->regs.add=0;
+        runningThread->regs.add=80;
         
     }
     int64_t tssAddr = runningThread->regs.kernelRsp;
@@ -157,7 +157,7 @@ void switchToUserMode()
     
     else
     {
-        runningThread->regs.add=0;
+        runningThread->regs.add=80;
     
     }
     uint64_t tssAddr = runningThread->regs.kernelRsp;
