@@ -130,7 +130,13 @@ void _moveToNextProcess(Registers* prev,Registers* next);
 void runNextTask()
 {
     runningThread->regs.kernelRsp = switchRsp;
-    //update the currentRunning Task
+    runningThread->regs.rax=switchRax;
+    runningThread->regs.rbx=switchRbx;
+    runningThread->regs.rcx=switchRcx;
+    runningThread->regs.rdx=switchRdx;
+    runningThread->regs.rsi=switchRsi;
+    runningThread->regs.rdi=switchRdi;
+    //update the currentRunning Task 
     Task *prev = runningThread;
     runningThread = runningThread->next;
     if (runningThread->regs.count==0)

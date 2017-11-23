@@ -5,6 +5,14 @@
 .extern _key_press_handler,_timer_intr_hdlr,_rtc_intr_hndlr,_common_interrupt_hndlr,_hndlr_isr0,_hndlr_isr1,_hndlr_isr2,_hndlr_isr3,_hndlr_isr4,_hndlr_isr5,_hndlr_isr6,_hndlr_isr7,_hndlr_isr8,_hndlr_isr9,_hndlr_isr10,_hndlr_isr11,_hndlr_isr12,_hndlr_isr13,_hndlr_isr14,_hndlr_isr15,_hndlr_isr16,_hndlr_isr17,_hndlr_isr18,_hndlr_isr19,_hndlr_isr20,_hndlr_isr21
 
 .global switchRsp
+.global switchRax
+.global switchRbx
+.global switchRcx
+.global switchRdx
+.global switchRsi
+.global switchRdi
+.global switchRbp
+
 
 _key_board_intr:
     pushq %rax
@@ -41,6 +49,15 @@ _key_board_intr:
 _timer_intr:
 
     movq %rsp,switchRsp
+
+    movq %rax, switchRax
+    movq %rbx, switchRbx
+    movq %rcx, switchRcx
+    movq %rdx, switchRdx
+    movq %rsi, switchRsi
+    movq %rdi, switchRdi
+    movq %rbp, switchRbp
+
     pushq %rax
     pushq %rbx
     pushq %rcx

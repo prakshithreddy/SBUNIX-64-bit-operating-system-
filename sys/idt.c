@@ -6,6 +6,12 @@
 #include <sys/kprintf.h>
 
 uint64_t switchRsp=0;
+uint64_t switchRbx=0;
+uint64_t switchRcx=0;
+uint64_t switchRdx=0;
+uint64_t switchRsi=0;
+uint64_t switchRdi=0;
+uint64_t switchRbp=0;
 
 typedef struct registers
 {
