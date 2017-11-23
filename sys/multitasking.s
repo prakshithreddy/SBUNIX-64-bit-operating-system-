@@ -89,7 +89,7 @@ _switchToRingThree:
 //    movq 64(%rsi),%rax
 //    pushq %rax
     movq 88(%rsi),%rsp
-    addq $40,%rsp
+    subq $40,%rsp
     movq 8(%rsi),%rbx
     movq 16(%rsi),%rcx
     movq 24(%rsi),%rdx
