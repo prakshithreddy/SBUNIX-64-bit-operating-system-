@@ -4,6 +4,7 @@
 #include<sys/virtualMemory.h>
 #include<sys/gdt.h>
 #include<sys/idt.h>
+#include<sys/pic.h>
 #include<sys/syscall.h>
 
 static Task *runningThread;
@@ -189,6 +190,7 @@ void initUserProcess()
 //    userThread2->next = &mainThread;
     userThread2->next = userThread1; //temp, just to see what happens :P
     
+    enableTimer();
     switchToUserMode();
     
 }

@@ -48,9 +48,10 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   loadFile("rakshith",0xfffffffff);
   initMultiTasking();
   initSyscalls();
+    
   initUserProcess();
   
-    enableTimer();
+    
     
     
     
