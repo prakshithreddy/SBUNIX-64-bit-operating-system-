@@ -64,10 +64,10 @@ void _key_press_handler(registers_t regs){
     //kprintf("%d ",regs.int_no);
     unsigned char a;
     
-    uint64_t temp;
-    //kprintf("In User Space1........");
-//    __asm__ __volatile__("movq %%rsp, %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
-//    kprintf("%p ", temp);
+//    uint64_t temp;
+//    //kprintf("In User Space1........");
+////    __asm__ __volatile__("movq %%rsp, %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
+////    kprintf("%p ", temp);
     
     a = inb(0x60);
     
