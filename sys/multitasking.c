@@ -63,7 +63,7 @@ void _switchThread_(Registers *from, Registers *to);
 
 static void userProcess1() {
     //static int i=0;
-    uint64_t temp;
+    //uint64_t temp;
 //    kprintf("In User Space1........");
 //    __asm__ __volatile__("movq %%rsp, %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
 //    kprintf("%p ", temp);
