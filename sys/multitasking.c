@@ -62,7 +62,7 @@ static void userProcess1() {
     //static int i=0;
     uint64_t temp;
     kprintf("In User Space1........");
-    __asm__ __volatile__("movq (%%rsp), %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
+    __asm__ __volatile__("movq %%rsp, %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
     kprintf("%p ", temp);
     //__asm__ __volatile__ ("int $0x10":::);
 //    uint64_t retVal = syscall(10,1,2,3,4,5,6);
