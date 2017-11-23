@@ -24,8 +24,8 @@ void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *p
     kthread->regs.rflags=rflags;
     kthread->regs.rip=(uint64_t)function;
     kthread->regs.cr3=(uint64_t)pml4;
-    kthread->regs.rsp=(uint64_t)kmalloc()+0x1000;
-    kthread->regs.rbp=kthread->regs.rsp; //doing this because rbp is base pointer of stack.
+    kthread->regs.userRsp=(uint64_t)kmalloc()+0x1000;
+    kthread->regs.rbp=kthread->regs.UserRsp; //doing this because rbp is base pointer of stack.
     kthread->next=0;
 }
 
@@ -111,7 +111,7 @@ void createUserProcess(Task *kthread, void(*function)(), uint64_t rflags){
     kthread->regs.cr3=(uint64_t)getNewPML4ForUser();
     kthread->regs.userRsp=(uint64_t)kmalloc()+0x1000;   // creating a stack for the user process
     kthread->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
-    kthread->regs.rbp=kthread->regs.rsp; //doing this because rbp is base pointer of stack.
+    kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
     kthread->next=0;
     _prepareInitialKernelStack(&kthread->regs);
 }
