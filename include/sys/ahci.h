@@ -6,11 +6,22 @@
 #define HBA_GHC_HR     (1U)
 
 #define HBA_PxCMD_ST   (1U)
+#define HBA_PXSACT_DS  (1U)
 #define HBA_PxCMD_CLO  (1U << 3)
 #define HBA_PxCMD_FRE  (1U << 4)
+#define HBA_PxCMD_POD  (1U << 2)
+#define HBA_PxCMD_SUD  (1U << 1)
 #define HBA_PxCMD_FR   (1U << 14)
 #define HBA_PxCMD_CR   (1U << 15)
 #define HBA_PxIS_TFES  (1U << 30)
+#define HBA_PxICC      (1U << 28)
+
+//#define AHCI_BASE 0xA6000
+//#define PORT_BASE 0x300000
+#define ATA_CMD_READ_DMA_EX 0x24
+#define ATA_CMD_WRITE_DMA_EX 0x34
+#define RESET_CMD_ST 0xfffffffe
+#define RESET_CMD_FRE 0xffffffef
 
 #define AHCI_DEV_SATA   0x00000101  // SATA drive
 #define AHCI_DEV_SATAPI 0xEB140101  // SATAPI drive
@@ -333,5 +344,7 @@ typedef volatile struct {
   // 0x100 - 0x10FF, Port control registers
   hba_port_t ports[MAX_PORT_CNT]; // 1 ~ 32
 }__attribute__((__packed__)) hba_mem_t;
+
+void port_probe(hba_mem_t *abar);
 
 #endif

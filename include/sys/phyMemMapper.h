@@ -27,6 +27,9 @@ uint64_t get_physend();
 void memset(uint64_t pageaddr);
 void set_availFrames(uint64_t kern_base);
 void set_bitmap_rows();
+uint64_t get_bitmap_rows();
+uint64_t get_AHCI_PHYS();
+void allocateAHCI();
 
 #define PHYSSTART 0x100000;
 

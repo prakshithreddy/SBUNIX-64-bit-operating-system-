@@ -2,6 +2,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/kprintf.h>
 #define VGA_ADDRESS 0xb8000
+#define AHCI_VIRTUAL_ADDRESS 0xFFFFFFFF80050000
 static uint64_t virtual_physbase=(uint64_t)&kernmem; //virtual_kernel_address -> pointer to free virtual adress above kernmem for usage in kernel.
 static uint64_t phys_base=(uint64_t)&physbase;
 static uint64_t kernbase;
@@ -9,7 +10,9 @@ static uint64_t vga_virtual_address;
 //static uint64_t vga_end_virtual_address;
 static struct PML4 *pml4;
 
-
+uint64_t get_kernbase(){
+  return kernbase;
+}
 void mapKernelMemory(){
   //uint64_t physbase = get_ker_physbase();
   //uint64_t physfree = get_ker_physfree();
@@ -215,6 +218,11 @@ void mapVideoMemory(uint64_t vga_virtual_address){
   mapVGA(vga_virtual_address);
 }
 
+uint64_t mapAHCI(uint64_t abar_phys){
+  mapPage(AHCI_VIRTUAL_ADDRESS,abar_phys);
+  mapPage(AHCI_VIRTUAL_ADDRESS+0x1000,abar_phys+0x1000);
+  return AHCI_VIRTUAL_ADDRESS;
+}
 void* kmalloc(){
   void *ptr=pageAllocator();
   ptr= (void*)((uint64_t)ptr+kernbase);
