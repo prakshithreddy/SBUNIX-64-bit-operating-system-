@@ -110,6 +110,6 @@ _prepareInitialKernelStack:
     pushq 64(%rdi)  //rip
     movq currentRAX,%rax
     movq currentRSP,%rsp //restore stack pointer
-    iret
+    retq
     
 
