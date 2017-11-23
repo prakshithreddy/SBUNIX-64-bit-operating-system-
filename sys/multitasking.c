@@ -21,6 +21,8 @@ void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *p
     kthread->regs.rcx=0;
     kthread->regs.rdx=0;
     kthread->regs.rsi=0;
+    kthread->regs.count=0;
+    kthread->regs.add=0;
     kthread->regs.rdi=0;
     kthread->regs.rflags=rflags;
     kthread->regs.rip=(uint64_t)function;
@@ -115,6 +117,8 @@ void createUserProcess(Task *kthread, void(*function)(), uint64_t rflags){
     kthread->regs.userRsp=(uint64_t)kmalloc()+0x1000;   // creating a stack for the user process
     kthread->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
+    kthread->regs.count=0;
+    kthread->regs.add=0;
     kthread->next=0;
     _prepareInitialKernelStack(&kthread->regs);
 }
@@ -127,6 +131,13 @@ void runNextTask()
     //update the currentRunning Task
     Task *prev = runningThread;
     runningThread = runningThread->next;
+    if (runningThread->regs.count==0)
+        kthread->regs.add=40;
+    else
+    {
+        kthread->regs.add=0;
+        kthread->regs.count+=1;
+    }
     int64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
     _moveToNextProcess(&prev->regs, &runningThread->regs);
@@ -136,6 +147,13 @@ void switchToUserMode()
 {
     Task *last = runningThread;
     runningThread = runningThread->next;
+    if (runningThread->regs.count==0)
+        kthread->regs.add=40;
+    else
+    {
+        kthread->regs.add=0;
+        kthread->regs.count+=1;
+    }
     uint64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
     _switchToRingThree(&last->regs, &runningThread->regs);

@@ -89,7 +89,7 @@ _switchToRingThree:
 //    movq 64(%rsi),%rax
 //    pushq %rax
     movq 88(%rsi),%rsp
-    subq $40,%rsp
+    subq 104(%rsi),%rsp
     movq 8(%rsi),%rbx
     movq 16(%rsi),%rcx
     movq 24(%rsi),%rdx
@@ -164,7 +164,7 @@ _moveToNextProcess:
     //    movq 64(%rsi),%rax
     //    pushq %rax
     movq 88(%rsi),%rsp
-    //subq $40,%rsp
+    subq 104(%rsi),%rsp
     movq 8(%rsi),%rbx
     movq 16(%rsi),%rcx
     movq 24(%rsi),%rdx

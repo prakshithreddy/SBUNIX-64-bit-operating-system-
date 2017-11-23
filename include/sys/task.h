@@ -4,7 +4,7 @@
 #include<sys/defs.h>
 
 typedef struct {
-    uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp;
+    uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp,count,add;
 } Registers;
 
 uint64_t* currentRsp;
