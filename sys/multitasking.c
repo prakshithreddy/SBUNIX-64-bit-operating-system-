@@ -132,11 +132,13 @@ void runNextTask()
     Task *prev = runningThread;
     runningThread = runningThread->next;
     if (runningThread->regs.count==0)
-        runningThread->regs.add=40;
+    {    runningThread->regs.add=40;
+        runningThread->regs.count+=1;
+    }
     else
     {
         runningThread->regs.add=0;
-        runningThread->regs.count+=1;
+        
     }
     int64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
@@ -148,11 +150,15 @@ void switchToUserMode()
     Task *last = runningThread;
     runningThread = runningThread->next;
     if (runningThread->regs.count==0)
+    {
         runningThread->regs.add=40;
+        runningThread->regs.count+=1;
+    }
+    
     else
     {
         runningThread->regs.add=0;
-        runningThread->regs.count+=1;
+    
     }
     uint64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
