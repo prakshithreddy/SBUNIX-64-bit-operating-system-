@@ -38,7 +38,7 @@ void init_pic(){
 
 }
 
-void enableInterrupts()
+void enableIntr()
 {
     outb(0xF8,0x21);
     outb(0xFE,0xA1);
