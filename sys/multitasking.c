@@ -125,6 +125,8 @@ void runNextTask()
     //update the currentRunning Task
     Task *prev = runningThread;
     runningThread = runningThread->next;
+    int64_t tssAddr = runningThread->regs.kernelRsp - 40;
+    set_tss_rsp((void*)(tssAddr));
     _moveToNextProcess(&prev->regs, &runningThread->regs);
 }
 

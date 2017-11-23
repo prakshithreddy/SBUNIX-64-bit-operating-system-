@@ -19,6 +19,8 @@ typedef struct Task {
   struct Task *next;
 } Task;
 
+void runNextTask();
+
 /*typedef struct thread {
    process*  parent;
    void*     initialStack;
