@@ -30,15 +30,15 @@ void init_pic(){
     outb(0x01,0x21);
     outb(0x01,0xA1);
     
-    outb(0xF9,0x21);
-    outb(0xFE,0xA1);
+    outb(0xFF,0x21);
+    outb(0xFF,0xA1);
     
     
     __asm__ __volatile__ ("sti");
 
 }
 
-void enableTimer()
+void enableInterrupts()
 {
     outb(0xF8,0x21);
     outb(0xFE,0xA1);
