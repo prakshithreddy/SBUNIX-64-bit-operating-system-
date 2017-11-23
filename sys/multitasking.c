@@ -138,6 +138,7 @@ void runNextTask()
     runningThread->regs.rdx=switchRdx;
     runningThread->regs.rsi=switchRsi;
     runningThread->regs.rdi=switchRdi;
+    runningThread->regs.rbp=switchRbp;
     //update the currentRunning Task 
     Task *prev = runningThread;
     runningThread = runningThread->next;
