@@ -4,6 +4,7 @@
 #include <sys/kprintf.h>
 #include <sys/tarfs.h>
 #include <sys/ahci.h>
+#include <sys/pci.h>
 #include <sys/pit.h>
 #include <sys/pic.h>
 #include <sys/rtc.h>
@@ -23,6 +24,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
 
   initPhys((uint64_t)physbase,(uint64_t)physfree);
   allocateBitmapMem();
+  allocateAHCI();
   struct smap_t {
     uint64_t base, length;
     uint32_t type;
@@ -37,10 +39,11 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   kprintf("physfree %p\n", (uint64_t)physfree);
   kprintf("tarfs in [%p:%p]\n", &_binary_tarfs_start, &_binary_tarfs_end);
   mapKernelMemory();
+  printALLDrivers();
   enablePaging();
-  //initUserMode();
-
   kprintf("***************************Paging Enabled***************************\n");
+  probeAHCI();
+  //initUserMode();
   initTarfs();
   loadFile("rakshith",0xfffffffff);
   initMultiTasking();

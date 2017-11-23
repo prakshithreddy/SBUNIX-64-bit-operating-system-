@@ -1,11 +1,13 @@
 #include<sys/phyMemMapper.h>
 #include<sys/kprintf.h>
+#define AHCI_MEM 122880
 static uint64_t* availFrames;
 static uint64_t KER_PHYSBASE;
 static uint64_t KER_PHYSFREE;
 static uint64_t PHYSEND;
 
 static uint64_t MAX_BITMAP_ROWS;
+static uint64_t AHCI_PHYS;
 //Using references from http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html
 
 void set_bitmap_rows(){
@@ -17,6 +19,9 @@ void set_bitmap_rows(){
   MAX_BITMAP_ROWS=512;
 }
 
+uint64_t get_AHCI_PHYS(){
+  return AHCI_PHYS;
+}
 uint64_t get_bitmap_rows(){
   return MAX_BITMAP_ROWS;
 }
@@ -74,7 +79,11 @@ void allocateBitmapMem()
     }
     
     KER_PHYSFREE+=(MAX_BITMAP_ROWS*64)/8;
-    
+}
+
+void allocateAHCI(){
+    AHCI_PHYS = KER_PHYSFREE;
+    KER_PHYSFREE+=AHCI_MEM;
 }
 
 void initBitmap(uint64_t start,uint64_t end)
