@@ -118,28 +118,28 @@ _moveToNextProcess:
 
     cli
 
-    movq %rax,(%rdi)
-    movq %rbx,8(%rdi)
-    movq %rcx,16(%rdi)
-    movq %rdx,24(%rdi)
-    movq %rsi,32(%rdi)
-    movq %rdi,40(%rdi)
-    movq %rbp,56(%rdi)
+//    movq %rax,(%rdi)
+//    movq %rbx,8(%rdi)
+//    movq %rcx,16(%rdi)
+//    movq %rdx,24(%rdi)
+//    movq %rsi,32(%rdi)
+//    movq %rdi,40(%rdi)
+//    movq %rbp,56(%rdi)
     /*movq %rip,64(%rdi)*/
-    pushfq
-    pop %rax
-    movq %rax,72(%rdi)
-    movq %cr3,%rax
-    movq %rax,80(%rdi)
-    movq %rsp,48(%rdi)
-    pushfq
-    pop %rax
-    movq %rax,72(%rdi)
-    movq %cr3,%rax
-    movq %rax,80(%rdi)
-    //movq %rsp,%rax
-    //addq $80,%rax
-    movq %rsp,88(%rdi)
+//    pushfq
+//    pop %rax
+//    movq %rax,72(%rdi)
+//    movq %cr3,%rax
+//    movq %rax,80(%rdi)
+//    movq %rsp,48(%rdi)
+//    pushfq
+//    pop %rax
+//    movq %rax,72(%rdi)
+//    movq %cr3,%rax
+//    movq %rax,80(%rdi)
+//    //movq %rsp,%rax
+//    //addq $80,%rax
+//    movq %rsp,88(%rdi)
 
     //done : saved the state of the first process
 
