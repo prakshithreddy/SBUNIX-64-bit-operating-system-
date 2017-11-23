@@ -138,7 +138,7 @@ _moveToNextProcess:
     movq %cr3,%rax
     movq %rax,80(%rdi)
     movq %rsp,%rax
-    subq $80,%rax
+    addq $80,%rax
     movq %rax,88(%rdi)
 
     //done : saved the state of the first process
