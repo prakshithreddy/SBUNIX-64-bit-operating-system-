@@ -132,7 +132,7 @@ void switchToUserMode()
 {
     Task *last = runningThread;
     runningThread = runningThread->next;
-    uint64_t tssAddr = runningThread->regs.kernelRSP - 40;
+    uint64_t tssAddr = runningThread->regs.kernelRsp - 40;
     set_tss_rsp((void*)(tssAddr));
     _switchToRingThree(&last->regs, &runningThread->regs);
     
