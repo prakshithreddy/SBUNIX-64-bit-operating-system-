@@ -25,7 +25,7 @@ void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *p
     kthread->regs.rip=(uint64_t)function;
     kthread->regs.cr3=(uint64_t)pml4;
     kthread->regs.userRsp=(uint64_t)kmalloc()+0x1000;
-    kthread->regs.rbp=kthread->regs.UserRsp; //doing this because rbp is base pointer of stack.
+    kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
     kthread->next=0;
 }
 
