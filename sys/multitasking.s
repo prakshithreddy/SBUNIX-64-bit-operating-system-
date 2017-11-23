@@ -2,7 +2,8 @@
 
 .global _switchThread_,_switchToRingThree,_prepareInitialKernelStack
 
-.global currentRSP,currentRAX
+.global currentRSP
+.global currentRAX
 
 _switchThread_:
 	movq %rax,(%rdi)
