@@ -197,8 +197,14 @@ void _timer_intr_hdlr(){
         
         boot_time_bar(hour,minute,seconds,14);
         
+        //send EOI to PIC
+        outb(0x20,0x20);
+        outb(0x20,0xA0);
+        
+        runNextTask();
+        
     }
-    runNextTask();
+    //runNextTask();
     
     
 //    //preemptive scheduling // time 1 sec
