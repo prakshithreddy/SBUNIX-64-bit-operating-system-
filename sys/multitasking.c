@@ -77,7 +77,7 @@ static void userProcess1() {
 ////    int j=0;
 //     j=i/j;
 //    kprintf("%d",j);
-    while(1)kprintf("1 ");
+    while(1);//kprintf("1 ");
     //yield();
     //  i+=1;
     //  kprintf("%d",i);
@@ -97,7 +97,7 @@ static void userProcess2() {
     //     j=i/j;
     //    kprintf("%d",j);
     
-    while(1)kprintf("2 ");
+    while(1);//kprintf("2 ");
     //yield();
     //  i+=1;
     //  kprintf("%d",i);

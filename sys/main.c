@@ -50,9 +50,9 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   initSyscalls();
   initUserProcess();
   
-    init_pic();
-    init_pit();
-     init_rtc();
+    enableTimer();
+    
+    
     
     
     
@@ -76,6 +76,9 @@ void boot(void)
   init_gdt();
   init_idt();
     
+ init_pic();
+ init_pit();
+ init_rtc();
     
    
   
