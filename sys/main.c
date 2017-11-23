@@ -42,7 +42,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   printALLDrivers();
   enablePaging();
   kprintf("***************************Paging Enabled***************************\n");
-  //probeAHCI();
+  probeAHCI();
   //initUserMode();
   initTarfs();
   loadFile("rakshith",0xfffffffff);
@@ -52,8 +52,9 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   
     init_pic();
     init_pit();
+     init_rtc();
     
-    probeAHCI();
+    
     
   
   while(1);
@@ -76,7 +77,7 @@ void boot(void)
   init_idt();
     
     
-    init_rtc();
+   
   
   
     
