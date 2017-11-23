@@ -1,6 +1,7 @@
 #include <sys/defs.h>
 #include <sys/idt.h>
 #include <sys/pic.h>
+#include <sys/task.h>
 #include <sys/keyboard.h>
 #include <sys/kprintf.h>
 
@@ -192,6 +193,20 @@ void _timer_intr_hdlr(){
         boot_time_bar(hour,minute,seconds,14);
         
     }
+    
+    
+//    //preemptive scheduling // time 1 sec
+//    if(i%19==0) {
+//        //move on to the next task
+//        kprintf("Trying to move to the next task\n");
+//        void switchToUserMode();
+//        
+//    }
+//    
+    
+    
+    
+    
    
     //send EOI to PIC
     outb(0x20,0x20);

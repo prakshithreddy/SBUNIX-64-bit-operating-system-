@@ -9,6 +9,9 @@ static kernelThread *runningThread;
 static kernelThread mainThread;
 static kernelThread otherThread;
 
+kernelThread *userThread1;
+kernelThread *userThread2;
+
 void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
@@ -55,16 +58,33 @@ void yield() {
 void _switchThread_(Registers *from, Registers *to);
 
 
-static void userProcess() {
+static void userProcess1() {
     //static int i=0;
-    kprintf("In User Space........");
+    kprintf("In User Space1........");
     //__asm__ __volatile__ ("int $0x10":::);
-    uint64_t retVal = syscall(10,1,2,3,4,5,6);
-    kprintf("%d",retVal);
-//    int i=1;
-//    int j=0;
+//    uint64_t retVal = syscall(10,1,2,3,4,5,6);
+//    kprintf("%d",retVal);
+////    int i=1;
+////    int j=0;
 //     j=i/j;
 //    kprintf("%d",j);
+    while(1);
+    //yield();
+    //  i+=1;
+    //  kprintf("%d",i);
+    //  yield();
+}
+
+static void userProcess2() {
+    //static int i=0;
+    kprintf("In User Space2........");
+//    //__asm__ __volatile__ ("int $0x10":::);
+//    uint64_t retVal = syscall(10,1,2,3,4,5,6);
+//    kprintf("%d",retVal);
+    //    int i=1;
+    //    int j=0;
+    //     j=i/j;
+    //    kprintf("%d",j);
     while(1);
     //yield();
     //  i+=1;
@@ -98,14 +118,18 @@ void switchToUserMode()
 }
 void initUserProcess()
 {
-    
     set_tss_rsp((void*)(kmalloc()));
     
+    userThread1 = (kernelThread*)kmalloc();
+    userThread2 = (kernelThread*)kmalloc();
     
-    kernelThread *userThread = (kernelThread*)kmalloc();
-    createUserProcess(userThread,userProcess,mainThread.regs.rflags);
-    mainThread.next = userThread;
-    userThread->next = &mainThread;
+    createUserProcess(userThread1,userProcess1,mainThread.regs.rflags);
+    createUserProcess(userThread2,userProcess2,mainThread.regs.rflags);
+    mainThread.next = userThread1;
+    userThread1->next = userThread2;
+//    userThread2->next = &mainThread;
+    userThread2->next = userThread1; //temp, just to see what happens :P
+    
     switchToUserMode();
     
 }

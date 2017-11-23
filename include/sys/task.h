@@ -42,4 +42,7 @@ void initMultiTasking();
 void createThread(kernelThread* task, void(*function)(), uint64_t rflags, uint64_t *pml4);
 void yield();
 void _switchThread_(Registers *from, Registers *to);
+
+void switchToUserMode();
+
 #endif
