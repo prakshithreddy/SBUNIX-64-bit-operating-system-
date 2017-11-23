@@ -64,7 +64,7 @@ void _switchThread_(Registers *from, Registers *to);
 static void userProcess1() {
     //static int i=0;
     //uint64_t temp;
-//    kprintf("In User Space1........");
+    kprintf("In User Space1........");
 //    __asm__ __volatile__("movq %%rsp, %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
 //    kprintf("%p ", temp);
     //__asm__ __volatile__ ("int $0x10":::);
@@ -127,7 +127,7 @@ void runNextTask()
     //update the currentRunning Task
     Task *prev = runningThread;
     runningThread = runningThread->next;
-    int64_t tssAddr = runningThread->regs.kernelRsp - 40;
+    int64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
     _moveToNextProcess(&prev->regs, &runningThread->regs);
 }
@@ -136,7 +136,7 @@ void switchToUserMode()
 {
     Task *last = runningThread;
     runningThread = runningThread->next;
-    uint64_t tssAddr = runningThread->regs.kernelRsp - 40;
+    uint64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
     _switchToRingThree(&last->regs, &runningThread->regs);
     
