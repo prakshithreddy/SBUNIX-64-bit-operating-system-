@@ -1,6 +1,6 @@
 .section .text
 
-.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack
+.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack,_moveToNextProcess
 
 .global currentRSP
 .global currentRAX
@@ -110,6 +110,9 @@ _prepareInitialKernelStack:
     pushq 64(%rdi)  //rip
     movq currentRAX,%rax
     movq currentRSP,%rsp //restore stack pointer
+    retq
+
+_moveToNextProcess:
     retq
     
 

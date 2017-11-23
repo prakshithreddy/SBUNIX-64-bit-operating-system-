@@ -118,6 +118,15 @@ void createUserProcess(Task *kthread, void(*function)(), uint64_t rflags){
 }
 
 void _switchToRingThree(Registers *from, Registers *to);
+void _moveToNextProcess(Registers* prev,Registers* next);
+
+void runNextTask()
+{
+    //update the currentRunning Task
+    Task *prev = runningThread;
+    runningThread = runningThread->next;
+    _moveToNextProcess(&prev->regs, &runningThread->regs);
+}
 
 void switchToUserMode()
 {
