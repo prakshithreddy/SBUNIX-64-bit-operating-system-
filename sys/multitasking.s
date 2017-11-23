@@ -105,6 +105,6 @@ _prepareInitialKernelStack:
     pushq 72(%rdi) //flags
     pushq 0x2B //code segment
     pushq 64(%rdi)  //rip
-    movq (currentRSP),%rsp //restore stack pointer
+    movq currentRSP,%rsp //restore stack pointer
     
 
