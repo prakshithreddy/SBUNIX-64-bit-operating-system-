@@ -2,6 +2,7 @@
 #include<sys/defs.h>
 #include<sys/virtualMemory.h>
 #include<sys/kprintf.h>
+#include<sys/task.h>
 
 #define MSR_EFER 0xC0000080
 #define MSR_STAR 0xC0000081

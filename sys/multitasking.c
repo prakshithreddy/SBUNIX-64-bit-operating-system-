@@ -68,7 +68,7 @@ static void userProcess1() {
     __asm__ __volatile__("movq %%rsp, %%rax; movq %%rax, %0;":"=m"(temp)::"%rax");
     kprintf("%p ", temp);
     //__asm__ __volatile__ ("int $0x10":::);
-//    uint64_t retVal = syscall(10,1,2,3,4,5,6);
+    uint64_t retVal = syscall(10,1,2,3,4,5,6);
 //    kprintf("%d",retVal);
 ////    int i=1;
 ////    int j=0;
@@ -132,12 +132,14 @@ void switchToUserMode()
 {
     Task *last = runningThread;
     runningThread = runningThread->next;
+    uint64_t tssAddr = runningThread->regs.kernelRSP - 40;
+    set_tss_rsp((void*)(tssAddr));
     _switchToRingThree(&last->regs, &runningThread->regs);
     
 }
 void initUserProcess()
 {
-    set_tss_rsp((void*)(kmalloc()));
+    
     
     userThread1 = (Task*)kmalloc();
     userThread2 = (Task*)kmalloc();
