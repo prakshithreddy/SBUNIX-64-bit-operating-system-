@@ -4,17 +4,19 @@
 #include<sys/defs.h>
 
 typedef struct {
-    uint64_t rax, rbx, rcx, rdx, rsi, rdi, rsp, rbp, rip, rflags, cr3;
+    uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp;
 } Registers;
+
+uint64_t* currentRsp;
 
 void initUserProcess();
 
-typedef struct kernelThread {
+typedef struct Task {
   /*int  priority;
   int  state;*/  //TODO: these two variables might be used later.
   Registers regs;
-  struct kernelThread *next;
-} kernelThread;
+  struct Task *next;
+} Task;
 
 /*typedef struct thread {
    process*  parent;
@@ -39,7 +41,7 @@ typedef struct process {
 
 
 void initMultiTasking();
-void createThread(kernelThread* task, void(*function)(), uint64_t rflags, uint64_t *pml4);
+void createThread(Task* task, void(*function)(), uint64_t rflags, uint64_t *pml4);
 void yield();
 void _switchThread_(Registers *from, Registers *to);
 

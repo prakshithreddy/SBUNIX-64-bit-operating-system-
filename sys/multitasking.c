@@ -5,14 +5,16 @@
 #include<sys/gdt.h>
 #include<sys/syscall.h>
 
-static kernelThread *runningThread;
-static kernelThread mainThread;
-static kernelThread otherThread;
+static Task *runningThread;
+static Task mainThread;
+static Task otherThread;
 
-kernelThread *userThread1;
-kernelThread *userThread2;
+Task *userThread1;
+Task *userThread2;
 
-void createThread(kernelThread *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
+uint64_t* currentRSP = 0;  // keep a current RSP
+
+void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
     kthread->regs.rcx=0;
@@ -50,7 +52,7 @@ void initMultiTasking() {
 }
 
 void yield() {
-    kernelThread *last = runningThread;
+    Task *last = runningThread;
     runningThread = runningThread->next;
     _switchThread_(&last->regs, &runningThread->regs);
 }
@@ -95,7 +97,9 @@ static void userProcess2() {
     //  yield();
 }
 
-void createUserProcess(kernelThread *kthread, void(*function)(), uint64_t rflags){
+void _prepareInitialKernelStack(Registers* current);
+
+void createUserProcess(Task *kthread, void(*function)(), uint64_t rflags){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
     kthread->regs.rcx=0;
@@ -105,16 +109,18 @@ void createUserProcess(kernelThread *kthread, void(*function)(), uint64_t rflags
     kthread->regs.rflags=rflags;
     kthread->regs.rip=(uint64_t)function;
     kthread->regs.cr3=(uint64_t)getNewPML4ForUser();
-    kthread->regs.rsp=(uint64_t)kmalloc()+0x1000;
+    kthread->regs.userRsp=(uint64_t)kmalloc()+0x1000;   // creating a stack for the user process
+    kthread->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     kthread->regs.rbp=kthread->regs.rsp; //doing this because rbp is base pointer of stack.
     kthread->next=0;
+    _prepareInitialKernelStack(&kthread->regs);
 }
 
 void _switchToRingThree(Registers *from, Registers *to);
 
 void switchToUserMode()
 {
-    kernelThread *last = runningThread;
+    Task *last = runningThread;
     runningThread = runningThread->next;
     _switchToRingThree(&last->regs, &runningThread->regs);
     
@@ -123,11 +129,12 @@ void initUserProcess()
 {
     set_tss_rsp((void*)(kmalloc()));
     
-    userThread1 = (kernelThread*)kmalloc();
-    userThread2 = (kernelThread*)kmalloc();
+    userThread1 = (Task*)kmalloc();
+    userThread2 = (Task*)kmalloc();
     
     createUserProcess(userThread1,userProcess1,mainThread.regs.rflags);
     createUserProcess(userThread2,userProcess2,mainThread.regs.rflags);
+    
     mainThread.next = userThread1;
     userThread1->next = userThread2;
 //    userThread2->next = &mainThread;

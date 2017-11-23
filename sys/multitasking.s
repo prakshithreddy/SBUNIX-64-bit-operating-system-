@@ -1,6 +1,8 @@
 .section .text
 
-.global _switchThread_,_switchToRingThree
+.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack
+
+.global currentRSP
 
 _switchThread_:
 	movq %rax,(%rdi)
@@ -93,3 +95,16 @@ _switchToRingThree:
     movq 56(%rsi),%rbp
     movq (%rsi),%rax
     iretq
+
+_prepareInitialKernelStack:
+    movq %rsp,currentRSP // will be restored later
+    movq 88(%rdi),%rsp //loaded the kernel RSP of the current process
+    pushq $0x23 //data segment descriptor
+    pushq 48(%rdi) //user rsp of the process
+    orq $0x200,72(%rdi) //flags
+    pushq 72(%rdi) //flags
+    pushq 0x2B //code segment
+    pushq 64(%rdi)  //rip
+    movq (currentRSP),%rsp //restore stack pointer
+    
+
