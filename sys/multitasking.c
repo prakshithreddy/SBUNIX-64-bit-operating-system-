@@ -190,7 +190,7 @@ void initUserProcess()
 //    userThread2->next = &mainThread;
     userThread2->next = userThread1; //temp, just to see what happens :P
     
-    enableTimer();
+    enableIntr();
     switchToUserMode();
     
 }
