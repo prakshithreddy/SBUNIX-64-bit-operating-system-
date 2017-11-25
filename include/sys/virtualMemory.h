@@ -20,6 +20,7 @@ void* kmalloc();//returns virtual address, to be called only after paging only b
 uint64_t getCr3();
 uint64_t get_kernbase();
 uint64_t mapAHCI(uint64_t abar_phys);
+void* kmallocForUser(uint64_t cr3);
 
 void* getNewPML4ForUser();
 

@@ -29,21 +29,21 @@ void mapKernelMemory(){
   uint64_t pdpt_e = (uint64_t)pdpt;
   pdpt_e|=PRESENT;
   pdpt_e|=WRITEABLE;
-  pdpt_e|=USER;
+  //pdpt_e|=USER;
   pml4->entries[get_PML4_INDEX((uint64_t)&kernmem)]=pdpt_e;
   
   //creating pdt to map to pdpt
   uint64_t pdt_e = (uint64_t)pdt;
   pdt_e|=PRESENT;
   pdt_e|=WRITEABLE;
-  pdt_e|=USER;
+  //pdt_e|=USER;
   pdpt->entries[get_PDPT_INDEX((uint64_t)&kernmem)]=pdt_e;
   
   //creating pdt to map to pdpt
   uint64_t pt_e = (uint64_t)pt;
   pt_e|=PRESENT;
   pt_e|=WRITEABLE;
-  pt_e|=USER;
+  //pt_e|=USER;
   pdt->entries[get_PDT_INDEX((uint64_t)&kernmem)]=pt_e;
   
   //physfree+=0x5000; //TODO: no idea why additonal memory is added.. need to verify
@@ -81,7 +81,7 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
     pml_entry = (uint64_t)pdpt;
     pml_entry|=PRESENT;
     pml_entry|=WRITEABLE;
-    pml_entry|=USER;
+    //pml_entry|=USER;
     pml4->entries[get_PML4_INDEX((uint64_t)v_addr)]=pml_entry;
   }
   
@@ -95,7 +95,7 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
     pdpt_entry = (uint64_t)pdt;
     pdpt_entry|=PRESENT;
     pdpt_entry|=WRITEABLE;
-    pdpt_entry|=USER;
+    //pdpt_entry|=USER;
     pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)]=pdpt_entry;
   }
   
@@ -109,24 +109,27 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
     pdt_entry = (uint64_t)pt;
     pdt_entry|=PRESENT;
     pdt_entry|=WRITEABLE;
-    pdt_entry|=USER;
+    //pdt_entry|=USER;
     pdt->entries[get_PDT_INDEX((uint64_t)v_addr)]=pdt_entry;
   }
   
   uint64_t pt_entry = phy_addr;
   pt_entry|=PRESENT;
   pt_entry|=WRITEABLE;
-  pt_entry|=USER;
+  //pt_entry|=USER;
   pt->entries[get_PT_INDEX((uint64_t)v_addr)]=pt_entry;
   
 }
 
 void mapPageForUser(uint64_t v_addr, uint64_t phy_addr,uint64_t temp){//TODO: This function maps physical and virtual in the given pml4 table.. 
-  struct PDPT *pdpt;
+  struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
   struct PDT *pdt;
   struct PT *pt;
+  struct PDPT *v_pdpt;
+  struct PDT *v_pdt;
+  struct PT *v_pt;
   
-  struct PML4 *curr_pml4=(struct PML4*)temp;
+  struct PML4 *curr_pml4=(struct PML4*)temp;//temp that is passed is already virtual..
   
   uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
   if(pml_entry&PRESENT){
@@ -134,47 +137,52 @@ void mapPageForUser(uint64_t v_addr, uint64_t phy_addr,uint64_t temp){//TODO: Th
   }
   else{
     pdpt = (struct PDPT*)pageAllocator();
-    memset((uint64_t)pdpt);
+    uint64_t vir_pdpt = (uint64_t)pdpt+kernbase;
+    memset((uint64_t)vir_pdpt);
     pml_entry = (uint64_t)pdpt;
     pml_entry|=PRESENT;
     pml_entry|=WRITEABLE;
     pml_entry|=USER;
     curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)]=pml_entry;
   }
-  
-  uint64_t pdpt_entry = pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
+  v_pdpt = (struct PDPT*)((uint64_t)pdpt+kernbase);
+  uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
   if(pdpt_entry&PRESENT){
     pdt = (struct PDT*)(pdpt_entry&FRAME);
   }
   else{
     pdt = (struct PDT*)pageAllocator();
-    memset((uint64_t)pdt);
+    uint64_t vir_pdt = (uint64_t)pdt+kernbase;
+    memset((uint64_t)vir_pdt);
     pdpt_entry = (uint64_t)pdt;
     pdpt_entry|=PRESENT;
     pdpt_entry|=WRITEABLE;
     pdpt_entry|=USER;
-    pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)]=pdpt_entry;
+    v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)]=pdpt_entry;
   }
   
-  uint64_t pdt_entry = pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
+  v_pdt = (struct PDT*)((uint64_t)pdt+kernbase);
+  uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
   if(pdt_entry&PRESENT){
     pt = (struct PT*)(pdt_entry&FRAME);
   }
   else{
     pt = (struct PT*)pageAllocator();
-    memset((uint64_t)pt);
+    uint64_t vir_pt = (uint64_t)pt+kernbase;
+    memset((uint64_t)vir_pt);
     pdt_entry = (uint64_t)pt;
     pdt_entry|=PRESENT;
     pdt_entry|=WRITEABLE;
     pdt_entry|=USER;
-    pdt->entries[get_PDT_INDEX((uint64_t)v_addr)]=pdt_entry;
+    v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)]=pdt_entry;
   }
   
+  v_pt = (struct PT*)((uint64_t)pt+kernbase);
   uint64_t pt_entry = phy_addr;
   pt_entry|=PRESENT;
   pt_entry|=WRITEABLE;
   pt_entry|=USER;
-  pt->entries[get_PT_INDEX((uint64_t)v_addr)]=pt_entry;
+  v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]=pt_entry;
   
 }
 
@@ -230,6 +238,12 @@ void* kmalloc(){
   return ptr;
 }
 
+void* kmallocForUser(uint64_t cr3){
+  void *ptr=pageAllocator();
+  mapPageForUser((uint64_t)ptr,(uint64_t)ptr,(uint64_t)cr3+kernbase);
+  memset((uint64_t)ptr+kernbase);
+  return ptr;
+}
 
 uint64_t getCr3()
 {
