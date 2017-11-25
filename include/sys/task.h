@@ -7,6 +7,8 @@ typedef struct {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp,count,add;
 } Registers;
 
+uint64_t* getRunKRsp();
+
 uint64_t* currentRsp;
 uint64_t currentRAX;
 
