@@ -41,6 +41,9 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   mapKernelMemory();
   printALLDrivers();
   enablePaging();
+    char *s = (void*)(0x0);
+    *s='a';
+    
   kprintf("***************************Paging Enabled***************************\n");
   probeAHCI();
   //initUserMode();
@@ -82,9 +85,7 @@ void boot(void)
  init_rtc();
     
    
-    char *s = (void*)(0x0);
-    *s='a';
-  
+   
     
   keypress_bar("Last Pressed: ",0XF0);
   boot_time_bar(0,0,0,0XF0);
