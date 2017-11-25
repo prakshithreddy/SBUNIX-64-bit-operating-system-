@@ -2,6 +2,7 @@
 #include<sys/defs.h>
 #include<sys/virtualMemory.h>
 #include<sys/kprintf.h>
+
 #include<sys/task.h>
 
 #define MSR_EFER 0xC0000080
@@ -44,8 +45,8 @@ void _syscallEntry();
 
 void initSyscalls()
 {
-    kernelRSP = getRunKRsp();
-    kprintf("K RSP : %p ", kernelRSP);
+    kernelRSP = (uint64_t*)kmalloc();
+    //kprintf("TSS RSP : %p ", kernelRSP);
     //STEP1: set the system call extension bit (SCE bit) to 1;
     uint64_t sce = readMSR(MSR_EFER);
     sce |= (0x1); //enable syscalls
