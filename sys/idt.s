@@ -210,7 +210,7 @@ _isr14:
 
     movq (%rsp),%rdi
     movq %rsp,%rax
-    addq %16,%rax
+    addq $16,%rax
     movq %rax,%rsi
     pushq %rax
     pushq %rbx
