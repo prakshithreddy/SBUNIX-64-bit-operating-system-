@@ -1,5 +1,5 @@
 #include <stdlib.h>
-int main(){
+int main(uint64_t val){
         /*int x=0;
         int i=0;
         char *s=(char *)(0xffffffff800b8000);
