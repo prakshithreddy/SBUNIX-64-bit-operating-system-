@@ -367,6 +367,7 @@ void _hndlr_isr13(registers_t regs){
 }
 
 void _hndlr_isr14(uint64_t val){
+    
     kprintf("%d",val);
     kprintf("\n0x0E    Page fault");
     kprintf("\nHandling Page Fault");
