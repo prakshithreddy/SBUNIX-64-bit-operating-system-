@@ -45,7 +45,7 @@ void _syscallEntry();
 void initSyscalls()
 {
     kernelRSP = getRunKRsp();
-    //kprintf("TSS RSP : %p ", kernelRSP);
+    kprintf("K RSP : %p ", kernelRSP);
     //STEP1: set the system call extension bit (SCE bit) to 1;
     uint64_t sce = readMSR(MSR_EFER);
     sce |= (0x1); //enable syscalls
