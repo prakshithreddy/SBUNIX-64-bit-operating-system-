@@ -2,7 +2,7 @@
 #include<sys/defs.h>
 #include<sys/virtualMemory.h>
 #include<sys/kprintf.h>
-#include<sys/multitasking.h>
+#include<sys/task.h>
 #include<sys/task.h>
 
 #define MSR_EFER 0xC0000080
