@@ -75,23 +75,30 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4){
     uint64_t temp=p_filesz;
     uint64_t temp2=p_vaddr;
     uint64_t temp3=p_offset;
+    uint64_t phy_temp2=(uint64_t)pageAllocator();
+    uint64_t vir_ker_temp2=phy_temp2+get_kernbase();
+    mapPageForUser(temp2,phy_temp2,pml4);
+    //mapPage(temp2,phy_temp2);
     while(temp>0){
-        mapPageForUser(temp2,(uint64_t)pageAllocator(),pml4);
         if(temp>0x1000){
-          memcpy((void *)(elf_file+temp3),(void *)temp2,0x1000);
+          memcpy((void *)(elf_file+temp3),(void *)vir_ker_temp2,0x1000);
           temp2+=0x1000;
           temp-=0x1000;
           temp3+=0x1000;
-          mapPageForUser(temp2,(uint64_t)pageAllocator(),pml4);
+          phy_temp2=(uint64_t)pageAllocator();
+          vir_ker_temp2=phy_temp2+get_kernbase();
+          mapPageForUser(temp2,phy_temp2,pml4);
+          //mapPage(temp2,phy_temp2);
         }
         else{
-          memcpy((void *)(elf_file+temp3),(void *)temp2,temp);
+          memcpy((void *)(elf_file+temp3),(void *)vir_ker_temp2,temp);
           temp2+=temp;
+          vir_ker_temp2+=temp;
           temp=0;
           temp3+=temp;
         }
     }
-    memset_file((void *)(temp2+p_filesz),0,p_memsz-p_filesz);
+    memset_file((void *)(vir_ker_temp2+p_filesz),0,p_memsz-p_filesz);
     //TODO: The above section of code needs to be changed to reflect vma_strcut i.e, using malloc of user process and kernel, so that this will also be accounted in vma_struct.
     //For now, allocating a page and mapping it into the correspoding user or kernel process. Mapping can also be ignore if vma_struct and demand paging are implemented.
     
@@ -183,6 +190,6 @@ uint64_t loadFile(char *file,uint64_t pml4){
         }
     }
     
-    return 1;
+    return elf_file->e_entry;
 }
 

@@ -45,7 +45,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   probeAHCI();
   //initUserMode();
   initTarfs();
-  loadFile("rakshith",0xfffffffff);
+  //loadFile("rakshith",0xfffffffff);
   initMultiTasking();
   initSyscalls();
     
