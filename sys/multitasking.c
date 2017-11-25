@@ -113,7 +113,7 @@ void _switchThread_(Registers *from, Registers *to);
 
 void _prepareInitialKernelStack(Registers* current);
 
-void _pushVal(uint64_t userRsp,uint64_t val);
+void _pushVal(uint64_t userRsp,int val);
 
 void pushSomeArgsToUser(uint64_t userRsp)
 {
