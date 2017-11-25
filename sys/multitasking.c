@@ -23,6 +23,11 @@ Task *vir_userThread3;
 uint64_t* currentRSP = 0; // keep a current RSP
 uint64_t currentRAX;
 
+uint64_t* getRunKRsp()
+{
+    return (uint64_t*)runningThread->regs.kernelRsp;
+}
+
 void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
