@@ -42,6 +42,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   printALLDrivers();
   enablePaging();
     char *s = (void*)(0x0);
+    kprintf("%p",s);
     *s='a';
     
   kprintf("***************************Paging Enabled***************************\n");
