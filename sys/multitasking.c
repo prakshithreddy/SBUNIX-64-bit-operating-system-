@@ -113,6 +113,13 @@ void _switchThread_(Registers *from, Registers *to);
 
 void _prepareInitialKernelStack(Registers* current);
 
+_pushVal(uint64_t userRsp,uint64_t val);
+
+void pushSomeArgsToUser(uint64_t userRsp)
+{
+    _pushVal(userRsp,123);
+}
+
 void createUserProcess(Task *kthread,uint64_t function, uint64_t rflags,uint64_t cr3){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
@@ -124,6 +131,8 @@ void createUserProcess(Task *kthread,uint64_t function, uint64_t rflags,uint64_t
     kthread->regs.rip=(uint64_t)function;
     kthread->regs.cr3=cr3;
     kthread->regs.userRsp=(uint64_t)kmallocForUser(cr3)+0x1000;   // creating a stack for the user process
+    pushSomeArgsToUser(kthread->regs.userRsp+get_kernbase());
+    kthread->regs.userRsp-=8;
     kthread->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
     kthread->regs.count=0;

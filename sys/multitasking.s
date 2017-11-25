@@ -1,6 +1,6 @@
 .section .text
 
-.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack,_moveToNextProcess
+.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack,_moveToNextProcess,_pushVal
 
 .global currentRSP
 .global currentRAX
@@ -176,5 +176,15 @@ _moveToNextProcess:
     movq (%rsi),%rax
 
     iretq
+
+_pushVal:
+    movq %rsp,currentRSP // will be restored later
+    movq %rax,currentRAX
+    movq %rdi,%rsp //loaded the kernel RSP of the current process
+    pushq %rsi
+    movq currentRAX,%rax
+    movq currentRSP,%rsp //restore stack pointer
+    retq
+
     
 

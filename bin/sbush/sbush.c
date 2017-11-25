@@ -1,4 +1,4 @@
 #include <stdlib.h>
-int main(){
+int main(uint64_t val){
         while(1);
 }
