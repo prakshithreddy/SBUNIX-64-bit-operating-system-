@@ -185,6 +185,7 @@ _isr2:
 
 _isr14:
 
+    movq (%rsp),%rdi
     pushq %rax
     pushq %rbx
     pushq %rcx

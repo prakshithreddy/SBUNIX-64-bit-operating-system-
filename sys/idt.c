@@ -217,7 +217,7 @@ void _timer_intr_hdlr(){
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-        runNextTask();
+        runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();
@@ -366,8 +366,22 @@ void _hndlr_isr13(registers_t regs){
     while(1);
 }
 
-void _hndlr_isr14(registers_t regs){
-    kprintf("0x0E    Page fault");
+void _hndlr_isr14(uint64_t val){
+    kprintf("%d",val);
+    kprintf("\n0x0E    Page fault");
+    kprintf("\nHandling Page Fault");
+    
+    //Ref : James Molloy
+    //When can a page fault occur
+    
+    //Map page only for this error  : read the error code
+    //Reading from or writing to an area of memory that is not mapped (page entry/table's 'present' flag is not set)
+    
+    //The process is in user-mode and tries to write to a read-only page.
+    //The process is in user-mode and tries to access a kernel-only page.
+    //The page table entry is corrupted - the reserved bits have been overwritten.
+    
+    
     uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
     kprintf("%p",pagefaultAt);
