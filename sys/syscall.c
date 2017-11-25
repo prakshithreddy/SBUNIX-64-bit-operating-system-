@@ -15,7 +15,7 @@ uint64_t* kernelRSP = 0;
 uint64_t readMSR(uint32_t msrAddr)
 {
     uint32_t msrLow, msrHigh;
-    __asm__ __volatile__ ( "rdmsr" : "=a" (msrLow), "=d" (msrHigh) : "c" (msrAddr));
+    __asm__ __volatile__ ("rdmsr" :"=a"(msrLow),"=d"(msrHigh):"c"(msrAddr));
     return (uint64_t)msrHigh<<32|(uint64_t)msrLow;
 }
 
