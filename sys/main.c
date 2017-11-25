@@ -82,7 +82,8 @@ void boot(void)
  init_rtc();
     
    
-  
+    char *s = (void*)(0x0);
+    *s='a';
   
     
   keypress_bar("Last Pressed: ",0XF0);
