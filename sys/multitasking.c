@@ -222,6 +222,7 @@ void initUserProcess()
     vir_userThread2->next = vir_userThread2; //temp, just to see what happens :P
     
     enableIntr();
+    initSyscalls();
     switchToUserMode();
     
 }
