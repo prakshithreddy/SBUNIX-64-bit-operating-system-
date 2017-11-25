@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include<syscall.h>
+#include<sys/syscall.h>
 
 int main(int argc, char *argv[], char *envp[]){
     argc+=1;
