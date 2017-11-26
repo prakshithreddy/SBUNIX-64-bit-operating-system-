@@ -4,6 +4,8 @@
 #include <sys/task.h>
 #include <sys/keyboard.h>
 #include <sys/kprintf.h>
+#include<sys/phyMemMapper.h>
+#include<sys/virtualMemory.h>
 
 uint64_t switchRsp=0;
 uint64_t switchRbx=0;
@@ -376,15 +378,15 @@ void _hndlr_isr14(){
    
     kprintf("PAGE FAULT AT : %p\n",pagefaultAt);
     
-//    if(errorCode&0x4)
-//    {
-//        kprintf("Handling page fault ");
-//        void *ptr=pageAllocator();
-//        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)cr3+kernbase);
-//        memset((uint64_t)ptr+kernbase);
-//
-//    }
-//
+    if(errorCode&0x4)
+    {
+        kprintf("Handling page fault ");
+        void *ptr=pageAllocator();
+        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)cr3+kernbase);
+        memset((uint64_t)ptr+kernbase);
+
+    }
+
     while(1);
 }
 
