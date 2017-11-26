@@ -377,7 +377,7 @@ void _hndlr_isr14(){
      uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
    
-    kprintf("PAGE FAULT AT : %p\n",pagefaultAt);
+    kprintf("PAGE FAULT AT : %p Error Code: \n",pagefaultAt,errorCode);
     
     if(errorCode&0x4)
     {
@@ -386,6 +386,12 @@ void _hndlr_isr14(){
         mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
         memset((uint64_t)ptr+get_kernbase());
 
+    }
+    
+    else
+    {
+        kprintf("Page fault cannot be handled.. Kill the process....! :-/");
+        
     }
 
     while(1);
