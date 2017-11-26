@@ -377,7 +377,7 @@ void _hndlr_isr14(){
      uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
    
-    kprintf("PAGE FAULT AT : %p Error Code: \n",pagefaultAt,errorCode);
+    kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
     
     if(errorCode&0x4)
     {
