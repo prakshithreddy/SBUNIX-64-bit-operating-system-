@@ -3,13 +3,15 @@
 
 #include<sys/defs.h>
 #include<sys/elf64.h>
+#include<sys/task.h>
 
 extern char _binary_tarfs_start;
 extern char _binary_tarfs_end;
 
 void initTarfs();
-uint64_t loadFile(char *file,uint64_t pml4);
 uint64_t validate_elf_file(Elf64_Ehdr *elf_hdr);
+uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,Task *uthread);
+uint64_t loadFile(char *file,uint64_t pml4,Task *uthread);
 
 struct posix_header_ustar {
   char name[100];

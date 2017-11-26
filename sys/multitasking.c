@@ -14,11 +14,11 @@ static Task otherThread;
 
 Task *userThread1;
 Task *userThread2;
-Task *userThread3;
+//Task *userThread3;
 
-Task *vir_userThread1;
-Task *vir_userThread2;
-Task *vir_userThread3;
+//Task *vir_userThread1;
+//Task *vir_userThread2;
+//Task *vir_userThread3;
 
 uint64_t* currentRSP = 0; // keep a current RSP
 uint64_t currentRAX;
@@ -135,14 +135,15 @@ void createUserProcess(Task *kthread,uint64_t function, uint64_t rflags,uint64_t
     kthread->regs.rflags=rflags;
     kthread->regs.rip=(uint64_t)function;
     kthread->regs.cr3=cr3;
-    kthread->regs.userRsp=(uint64_t)kmallocForUser(cr3)+0x1000;   // creating a stack for the user process
-    pushSomeArgsToUser(kthread->regs.userRsp+get_kernbase());
+    kthread->regs.userRsp=(uint64_t)stackForUser(kthread)+0x1000;   // creating a stack for the user process
+    pushSomeArgsToUser(kthread->regs.userRsp);
     kthread->regs.userRsp-=8;
     kthread->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
     kthread->regs.count=0;
     kthread->regs.add=0;
     kthread->next=0;
+    kthread->memMap.mmap=((void *)0);
     _prepareInitialKernelStack(&kthread->regs);
 }
 
@@ -205,21 +206,22 @@ void initUserProcess()
     uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
     
     //userThread1 = (Task*)kmallocForUser(U1_cr3);
-    userThread2 = (Task*)kmallocForUser(U2_cr3);
+    //userThread2 = (Task*)kmallocForUser(U2_cr3);
+    userThread2 = (Task*)kmalloc();
     //vir_userThread1 = (Task*)((uint64_t)userThread1+get_kernbase());
-    vir_userThread2 = (Task*)((uint64_t)userThread2+get_kernbase());
+    //vir_userThread2 = (Task*)((uint64_t)userThread2+get_kernbase());
     
     //createUserProcess((Task*)((uint64_t)userThread1+get_kernbase()),(uint64_t)userProcess1,mainThread.regs.rflags,U1_cr3);
-    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase())));
+    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    createUserProcess((Task*)((uint64_t)userThread2+get_kernbase()),hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+    createUserProcess(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
-    mainThread.next = vir_userThread2;
+    mainThread.next = userThread2;
     //mainThread.next = userThread3;
     //userThread3->next = userThread1;
     //vir_userThread1->next = vir_userThread2;
 //    userThread2->next = &mainThread;
-    vir_userThread2->next = vir_userThread2; //temp, just to see what happens :P
+    userThread2->next = userThread2; //temp, just to see what happens :P
     
     enableIntr();
     switchToUserMode();

@@ -4,6 +4,7 @@
 #include<sys/defs.h>
 #include<sys/virtualMemory.h>
 #include<sys/phyMemMapper.h>
+#include<sys/task.h>
 
 #define MAX_SEGMENTS 100
 #define ELF_PT_LOAD 1
@@ -59,7 +60,7 @@ void memset_file(void *str, int c, size_t n){
     }
 }
 
-uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4){
+uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,Task *uthread){
     uint64_t p_filesz=elf_p_hdr->p_filesz;
     uint64_t p_memsz=elf_p_hdr->p_memsz;
     uint64_t p_offset=elf_p_hdr->p_offset;
@@ -71,13 +72,37 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4){
         return 0;
     }
     
-    //**************
+    //***********************Below code is to create VMA struct for each program header section.
+    MM *mm = &uthread->memMap;
+    VMA *vma_start;
+    VMA *new_vma;
+    vma_start = mm->mmap;
+    while(vma_start != NULL && vma_start->next != NULL){
+        vma_start=vma_start->next;
+    }
+    new_vma=(VMA *)kmalloc();//TODO: Allocating a full page for just one VMA struct, which is too expensive, SOL1: Can assume that one page is sufficient 
+                             //for all the mallocs that will be done by the user. SOL2: Find a new way.. :P
+    if(vma_start==NULL){
+        mm->mmap = new_vma;
+    }
+    else{
+        vma_start->next=new_vma;
+    }
+    mm->count++;
+    new_vma->v_file=(uint64_t)elf_file;
+    new_vma->next=NULL;
+    new_vma->v_start=p_vaddr;
+    new_vma->v_end=p_vaddr+p_memsz;
+    new_vma->v_flags=elf_p_hdr->p_flags;//TODO: So many other details can be stored in VMA struct
+    
+    //*************************END of creating VMA structs, Start of mapping memory..
     uint64_t temp=p_filesz;
     uint64_t temp2=p_vaddr;
     uint64_t temp3=p_offset;
     uint64_t phy_temp2=(uint64_t)pageAllocator();
     uint64_t vir_ker_temp2=phy_temp2+get_kernbase();
     mapPageForUser(temp2,phy_temp2,pml4);
+    
     //mapPage(temp2,phy_temp2);
     while(temp>0){
         if(temp>0x1000){
@@ -133,7 +158,7 @@ uint64_t validate_elf_file(Elf64_Ehdr *elf_hdr){
 }
 
 
-uint64_t loadFile(char *file,uint64_t pml4){
+uint64_t loadFile(char *file,uint64_t pml4,Task *uthread){
     uint64_t search_pointer = BINARY_TARFS_START;
     struct posix_header_ustar *tar_file_pointer = tar_file_start; 
     kprintf("\nFiles Found in tarfs:\n");
@@ -183,7 +208,7 @@ uint64_t loadFile(char *file,uint64_t pml4){
         }
         if((elf_program_hdr+i)->p_type == ELF_PT_LOAD){
             counter+=1;
-            if (!(map_elf_file(elf_file,elf_program_hdr+i,pml4))){
+            if (!(map_elf_file(elf_file,elf_program_hdr+i,pml4,uthread))){
                 kprintf("Error while loading program into memory..\n");
                 return 0;
             }

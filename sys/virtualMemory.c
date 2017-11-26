@@ -3,6 +3,7 @@
 #include<sys/kprintf.h>
 #define VGA_ADDRESS 0xb8000
 #define AHCI_VIRTUAL_ADDRESS 0xFFFFFFFF80050000
+#define USER_VIRTUAL_STACK_TOP 0xFFFFFF7F00000000
 static uint64_t virtual_physbase=(uint64_t)&kernmem; //virtual_kernel_address -> pointer to free virtual adress above kernmem for usage in kernel.
 static uint64_t phys_base=(uint64_t)&physbase;
 static uint64_t kernbase;
@@ -121,6 +122,79 @@ void mapPage(uint64_t v_addr, uint64_t phy_addr){
   
 }
 
+void forceMapPage(uint64_t v_addr, uint64_t phy_addr,uint64_t temp,int user){//TODO: This function maps physical and virtual in the given pml4 table..   
+                                                                                        //user=1 implies user bit will be set.
+  struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
+  struct PDT *pdt;
+  struct PT *pt;
+  struct PDPT *v_pdpt;
+  struct PDT *v_pdt;
+  struct PT *v_pt;
+  
+  struct PML4 *curr_pml4=(struct PML4*)temp;//temp that is passed is already virtual..
+  
+  uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
+  if(pml_entry&PRESENT){
+    pdpt = (struct PDPT*)(pml_entry&FRAME);
+  }
+  else{
+    pdpt = (struct PDPT*)pageAllocator();
+    uint64_t vir_pdpt = (uint64_t)pdpt+kernbase;
+    memset((uint64_t)vir_pdpt);
+    pml_entry = (uint64_t)pdpt;
+    pml_entry|=PRESENT;
+    pml_entry|=WRITEABLE;
+    if(user){
+    pml_entry|=USER;
+    }
+    curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)]=pml_entry;
+  }
+  v_pdpt = (struct PDPT*)((uint64_t)pdpt+kernbase);
+  uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
+  if(pdpt_entry&PRESENT){
+    pdt = (struct PDT*)(pdpt_entry&FRAME);
+  }
+  else{
+    pdt = (struct PDT*)pageAllocator();
+    uint64_t vir_pdt = (uint64_t)pdt+kernbase;
+    memset((uint64_t)vir_pdt);
+    pdpt_entry = (uint64_t)pdt;
+    pdpt_entry|=PRESENT;
+    pdpt_entry|=WRITEABLE;
+    if(user){
+    pdpt_entry|=USER;
+    }
+    v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)]=pdpt_entry;
+  }
+  
+  v_pdt = (struct PDT*)((uint64_t)pdt+kernbase);
+  uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
+  if(pdt_entry&PRESENT){
+    pt = (struct PT*)(pdt_entry&FRAME);
+  }
+  else{
+    pt = (struct PT*)pageAllocator();
+    uint64_t vir_pt = (uint64_t)pt+kernbase;
+    memset((uint64_t)vir_pt);
+    pdt_entry = (uint64_t)pt;
+    pdt_entry|=PRESENT;
+    pdt_entry|=WRITEABLE;
+    if(user){
+    pdt_entry|=USER;
+    }
+    v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)]=pdt_entry;
+  }
+  
+  v_pt = (struct PT*)((uint64_t)pt+kernbase);
+  uint64_t pt_entry = phy_addr;
+  pt_entry|=PRESENT;
+  pt_entry|=WRITEABLE;
+  if(user){
+  pt_entry|=USER;
+  }
+  v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]=pt_entry;
+}
+
 void mapPageForUser(uint64_t v_addr, uint64_t phy_addr,uint64_t temp){//TODO: This function maps physical and virtual in the given pml4 table.. 
   struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
   struct PDT *pdt;
@@ -198,6 +272,7 @@ void enablePaging(){
   kprintf("CR0:- %p",temp);
   __asm__ __volatile__("mov %0,%%cr0":: "b"((uint64_t)temp));*/
   set_availFrames(kernbase);
+  pml4= (struct PML4 *)((uint64_t)pml4+kernbase);
 }
 
 void identityMapping(){
@@ -238,11 +313,38 @@ void* kmalloc(){
   return ptr;
 }
 
-void* kmallocForUser(uint64_t cr3){
-  void *ptr=pageAllocator();
-  mapPageForUser((uint64_t)ptr,(uint64_t)ptr,(uint64_t)cr3+kernbase);
-  memset((uint64_t)ptr+kernbase);
-  return ptr;
+void* stackForUser(Task *uthread){
+    void *ptr=pageAllocator();
+    mapPageForUser(USER_VIRTUAL_STACK_TOP-0x1000,(uint64_t)ptr,(uint64_t)(uthread->regs.cr3)+kernbase);
+    forceMapPage(USER_VIRTUAL_STACK_TOP-0x1000,(uint64_t)ptr,(uint64_t)pml4,0);
+    memset((uint64_t)ptr+kernbase);
+    
+    //Adding VMA STRUCT
+    MM *mm = &uthread->memMap;
+    VMA *vma_start;
+    VMA *new_vma;
+    vma_start = mm->mmap;
+    while(vma_start != NULL && vma_start->next != NULL){
+        vma_start=vma_start->next;
+    }
+    new_vma=(VMA *)kmalloc();//TODO: Allocating a full page for just one VMA struct, which is too expensive, SOL1: Can assume that one page is sufficient 
+                             //for all the mallocs that will be done by the user. SOL2: Find a new way.. :P
+    if(vma_start==NULL){
+        mm->mmap = new_vma;
+    }
+    else{
+        vma_start->next=new_vma;
+    }
+    mm->count++;
+    new_vma->next=NULL;
+    new_vma->grows_down=1;
+    new_vma->v_start=USER_VIRTUAL_STACK_TOP;
+    new_vma->v_end=USER_VIRTUAL_STACK_TOP+0x1000;
+    new_vma->mmsz=0x1000;
+    //new_vma->v_flags=elf_p_hdr->p_flags;//TODO: So many other details can be stored in VMA struct, Not sure what flags to set to stack.
+    
+    //*************************END of creating VMA structs, Start of mapping memory..
+    return (void *)(USER_VIRTUAL_STACK_TOP-0x1000);
 }
 
 uint64_t getCr3()
