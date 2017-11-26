@@ -391,10 +391,11 @@ void _hndlr_isr14(){
     else
     {
         kprintf("Page fault cannot be handled.. Kill the process....! :-/");
+        while(1);
         
     }
 
-    while(1);
+    
 }
 
 void _hndlr_isr15(registers_t regs){
