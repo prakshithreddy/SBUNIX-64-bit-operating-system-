@@ -383,8 +383,8 @@ void _hndlr_isr14(){
     {
         kprintf("Handling page fault ");
         void *ptr=pageAllocator();
-        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)cr3+kernbase);
-        memset((uint64_t)ptr+kernbase);
+        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
+        memset((uint64_t)ptr+get_kernbase());
 
     }
 
