@@ -4,6 +4,9 @@
 #include <sys/task.h>
 #include <sys/keyboard.h>
 #include <sys/kprintf.h>
+#include<sys/phyMemMapper.h>
+#include<sys/virtualMemory.h>
+#include<sys/task.h>
 
 uint64_t switchRsp=0;
 uint64_t switchRbx=0;
@@ -12,6 +15,8 @@ uint64_t switchRdx=0;
 uint64_t switchRsi=0;
 uint64_t switchRdi=0;
 uint64_t switchRbp=0;
+
+uint64_t errorCode;
 
 typedef struct registers
 {
@@ -217,7 +222,7 @@ void _timer_intr_hdlr(){
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-        runNextTask();
+        runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();
@@ -366,12 +371,31 @@ void _hndlr_isr13(registers_t regs){
     while(1);
 }
 
-void _hndlr_isr14(registers_t regs){
-    kprintf("0x0E    Page fault");
-    uint64_t pagefaultAt;
+void _hndlr_isr14(){
+    
+    kprintf("\n0x0E    Page fault");
+     uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
-    kprintf("%p",pagefaultAt);
-    while(1);
+   
+    kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
+    
+    if(errorCode&0x4)
+    {
+        kprintf("Handling page fault ");
+        void *ptr=pageAllocator();
+        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
+        memset((uint64_t)ptr+get_kernbase());
+
+    }
+    
+    else
+    {
+        kprintf("Page fault cannot be handled.. Kill the process....! :-/");
+        while(1);
+        
+    }
+
+    
 }
 
 void _hndlr_isr15(registers_t regs){

@@ -14,5 +14,10 @@ int main(int argc, char *argv[], char *envp[]){
     syscall(argc,1,2,3,4,5,6);
     syscall(argc,1,2,3,4,5,6);
     
+    char *s = (void*)(0x0);
+    //kprintf("%p",s);
+    *s='a';
+
+    syscall(argc,1,2,3,4,5,6);
         while(1);
 }

@@ -7,7 +7,7 @@ typedef struct {
 } Registers;
 
 uint64_t* getRunKRsp();
-
+uint64_t getRunCr3();
 uint64_t* currentRsp;
 uint64_t currentRAX;
 

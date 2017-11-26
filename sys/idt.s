@@ -1,8 +1,33 @@
 .text
 
 
+
+//0    Division By Zero Exception    No
+//1    Debug Exception    No
+//2    Non Maskable Interrupt Exception    No
+//3    Breakpoint Exception    No
+//4    Into Detected Overflow Exception    No
+//5    Out of Bounds Exception    No
+//6    Invalid Opcode Exception    No
+//7    No Coprocessor Exception    No
+//8    Double Fault Exception    Yes
+//9    Coprocessor Segment Overrun Exception    No
+//10    Bad TSS Exception    Yes
+//11    Segment Not Present Exception    Yes
+//12    Stack Fault Exception    Yes
+//13    General Protection Fault Exception    Yes
+//14    Page Fault Exception    Yes
+//15    Unknown Interrupt Exception    No
+//16    Coprocessor Fault Exception    No
+//17    Alignment Check Exception (486+)    No
+//18    Machine Check Exception (Pentium/586+)    No
+//19 to 31    Reserved Exceptions    No
+
+
 .global _key_board_intr,_timer_intr,_rtc_intr,_common_interrupt,_isr0,_isr1,_isr2,_isr3,_isr4,_isr5,_isr6,_isr7,_isr8,_isr9,_isr10,_isr11,_isr12,_isr13,_isr14,_isr15,_isr16,_isr17,_isr18,_isr19,_isr20,_isr21,
 .extern _key_press_handler,_timer_intr_hdlr,_rtc_intr_hndlr,_common_interrupt_hndlr,_hndlr_isr0,_hndlr_isr1,_hndlr_isr2,_hndlr_isr3,_hndlr_isr4,_hndlr_isr5,_hndlr_isr6,_hndlr_isr7,_hndlr_isr8,_hndlr_isr9,_hndlr_isr10,_hndlr_isr11,_hndlr_isr12,_hndlr_isr13,_hndlr_isr14,_hndlr_isr15,_hndlr_isr16,_hndlr_isr17,_hndlr_isr18,_hndlr_isr19,_hndlr_isr20,_hndlr_isr21
+
+.global errorCode
 
 .global switchRsp
 .global switchRax
@@ -185,6 +210,7 @@ _isr2:
 
 _isr14:
 
+    popq errorCode
     pushq %rax
     pushq %rbx
     pushq %rcx
@@ -213,6 +239,7 @@ _isr14:
     popq  %rcx
     popq  %rbx
     popq  %rax
+    iretq
 
 
 _isr21:

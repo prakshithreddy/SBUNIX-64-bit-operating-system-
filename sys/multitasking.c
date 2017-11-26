@@ -28,6 +28,11 @@ uint64_t* getRunKRsp()
     return (uint64_t*)runningThread->regs.kernelRsp;
 }
 
+uint64_t getRunCr3()
+{
+    return runningThread->regs.cr3;
+}
+
 void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
     kthread->regs.rax=0;
     kthread->regs.rbx=0;
