@@ -376,15 +376,15 @@ void _hndlr_isr14(){
     uint64_t pagefaultAt;
     kprintf("PAGE FAULT AT : %p\n",pagefaultAt);
     
-    if(errorCode&0x4)
-    {
-        kprintf("Handling page fault ");
-        void *ptr=pageAllocator();
-        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)cr3+kernbase);
-        memset((uint64_t)ptr+kernbase);
-        
-    }
- 
+//    if(errorCode&0x4)
+//    {
+//        kprintf("Handling page fault ");
+//        void *ptr=pageAllocator();
+//        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)cr3+kernbase);
+//        memset((uint64_t)ptr+kernbase);
+//        
+//    }
+// 
     while(1);
 }
 
