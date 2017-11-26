@@ -371,9 +371,9 @@ void _hndlr_isr13(registers_t regs){
 void _hndlr_isr14(){
     
     kprintf("\n0x0E    Page fault");
-    
+     uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
-    uint64_t pagefaultAt;
+   
     kprintf("PAGE FAULT AT : %p\n",pagefaultAt);
     
 //    if(errorCode&0x4)
@@ -382,9 +382,9 @@ void _hndlr_isr14(){
 //        void *ptr=pageAllocator();
 //        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)cr3+kernbase);
 //        memset((uint64_t)ptr+kernbase);
-//        
+//
 //    }
-// 
+//
     while(1);
 }
 
