@@ -6,6 +6,7 @@
 #include <sys/kprintf.h>
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
+#include<sys/task.h>
 
 uint64_t switchRsp=0;
 uint64_t switchRbx=0;
