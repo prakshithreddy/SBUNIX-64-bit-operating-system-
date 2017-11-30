@@ -263,7 +263,7 @@ void markPagesAsReadOnly(uint64_t cr3)
             
             uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)start)];
             pml_entry&=MAKERDONLY;
-            curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)]=pml_entry;
+            curr_pml4->entries[get_PML4_INDEX((uint64_t)start)]=pml_entry;
         
             start+=0x1000;
         }
