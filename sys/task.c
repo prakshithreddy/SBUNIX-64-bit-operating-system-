@@ -12,6 +12,8 @@ static Task *runningThread;
 static Task mainThread;
 static Task otherThread;
 
+static int count pidCount = 0;
+
 Task *userThread1;
 Task *userThread2;
 //Task *userThread3;
@@ -130,7 +132,10 @@ void pushSomeArgsToUser(uint64_t userRsp)
     _pushVal(userRsp,123);
 }
 
-void createUserProcess(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
+void createUserProcess(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3,int parentPid){
+    
+    task->pid_t = pidCount+1;
+    task->ppid_t = parentPid; //setting the Pid of the parent for COW
     task->regs.rax=0;
     task->regs.rbx=0;
     task->regs.rcx=0;
