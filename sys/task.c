@@ -212,6 +212,8 @@ void switchToUserMode()
 
 Task* createCOWTask(Task* parent)
 {
+    Task* task = (Task*)kmalloc();
+    
     task->pid_t = pidCount+1;
     task->ppid_t = parent->pid_t; //setting the Pid of the parent for COW
     
@@ -228,6 +230,8 @@ Task* createCOWTask(Task* parent)
     task->memMap.mmap=((void *)0);
     _prepareInitialKernelStack(&task->regs);
     addCurrentTasktoRunQueue(task);
+                          
+  return task;
 }
 
 void addCurrentTasktoRunQueue(Task* task)
