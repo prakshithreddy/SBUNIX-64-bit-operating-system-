@@ -2,6 +2,7 @@
 
 .global userRSP
 .global kernelRSP
+.global userRIP
 
 .global _syscallEntry
 
@@ -9,6 +10,8 @@
 
 _syscallEntry:
     movq %rsp, userRSP
+    popq %rsp, userRIP
+    pushq (userRIP)
     movq (kernelRSP),%rsp
     pushq (userRSP)
 

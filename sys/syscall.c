@@ -23,7 +23,13 @@ uint64_t readMSR(uint32_t msrAddr)
 uint64_t syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t paramD,uint64_t paramE,uint64_t paramF,uint64_t syscallNum) {
     
     kprintf("%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
-    return 100;
+    
+    switch(syscallNum)
+    {
+        case 1: kprintf("Fork System Call\n"); return fork();
+                
+    }
+    
 }
 
 uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t param3,uint64_t param4,uint64_t param5,uint64_t param6) {

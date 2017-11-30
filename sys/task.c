@@ -209,6 +209,76 @@ void switchToUserMode()
     _switchToRingThree(&last->regs, &runningThread->regs);
     
 }
+
+Task* createCOWTask(Task* parent)
+{
+    task->pid_t = pidCount+1;
+    task->ppid_t = parent->pid_t; //setting the Pid of the parent for COW
+    
+    __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%3; movq %%rdx,%4; movq %%rsi,%5; movq %%rdi, %6; movq %%rbp,%7; pushfq; pop %8": "=a" (task->regs.rax),"=a" (task->regs.rbx),"=a" (task->regs.rcx,"=a" (task->regs.rdx),"=a" (task->regs.rsi),"=a" (task->regs.rdi),"=a" (task->regs.rax),"=a" (task->regs.rflags)::);
+   
+    task->regs.rax =0; //why 0 ; because syscall return to child must be zero
+    task->regs.rip=userRIP;
+    task->regs.cr3=parent->regs.cr3;
+    task->regs.userRsp= (uint64_t)userRSP   // creating a stack for the user process
+    task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // the kernel stack should be diff for interrupts
+    task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
+    task->regs.count=0;
+    task->regs.add=0;
+    task->memMap.mmap=((void *)0);
+    _prepareInitialKernelStack(&task->regs);
+    addCurrentTasktoRunQueue(task);
+}
+
+void addCurrentTasktoRunQueue(Task* task)
+{
+    //insert this task at the end / / /
+    Task* nextToCurrentTask = runningThread
+    
+    while(nextToCurrentTask->next!=runningThread)
+    {
+        nextToCurrentTask=nextToCurrentTask->next;
+    }
+    
+    nextToCurrentTask->next = task;
+    task->next = nextToCurrentTask->next;
+
+}
+
+                          
+void markPagesAsReadOnly(uint64_t cr3)
+{
+    struct vma_struct *temp = runningThread->memMap.mmap;
+    
+    while(temp!=NULL)
+    {
+        uint64_t start = temp.v_start;
+        while(start<temp.v_end)
+        {
+            struct PML4 *curr_pml4=(struct PML4*)cr3;//temp that is passed is already virtual..
+            
+            uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)start)];
+            pml_entry&=MAKERDONLY;
+            curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)]=pml_entry;
+        
+            start+=0x1000;
+        }
+        temp=temp->next;
+    }
+    
+    
+}
+                          
+
+void fork()
+{
+    Task* child = createCOWTask(runningThread);
+    //mark all the entries in the CR3 as readable
+    uint64_t cr3VirtualAddr = runningThread->regs.cr3+get_kernbase()
+    markPagesAsReadOnly(cr3VirtualAddr);
+    return child->pid_t;
+    
+}
 void initUserProcess()
 {
     

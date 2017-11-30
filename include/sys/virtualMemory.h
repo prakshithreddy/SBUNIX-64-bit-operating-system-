@@ -9,6 +9,7 @@
 #define get_PT_INDEX(x)  (((x) >> 12)&0x1FF)
 #define PRESENT 0x1
 #define WRITEABLE 0x2
+#define MAKERDONLY 0xFFFFFFFFFFFFFFFD
 #define USER 0x4
 #define FRAME 0xFFFFFFFFFFFFF000
 void mapKernelMemory();
