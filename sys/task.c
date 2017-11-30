@@ -135,6 +135,7 @@ void pushSomeArgsToUser(uint64_t userRsp)
 void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3,int parentPid){
     
     task->pid_t = pidCount+1;
+    pidCount+=1; //next process takes the next id
     task->ppid_t = parentPid; //setting the Pid of the parent for COW
     task->regs.rax=0;
     task->regs.rbx=0;
@@ -215,6 +216,7 @@ Task* createCOWTask(Task* parent)
     Task* task = (Task*)kmalloc();
     
     task->pid_t = pidCount+1;
+    pidCount+=1; //next process takes the next id
     task->ppid_t = parent->pid_t; //setting the Pid of the parent for COW
     
     __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%2; movq %%rdx,%3; movq %%rsi,%4; movq %%rdi, %5; movq %%rbp,%6; pushfq; pop %7": "=g" (task->regs.rax),"=g" (task->regs.rbx),"=g" (task->regs.rcx),"=g" (task->regs.rdx),"=g" (task->regs.rsi),"=g" (task->regs.rdi),"=g" (task->regs.rax),"=g" (task->regs.rflags)::);
