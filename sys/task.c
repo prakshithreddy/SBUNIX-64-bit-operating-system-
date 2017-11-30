@@ -256,8 +256,8 @@ void markPagesAsReadOnly(uint64_t cr3)
     
     while(temp!=NULL)
     {
-        uint64_t start = temp.v_start;
-        while(start<temp.v_end)
+        uint64_t start = temp->v_start;
+        while(start<temp->v_end)
         {
             struct PML4 *curr_pml4=(struct PML4*)cr3;//temp that is passed is already virtual..
             
