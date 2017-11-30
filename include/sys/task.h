@@ -42,7 +42,7 @@ typedef struct mm_struct {
 
 typedef struct Task {
     int pid_t;            //p_id of the current task
-    int ppid_t            //parent pid of the current task
+    int ppid_t;           //parent pid of the current task
     Registers regs;
     struct Task *next;
     struct mm_struct memMap;
