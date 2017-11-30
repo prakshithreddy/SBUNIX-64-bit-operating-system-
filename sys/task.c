@@ -217,7 +217,7 @@ Task* createCOWTask(Task* parent)
     task->pid_t = pidCount+1;
     task->ppid_t = parent->pid_t; //setting the Pid of the parent for COW
     
-    __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%2; movq %%rdx,%3; movq %%rsi,%4; movq %%rdi, %5; movq %%rbp,%6; pushfq; popq %7": "=g" (task->regs.rax),"=g" (task->regs.rbx),"=g" (task->regs.rcx),"=g" (task->regs.rdx),"=g" (task->regs.rsi),"=g" (task->regs.rdi),"=g" (task->regs.rax),"=g" (task->regs.rflags)::);
+    __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%2; movq %%rdx,%3; movq %%rsi,%4; movq %%rdi, %5; movq %%rbp,%6; pushfq; popq %%rax;movq %%rax,%7;movq %8,%%rax": "=g" (task->regs.rax),"=g" (task->regs.rbx),"=g" (task->regs.rcx),"=g" (task->regs.rdx),"=g" (task->regs.rsi),"=g" (task->regs.rdi),"=g" (task->regs.rax),"=g" (task->regs.rflags):"g" (task->regs.rax):);
    
     task->regs.rax =0; //why 0 ; because syscall return to child must be zero
     task->regs.rip=(uint64_t)userRIP;
