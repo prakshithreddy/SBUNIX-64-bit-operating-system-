@@ -165,5 +165,11 @@ void memset(uint64_t pageaddr){
   //kprintf("M ");
 }
 
+void invlpg(uint64_t addr) {
+    //flush the TLb
+    __asm__ __volatile__("invlpg (%0)"::"r"(addr):"memory");
+}
+
+
 
 
