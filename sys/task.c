@@ -153,7 +153,7 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3,in
     task->regs.count=0;
     task->regs.add=0;
     task->next=0;
-    task->memMap.mmap=((void *)0);
+    //task->memMap.mmap=((void *)0);
     _prepareInitialKernelStack(&task->regs);
 }
 

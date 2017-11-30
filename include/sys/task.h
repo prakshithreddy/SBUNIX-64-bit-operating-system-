@@ -2,6 +2,7 @@
 #define _TASK_H
 
 #include<sys/defs.h>
+#include<dirent.h>
 typedef struct {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp,count,add;
 } Registers;
@@ -41,11 +42,15 @@ typedef struct mm_struct {
 
 
 typedef struct Task {
-    int pid_t;            //p_id of the current task
-    int ppid_t;           //parent pid of the current task
-    Registers regs;
-    struct Task *next;
-    struct mm_struct memMap;
+  /*int  priority;
+  int  state;*/  //TODO: these two variables might be used later	
+  int pid_t;
+  int ppid_t;
+  Registers regs;
+  struct Task *next;
+  struct mm_struct memMap;
+  File files[50];
+  Directory directories[50];
 } Task;
 
 void runNextTask();
