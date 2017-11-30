@@ -252,7 +252,7 @@ void addCurrentTasktoRunQueue(Task* task)
                           
 void markPagesAsReadOnly(uint64_t cr3)
 {
-    struct vma_struct *temp = runningThread->memMap.mmap;
+    VMA *temp = runningThread->memMap.mmap;
     
     while(temp!=NULL)
     {
