@@ -12,7 +12,7 @@ static Task *runningThread;
 static Task mainThread;
 static Task otherThread;
 
-static int count pidCount = 0;
+static int pidCount = 0;
 
 Task *userThread1;
 Task *userThread2;
