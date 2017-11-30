@@ -2,6 +2,7 @@
 #define _TASK_H
 
 #include<sys/defs.h>
+#include<dirent.h>
 typedef struct {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp,count,add;
 } Registers;
@@ -45,6 +46,8 @@ typedef struct Task {
   Registers regs;
   struct Task *next;
   struct mm_struct memMap;
+  File files[50];
+  Directory directories[50];
 } Task;
 
 void runNextTask();

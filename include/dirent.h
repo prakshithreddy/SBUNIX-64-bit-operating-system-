@@ -12,6 +12,17 @@ struct dirent {
     char           d_name[NAME_MAX+1];
 };
 
+typedef struct file{
+    uint64_t f_start;
+    uint64_t f_offset;
+    char fileName[256];
+}File;
+
+typedef struct directory{
+    uint64_t d_start;
+    char dirName[256];
+}Directory;
+
 typedef struct DIR DIR;
 
 void list_all_dir(const char* path);
