@@ -224,7 +224,7 @@ void initUserProcess()
     //createUserProcess((Task*)((uint64_t)userThread1+get_kernbase()),(uint64_t)userProcess1,mainThread.regs.rflags,U1_cr3);
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    createUserProcess(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3,0);
+    createUserProcess(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3,-1);
     
     mainThread.next = userThread2;
     //mainThread.next = userThread3;
