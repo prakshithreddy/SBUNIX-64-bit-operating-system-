@@ -220,9 +220,9 @@ Task* createCOWTask(Task* parent)
     __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%3; movq %%rdx,%4; movq %%rsi,%5; movq %%rdi, %6; movq %%rbp,%7; pushfq; pop %8": "=a" (task->regs.rax),"=a" (task->regs.rbx),"=a" (task->regs.rcx),"=a" (task->regs.rdx),"=a" (task->regs.rsi),"=a" (task->regs.rdi),"=a" (task->regs.rax),"=a" (task->regs.rflags)::);
    
     task->regs.rax =0; //why 0 ; because syscall return to child must be zero
-    task->regs.rip=userRIP;
+    task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=parent->regs.cr3;
-    task->regs.userRsp= (uint64_t)userRSP   // creating a stack for the user process
+    task->regs.userRsp= (uint64_t)userRSP;  // creating a stack for the user process
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // the kernel stack should be diff for interrupts
     task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
@@ -237,7 +237,7 @@ Task* createCOWTask(Task* parent)
 void addCurrentTasktoRunQueue(Task* task)
 {
     //insert this task at the end / / /
-    Task* nextToCurrentTask = runningThread
+    Task* nextToCurrentTask = runningThread;
     
     while(nextToCurrentTask->next!=runningThread)
     {
@@ -278,8 +278,7 @@ int fork()
 {
     Task* child = createCOWTask(runningThread);
     //mark all the entries in the CR3 as readable
-    uint64_t cr3VirtualAddr = runningThread->regs.cr3+get_kernbase()
-    markPagesAsReadOnly(cr3VirtualAddr);
+    markPagesAsReadOnly(runningThread->regs.cr3+get_kernbase());
     return child->pid_t;
     
 }
