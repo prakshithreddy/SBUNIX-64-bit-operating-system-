@@ -31,6 +31,8 @@ uint64_t get_bitmap_rows();
 uint64_t get_AHCI_PHYS();
 void allocateAHCI();
 
+void invlpg(uint64_t addr);
+
 #define PHYSSTART 0x100000;
 
 #endif
