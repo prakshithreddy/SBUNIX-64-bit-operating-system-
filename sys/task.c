@@ -220,7 +220,7 @@ Task* createCOWTask(Task* parent)
     __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%2; movq %%rdx,%3; movq %%rsi,%4; movq %%rdi, %5; movq %%rbp,%6; pushfq; pop %7": "=g" (task->regs.rax),"=g" (task->regs.rbx),"=g" (task->regs.rcx),"=g" (task->regs.rdx),"=g" (task->regs.rsi),"=g" (task->regs.rdi),"=g" (task->regs.rax),"=g" (task->regs.rflags)::);
    
     task->regs.rax =0; //why 0 ; because syscall return to child must be zero
-    task->regs.rip=(uint64_t)userRIP;
+    task->regs.rip=(uint64_t)*(userRSP);
     task->regs.cr3=parent->regs.cr3;
     task->regs.userRsp= (uint64_t)userRSP;  // creating a stack for the user process
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // the kernel stack should be diff for interrupts
