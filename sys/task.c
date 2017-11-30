@@ -270,7 +270,7 @@ void markPagesAsReadOnly(uint64_t cr3)
 }
                           
 
-void fork()
+int fork()
 {
     Task* child = createCOWTask(runningThread);
     //mark all the entries in the CR3 as readable

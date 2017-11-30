@@ -30,6 +30,8 @@ uint64_t syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t
                 
     }
     
+    return 100;
+    
 }
 
 uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t param3,uint64_t param4,uint64_t param5,uint64_t param6) {
