@@ -33,21 +33,21 @@ uint64_t getRunCr3()
     return runningThread->regs.cr3;
 }
 
-void createThread(Task *kthread, void(*function)(), uint64_t rflags, uint64_t *pml4){
-    kthread->regs.rax=0;
-    kthread->regs.rbx=0;
-    kthread->regs.rcx=0;
-    kthread->regs.rdx=0;
-    kthread->regs.rsi=0;
-    kthread->regs.count=0;
-    kthread->regs.add=0;
-    kthread->regs.rdi=0;
-    kthread->regs.rflags=rflags;
-    kthread->regs.rip=(uint64_t)function;
-    kthread->regs.cr3=(uint64_t)pml4;
-    kthread->regs.userRsp=(uint64_t)kmalloc()+0x1000;
-    kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
-    kthread->next=0;
+void createThread(Task *task, void(*function)(), uint64_t rflags, uint64_t *pml4){
+    task->regs.rax=0;
+    task->regs.rbx=0;
+    task->regs.rcx=0;
+    task->regs.rdx=0;
+    task->regs.rsi=0;
+    task->regs.count=0;
+    task->regs.add=0;
+    task->regs.rdi=0;
+    task->regs.rflags=rflags;
+    task->regs.rip=(uint64_t)function;
+    task->regs.cr3=(uint64_t)pml4;
+    task->regs.userRsp=(uint64_t)kmalloc()+0x1000;
+    task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
+    task->next=0;
 }
 
 static void multitaskMain() {
@@ -130,26 +130,26 @@ void pushSomeArgsToUser(uint64_t userRsp)
     _pushVal(userRsp,123);
 }
 
-void createUserProcess(Task *kthread,uint64_t function, uint64_t rflags,uint64_t cr3){
-    kthread->regs.rax=0;
-    kthread->regs.rbx=0;
-    kthread->regs.rcx=0;
-    kthread->regs.rdx=0;
-    kthread->regs.rsi=0;
-    kthread->regs.rdi=0;
-    kthread->regs.rflags=rflags;
-    kthread->regs.rip=(uint64_t)function;
-    kthread->regs.cr3=cr3;
-    kthread->regs.userRsp=(uint64_t)stackForUser(kthread)+0x1000;   // creating a stack for the user process
-    pushSomeArgsToUser(kthread->regs.userRsp);
-    kthread->regs.userRsp-=8;
-    kthread->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
-    kthread->regs.rbp=kthread->regs.userRsp; //doing this because rbp is base pointer of stack.
-    kthread->regs.count=0;
-    kthread->regs.add=0;
-    kthread->next=0;
-    kthread->memMap.mmap=((void *)0);
-    _prepareInitialKernelStack(&kthread->regs);
+void createUserProcess(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
+    task->regs.rax=0;
+    task->regs.rbx=0;
+    task->regs.rcx=0;
+    task->regs.rdx=0;
+    task->regs.rsi=0;
+    task->regs.rdi=0;
+    task->regs.rflags=rflags;
+    task->regs.rip=(uint64_t)function;
+    task->regs.cr3=cr3;
+    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
+    pushSomeArgsToUser(task->regs.userRsp);
+    task->regs.userRsp-=8;
+    task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
+    task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
+    task->regs.count=0;
+    task->regs.add=0;
+    task->next=0;
+    task->memMap.mmap=((void *)0);
+    _prepareInitialKernelStack(&task->regs);
 }
 
 void _switchToRingThree(Registers *from, Registers *to);
