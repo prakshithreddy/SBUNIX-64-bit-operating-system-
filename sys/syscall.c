@@ -11,6 +11,7 @@
 #define MSR_SFMASK  0xC0000084
 
 uint64_t* userRSP = 0;
+uint64_t* userRIP = 0;
 uint64_t* kernelRSP = 0;
 
 uint64_t readMSR(uint32_t msrAddr)
