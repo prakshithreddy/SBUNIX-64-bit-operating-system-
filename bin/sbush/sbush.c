@@ -10,9 +10,18 @@ uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t pa
 int main(int argc, char *argv[], char *envp[]){
     argc+=1;
     
-    syscall(1,1,2,3,4,5,6);
-    syscall(10,1,2,3,4,5,6);
-    syscall(11,1,2,3,4,5,6);
+    int pid = syscall(1,1,2,3,4,5,6);
+    if(pid == 0)
+    {
+        syscall(10,1,2,3,4,5,6);
+    }
+    else
+    {
+        syscall(20,1,2,3,4,5,6);
+    }
+    
+    //syscall(10,1,2,3,4,5,6);
+    //syscall(11,1,2,3,4,5,6);
 //    king fine.... need to debug the mischevious child//
 //    //kprintf("%d",retVal);
 //    syscall(argc,1,2,3,4,5,6);
