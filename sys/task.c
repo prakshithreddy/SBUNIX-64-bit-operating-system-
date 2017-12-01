@@ -211,25 +211,9 @@ void switchToUserMode()
     
 }
 
-
-
-uint64_t* copyUserStack(uint64_t rsp,uint64_t cr3)
-{
-    uint64_t* temp = (uint64_t*)(rsp&0xFFFFFFFFFFFFF000);
-    void *ptr=pageAllocator();
-    mapPageForUser(USER_VIRTUAL_STACK_TOP-0x2000,(uint64_t)ptr,(uint64_t)(cr3)+kernbase);
-    forceMapPage(USER_VIRTUAL_STACK_TOP-0x2000,(uint64_t)ptr,(uint64_t)pml4,0);
-    memset((uint64_t)ptr+kernbase);
-    memcpy(temp,void*((uint64_t)ptr+kernbase),0x1000);
-    return (uint64_t)USER_VIRTUAL_STACK_TOP-0x2000;
-    
-}
 Task* createChildandSaveParentState(Task* parent)
 {
     Task* task = (Task*)kmalloc();
-    
-    task->regs.userRsp=(uint64_t)copyUserStack(parent->regs.userRsp,parent->regs.cr3);
-    
     
     task->pid_t = pidCount+1;
     pidCount+=1; //next process takes the next id
@@ -260,7 +244,7 @@ Task* createChildandSaveParentState(Task* parent)
     
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=parent->regs.cr3;
-      // creating a stack for the user process
+    task->regs.userRsp= (uint64_t)userRSP;  // creating a stack for the user process
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // the kernel stack should be diff for interrupts
     //task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
