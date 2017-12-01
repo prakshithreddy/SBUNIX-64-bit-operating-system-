@@ -173,7 +173,7 @@ _moveToNextProcess:
     /*movq 32(%rsi),%rsi*/
     movq 40(%rsi),%rdi
     movq 56(%rsi),%rbp
-    movq (%rsi),%rax
+    movq $0,%rax
 
     iretq
 
