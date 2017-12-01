@@ -272,7 +272,7 @@ Task* createChildandSaveParentState(Task* parent)
     //task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
     task->regs.add=0;
-    task->memMap.mmap=parent->memMap.mmap
+    task->memMap.mmap=parent->memMap.mmap;
     _prepareInitialKernelStack(&task->regs);
     
                           
