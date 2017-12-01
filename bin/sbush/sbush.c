@@ -9,7 +9,7 @@ uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t pa
 
 int main(int argc, char *argv[], char *envp[]){
     argc+=1;
-    syscall(1,1,2,3,4,5,6);
+    syscall(1,1,2,3,4,5,6); //30-11 parent is almost working fine.... need to debug the mischevious child
 //    //kprintf("%d",retVal);
 //    syscall(argc,1,2,3,4,5,6);
 //    syscall(argc,1,2,3,4,5,6);
