@@ -302,7 +302,7 @@ int fork()
     //mark all the entries in the CR3 as readable
     markPagesAsReadOnly(runningThread->regs.cr3+get_kernbase());
     addCurrentTasktoRunQueue(child);
-    runningThread->regs.rax = 0;
+    //runningThread->regs.rax = 0;
     runNextTask();
     return child->pid_t;
     
