@@ -218,9 +218,13 @@ Task* createCOWTask(Task* parent)
     task->pid_t = pidCount+1;
     pidCount+=1; //next process takes the next id
     task->ppid_t = parent->pid_t; //setting the Pid of the parent for COW
-    
-    __asm__ __volatile__ ("movq %%rax,%0; movq %%rbx,%1; movq %%rcx,%2; movq %%rdx,%3; movq %%rsi,%4; movq %%rdi, %5; movq %%rbp,%6; pushfq; pop %7": "=g" (task->regs.rax),"=g" (task->regs.rbx),"=g" (task->regs.rcx),"=g" (task->regs.rdx),"=g" (task->regs.rsi),"=g" (task->regs.rdi),"=g" (task->regs.rax),"=g" (task->regs.rflags)::);
-   
+    task->regs.rbx = userRax;
+    task->regs.rcx = userRcx;
+    task->regs.rdx = userRdx;
+    task->regs.rsi = userRsi;
+    task->regs.rdi = userRdi;
+    task->regs.rbp = userRbp;
+    task->regs.rflags = userRflags;
     task->regs.rax =0; //why 0 ; because syscall return to child must be zero
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=parent->regs.cr3;

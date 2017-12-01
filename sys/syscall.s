@@ -3,14 +3,36 @@
 .global userRSP
 .global kernelRSP
 .global userRIP
+.global userRax
+.global userRbx
+.global userRcx
+.global userRdx
+.global userRsi
+.global userRdi
+.global userRbp
+.global userRflags
+
 
 .global _syscallEntry
 
 .global syscallHandler
 
 _syscallEntry:
+
     movq %rsp, userRSP
     movq %rcx,userRIP
+    movq %rax,userRax
+    movq %rbx,userRbx
+    movq %rcx,userRcx
+    movq %rdx,userRdx
+    movq %rsi,userRsi
+    movq %rdi,userRdi
+    movq %rbp,userRbp
+    pushfq
+    popq %rax
+    movq %rax,userRflags
+    movq userRax,%rax
+
     movq (kernelRSP),%rsp
     pushq (userRSP)
 

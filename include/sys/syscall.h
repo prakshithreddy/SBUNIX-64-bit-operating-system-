@@ -7,6 +7,14 @@ void* syscall5(void* syscall_number,void* param1,void* param2,void* param3,void*
 extern uint64_t* userRSP;
 extern uint64_t* kernelRSP;
 extern uint64_t* userRIP;
+extern uint64_t userRax;
+extern uint64_t userRbx;
+extern uint64_t userRcx;
+extern uint64_t userRdx;
+extern uint64_t userRsi;
+extern uint64_t userRdi;
+extern uint64_t userRbp;
+extern uint64_t userRflags;
 
 
 void initSyscalls();
