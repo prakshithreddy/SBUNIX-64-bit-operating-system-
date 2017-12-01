@@ -300,7 +300,7 @@ int fork()
 {
     Task* child = createChildandSaveParentState(runningThread);
     //mark all the entries in the CR3 as readable
-    markPagesAsReadOnly(runningThread->regs.cr3+get_kernbase());
+    //markPagesAsReadOnly(runningThread->regs.cr3+get_kernbase());
     addCurrentTasktoRunQueue(child);
     //runningThread->regs.rax = 0;
     runNextTask();
