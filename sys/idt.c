@@ -217,7 +217,7 @@ void _timer_intr_hdlr(){
         //runNextTask();
         
     }
-    else if (i%5==0)
+    else if (i%100==0)
     {
         outb(0x20,0x20);
         outb(0x20,0xA0);
