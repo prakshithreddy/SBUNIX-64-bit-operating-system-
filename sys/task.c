@@ -233,7 +233,7 @@ Task* createChildandSaveParentState(Task* parent)
     parent->regs.rsi = userRsi;
     parent->regs.rdi = userRdi;
     parent->regs.rbp = userRbp;
-    parent->regs.rax = userRax;
+    parent->regs.rax = task->pid_t;
     parent->regs.rip = (uint64_t)userRIP;
     parent->regs.userRsp= (uint64_t)userRSP;
     parent->regs.rflags = userRflags;
