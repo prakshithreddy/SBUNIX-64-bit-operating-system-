@@ -379,21 +379,21 @@ void _hndlr_isr14(){
    
     kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
     
-    if(errorCode&0x4)
-    {
-        kprintf("Handling page fault ");
-        void *ptr=pageAllocator();
-        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
-        memset((uint64_t)ptr+get_kernbase());
-
-    }
-    
-    else
-    {
+//    if(errorCode&0x4)
+//    {
+//        kprintf("Handling page fault ");
+//        void *ptr=pageAllocator();
+//        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
+//        memset((uint64_t)ptr+get_kernbase());
+//
+//    }
+//
+//    else
+//    {
         kprintf("Page fault cannot be handled.. Kill the process....! :-/");
         while(1);
         
-    }
+//    }
 
     
 }
