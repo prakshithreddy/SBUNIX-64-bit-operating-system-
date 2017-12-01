@@ -234,7 +234,7 @@ Task* createChildandSaveParentState(Task* parent)
     parent->regs.rdi = userRdi;
     parent->regs.rbp = userRbp;
     parent->regs.rax = userRax;
-    parent->regs.rip = (uint64_t)userRip;
+    parent->regs.rip = (uint64_t)userRIP;
     parent->regs.userRsp= (uint64_t)userRSP;
     parent->regs.rflags = userRflags;
     _prepareInitialKernelStack(&parent->regs);
