@@ -211,9 +211,32 @@ void switchToUserMode()
     
 }
 
+
+void memcpy(void *src,void *dest,size_t n){
+    unsigned char *s=src;
+    unsigned char *d=dest;
+    while(n>0){
+        *d=*s;
+        s++;
+        d++;
+        n--;
+    }
+}
+
+uint64_t* copyUserStack(uint64_t rsp)
+{
+    uint64_t* temp = rsp&0xFFFFFFFFFFFFF000;
+    uint64_t* page = (uint64_t*)kmalloc();
+    memcpy(temp,page,0x1000);
+    return page+0x1000;
+    
+}
 Task* createChildandSaveParentState(Task* parent)
 {
     Task* task = (Task*)kmalloc();
+    
+    task->regs.userRsp=(uint64_t)copyUserStack(parent->regs.userRsp);
+    
     
     task->pid_t = pidCount+1;
     pidCount+=1; //next process takes the next id
@@ -244,12 +267,12 @@ Task* createChildandSaveParentState(Task* parent)
     
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=parent->regs.cr3;
-    task->regs.userRsp= (uint64_t)userRSP;  // creating a stack for the user process
+      // creating a stack for the user process
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // the kernel stack should be diff for interrupts
     //task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
     task->regs.add=0;
-    task->memMap.mmap=((void *)0);
+    task->memMap.mmap=parent->memMap.mmap
     _prepareInitialKernelStack(&task->regs);
     
                           
