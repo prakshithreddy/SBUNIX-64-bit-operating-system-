@@ -225,7 +225,7 @@ void memcpy(void *src,void *dest,size_t n){
 
 uint64_t* copyUserStack(uint64_t rsp)
 {
-    uint64_t* temp = rsp&0xFFFFFFFFFFFFF000;
+    uint64_t* temp = (uint64_t*)rsp&0xFFFFFFFFFFFFF000;
     uint64_t* page = (uint64_t*)kmalloc();
     memcpy(temp,page,0x1000);
     return page+0x1000;
