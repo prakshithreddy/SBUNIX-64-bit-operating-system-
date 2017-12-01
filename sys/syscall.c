@@ -17,7 +17,6 @@ uint64_t userRax = 0;
 uint64_t userRbx = 0;
 uint64_t userRcx = 0;
 uint64_t userRdx = 0;
-uint64_t userRdi = 0;
 uint64_t userRsi = 0;
 uint64_t userRdi = 0;
 uint64_t userRbp = 0;
