@@ -10,10 +10,7 @@
 
 _syscallEntry:
     movq %rsp, userRSP
-    pushq %rax
-    movq 8(%rsp),%rax
-    movq %rax,userRIP
-    popq %rax
+    movq %rcx,userRIP
     movq (kernelRSP),%rsp
     pushq (userRSP)
 
