@@ -211,14 +211,14 @@ void switchToUserMode()
     
 }
 
-Task* createCOWTask(Task* parent)
+Task* createChildandSaveParentState(Task* parent)
 {
     Task* task = (Task*)kmalloc();
     
     task->pid_t = pidCount+1;
     pidCount+=1; //next process takes the next id
     task->ppid_t = parent->pid_t; //setting the Pid of the parent for COW
-    task->regs.rbx = userRax;
+    task->regs.rbx = userRbx;
     task->regs.rcx = userRcx;
     task->regs.rdx = userRdx;
     task->regs.rsi = userRsi;
@@ -226,16 +226,32 @@ Task* createCOWTask(Task* parent)
     task->regs.rbp = userRbp;
     task->regs.rflags = userRflags;
     task->regs.rax =0; //why 0 ; because syscall return to child must be zero
+    
+    parent->regs.rbx = userRbx;
+    parent->regs.rcx = userRcx;
+    parent->regs.rdx = userRdx;
+    parent->regs.rsi = userRsi;
+    parent->regs.rdi = userRdi;
+    parent->regs.rbp = userRbp;
+    parent->regs.rax = userRax;
+    parent->regs.rip = (uint64_t)userRip;
+    parent->regs.userRsp= (uint64_t)userRSP;
+    parent->regs.rflags = userRflags;
+    _prepareInitialKernelStack(&parent->regs);
+    parent->regs.count=0;
+    parent->regs.add=0;
+    
+    
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=parent->regs.cr3;
     task->regs.userRsp= (uint64_t)userRSP;  // creating a stack for the user process
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // the kernel stack should be diff for interrupts
-    task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
+    //task->regs.rbp=parent->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
     task->regs.add=0;
     task->memMap.mmap=((void *)0);
     _prepareInitialKernelStack(&task->regs);
-    addCurrentTasktoRunQueue(task);
+    
                           
   return task;
 }
@@ -245,10 +261,10 @@ void addCurrentTasktoRunQueue(Task* task)
     //insert this task at the end / / /
     Task* nextToCurrentTask = runningThread;
     
-    while(nextToCurrentTask->next!=runningThread)
-    {
-        nextToCurrentTask=nextToCurrentTask->next;
-    }
+//    while(nextToCurrentTask->next!=runningThread)
+//    {
+//        nextToCurrentTask=nextToCurrentTask->next;
+//    }
     
     nextToCurrentTask->next = task;
     task->next = nextToCurrentTask->next;
@@ -282,9 +298,12 @@ void markPagesAsReadOnly(uint64_t cr3)
 
 int fork()
 {
-    Task* child = createCOWTask(runningThread);
+    Task* child = createChildandSaveParentState(runningThread);
     //mark all the entries in the CR3 as readable
     markPagesAsReadOnly(runningThread->regs.cr3+get_kernbase());
+    addCurrentTasktoRunQueue(child);
+    runningThread->regs.rax = 0;
+    runNextTask();
     return child->pid_t;
     
 }
