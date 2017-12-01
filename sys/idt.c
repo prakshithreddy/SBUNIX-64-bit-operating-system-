@@ -222,7 +222,7 @@ void _timer_intr_hdlr(){
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-        runNextTask(); // preemptive multitasking code starts here..
+        //runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();
