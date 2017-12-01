@@ -33,4 +33,6 @@ struct posix_header_ustar {
   char pad[12];
 };
 
+void memcpy(void *src,void *dest,size_t n);
+
 #endif

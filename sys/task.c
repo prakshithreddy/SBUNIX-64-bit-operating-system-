@@ -212,16 +212,6 @@ void switchToUserMode()
 }
 
 
-void memcpy(void *src,void *dest,size_t n){
-    unsigned char *s=src;
-    unsigned char *d=dest;
-    while(n>0){
-        *d=*s;
-        s++;
-        d++;
-        n--;
-    }
-}
 
 uint64_t* copyUserStack(uint64_t rsp)
 {
