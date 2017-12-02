@@ -44,7 +44,7 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
     
     
   kprintf("***************************Paging Enabled***************************\n");
-  probeAHCI();
+  //probeAHCI();
   //initUserMode();
   initTarfs();
   //loadFile("rakshith",0xfffffffff);
