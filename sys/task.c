@@ -249,14 +249,26 @@ uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
 void copyParentCr3Entries(Task* task)
 {
     VMA* vma = runningThread->memMap.mmap;
-    //uint64_t temp = get_stack_top();
+    uint64_t temp = get_stack_top();
+    uint64_t cur_stack_start = (runningThread->regs.userRsp)&FRAME;
     while(vma!=NULL)
     {
         uint64_t start = vma->v_start;
         while(start<vma->v_end)
         {   
-            mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
-            start = start + 0x1000;
+            if(vma->v_end != temp){
+                mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
+                start = start + 0x1000;
+            }
+            else{
+                //uint64_t child_stack = 0xFFFFFF7F00000000-0x1000;
+                uint64_t phy_child_stack = (uint64_t)kmalloc();
+                phy_child_stack-=get_kernbase();
+                mapPageForUser(start,phy_child_stack,task->regs.cr3+get_kernbase());
+                memcpy((void *)start,(void *)(phy_child_stack+get_kernbase()),4096);
+                start = start + 0x1000;
+                cur_stack_start+=0x1000;
+            }
         }
         vma=vma->next;
     }
@@ -285,10 +297,10 @@ void createChildTask(Task *task){
     task->regs.rflags=userRflags;
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=(uint64_t)getNewPML4ForUser();
-    task->regs.userRsp=(uint64_t)userRSP;
     
     copyParentCr3Entries(task);
     //copyStacktoChild(task);
+    task->regs.userRsp=(uint64_t)userRSP;
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000;
     task->regs.count=0;
     task->regs.add=0;
