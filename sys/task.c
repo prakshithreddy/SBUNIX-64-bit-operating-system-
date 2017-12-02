@@ -261,7 +261,6 @@ void copyParentCr3Entries(Task* task)
                 start = start + 0x1000;
             }
             else{
-                //uint64_t child_stack = 0xFFFFFF7F00000000-0x1000;
                 uint64_t phy_child_stack = (uint64_t)kmalloc();
                 phy_child_stack-=get_kernbase();
                 mapPageForUser(start,phy_child_stack,task->regs.cr3+get_kernbase());
@@ -274,6 +273,8 @@ void copyParentCr3Entries(Task* task)
     }
 }
 
+
+
 void copyStacktoChild(Task* task)
 {
     uint64_t cur_stack_start = (runningThread->regs.userRsp)&FRAME;
@@ -281,6 +282,47 @@ void copyStacktoChild(Task* task)
     memcpy((void *)cur_stack_start,(void *)(0xFFFFFF7F00000000-0x1000),4096);
 }
 //fork process code starts here.
+
+void copyVMA(VMA* vma)
+{
+    MM* newMM = (MM*)kmalloc();
+    newMM->mmap = NULL;
+    VMA* oldHead = vma;
+    while(oldHead!=NULL)
+    {
+        newVMA = (VMA*)kmalloc();
+        if(newVMA!=NULL)
+        {
+            newVma->v_mm = newMM;
+            mm->count+=1;
+//            newVma->next=vma->next;
+            newVma->grows_down=vma->grows_down;
+            newVma->v_start=vma->v_start;
+            newVma->v_end=vma->v_end;
+            newVma->mmsz=vma->mmsz;
+            
+            VMA* temp = newMM->mmap;
+            if(temp==NULL)
+            {
+                newMM->mmap = newVMA;
+                newVMA->next=NULL;
+            }
+            else
+            {
+                while(temp->next!=NULL)temp=temp->next;
+                temp->next=newVMA;
+                newVMA->next=NULL;
+                
+            }
+            
+        }
+        
+        oldHead=oldHead->next;
+    }
+    task->memMap = newMM;
+    task->memMap.mmap = newMM->mmap;
+    
+}
 
 void createChildTask(Task *task){
     
@@ -305,7 +347,8 @@ void createChildTask(Task *task){
     task->regs.count=0;
     task->regs.add=0;
     //task->next=0;
-    task->memMap.mmap=runningThread->memMap.mmap;
+   // task->memMap.mmap=runningThread->memMap.mmap;
+    copyVMA(task,runningThread->Mmap.mmap);
     _prepareInitialKernelStack(&task->regs);
 }
 
