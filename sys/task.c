@@ -285,7 +285,6 @@ void copyStacktoChild(Task* task)
 
 void copyVMA(Task* task,VMA* vma)
 {
-    //MM* newMM = (MM*)kmalloc();
     task->memMap.mmap = NULL;
     VMA* oldHead = vma;
     while(oldHead!=NULL)
@@ -295,7 +294,6 @@ void copyVMA(Task* task,VMA* vma)
         {
             newVma->v_mm = newMM;
             newMM->count+=1;
-//            newVma->next=vma->next;
             newVma->grows_down=vma->grows_down;
             newVma->v_start=vma->v_start;
             newVma->v_end=vma->v_end;
