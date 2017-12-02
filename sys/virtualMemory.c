@@ -18,6 +18,7 @@ uint64_t get_kernbase(){
 uint64_t get_stack_top(){
   return USER_VIRTUAL_STACK_TOP;
 }
+
 void mapKernelMemory(){
   //uint64_t physbase = get_ker_physbase();
   //uint64_t physfree = get_ker_physfree();
