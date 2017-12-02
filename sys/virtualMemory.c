@@ -325,7 +325,7 @@ void* stackForUser(Task *uthread){
     memset((uint64_t)ptr+kernbase);
     
     //Adding VMA STRUCT
-    MM *mm = uthread->memMap;
+    MM *mm = &uthread->memMap;
     VMA *vma_start;
     VMA *new_vma;
     vma_start = mm->mmap;
