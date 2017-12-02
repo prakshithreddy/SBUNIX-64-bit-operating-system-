@@ -73,7 +73,7 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,T
     }
     
     //***********************Below code is to create VMA struct for each program header section.
-    MM *mm = &uthread->memMap;
+    MM *mm = uthread->memMap;
     VMA *vma_start;
     VMA *new_vma;
     vma_start = mm->mmap;

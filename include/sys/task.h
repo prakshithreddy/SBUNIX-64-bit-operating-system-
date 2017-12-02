@@ -48,7 +48,7 @@ typedef struct Task {
   int ppid_t;
   Registers regs;
   struct Task *next;
-  struct mm_struct memMap;
+  struct mm_struct *memMap;
   File files[50];
   Directory directories[50];
 } Task;
