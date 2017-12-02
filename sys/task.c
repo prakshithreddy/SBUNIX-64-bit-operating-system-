@@ -227,21 +227,21 @@ void getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
     
     if(pml_entry&PRESENT){
         pdpt = (struct PDPT*)(pml_entry);
-        v_pdpt = (struct PDPT*)((uint64_t)pdpt+kernbase);
+        v_pdpt = (struct PDPT*)((uint64_t)pdpt+get_kernbase());
         uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
         if(pdpt_entry&PRESENT){
             pdt = (struct PDT*)(pdpt_entry);
-            v_pdt = (struct PDT*)((uint64_t)pdt+kernbase);
+            v_pdt = (struct PDT*)((uint64_t)pdt+get_kernbase());
             uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
             if(pdt_entry&PRESENT){
                 pt = (struct PT*)(pdt_entry);
-                v_pt = (struct PT*)((uint64_t)pt+kernbase);
+                v_pt = (struct PT*)((uint64_t)pt+get_kernbase());
                 return v_pt->entries[get_PT_INDEX((uint64_t)v_addr)];
             }
             
         }
     }
-    return NULL;
+    return -1;
     
 }
 
@@ -252,7 +252,7 @@ void copyParentCr3Entries(Task* task)
     while(vma!=NULL)
     {
         uint64_t start = vma->v_start;
-        while(start<vma->end)
+        while(start<vma->v_end)
         {
             mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
             start = start + 0x1000;
@@ -268,7 +268,7 @@ void createChildTask(Task *task){
     
     task->pid_t = pidCount+1;
     pidCount+=1; //next process takes the next id
-    task->ppid_t = parentPid; //setting the Pid of the parent for COW
+    task->ppid_t = runningThread->pid_t; //setting the Pid of the parent for COW
     
     task->regs.rax=userRax;
     task->regs.rbx=userRbx;
@@ -280,7 +280,7 @@ void createChildTask(Task *task){
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=(uint64_t)getNewPML4ForUser();
     
-    copyParentCr3Entries(task)
+    copyParentCr3Entries(task);
     
     task->regs.userRsp=userRsp;
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000;
@@ -298,7 +298,7 @@ void addChildToQueue(Task* task)
 
 }
 
-void fork()
+int fork()
 {
     Task* child = (uint64_t*)kmalloc();
     createChildTask(child);
