@@ -254,7 +254,7 @@ void copyParentCr3Entries(Task* task)
         uint64_t start = vma->v_start;
         while(start<vma->v_end)
         {
-            mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
+            mapPageForUser(start,getPhysicalPageAddr(start&FRAME,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
             start = start + 0x1000;
         }
         
