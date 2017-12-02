@@ -212,7 +212,7 @@ void switchToUserMode()
 }
 
 
-void getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
+uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
     
     struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
     struct PDT *pdt;
