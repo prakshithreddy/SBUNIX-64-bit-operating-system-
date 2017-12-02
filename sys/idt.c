@@ -181,8 +181,12 @@ void _key_press_handler(registers_t regs){
           control=0;
       }
     }
+    
+    
+    
     outb(0x20,0x20);
     outb(0x20,0xA0);
+    runNextTask();
 }
 
 static int i = 0;
@@ -222,7 +226,7 @@ void _timer_intr_hdlr(){
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-        runNextTask(); // preemptive multitasking code starts here..
+//        runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();
