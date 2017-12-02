@@ -324,6 +324,7 @@ void copyVMA(Task* task,VMA* vma)
     }
     task->memMap = newMM;
     task->memMap->mmap = newMM->mmap;
+    //asd
     
 }
 
