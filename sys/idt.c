@@ -186,10 +186,10 @@ void _key_press_handler(registers_t regs){
     
     outb(0x20,0x20);
     outb(0x20,0xA0);
-    runNextTask();
 }
 
 static int i = 0;
+static int j=0;
 static int hour = 0;
 static int minute = 0;
 static int seconds = 0;
@@ -197,6 +197,7 @@ static int seconds = 0;
 void _timer_intr_hdlr(){
     
     i++;
+    j++;
     
     if(i%19==0) {
         i = 0;
@@ -221,12 +222,13 @@ void _timer_intr_hdlr(){
         //runNextTask();
         
     }
-    else if (i%100==0)
+    else if (j%100==0)
     {
+        j=0;
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-//        runNextTask(); // preemptive multitasking code starts here..
+        runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();

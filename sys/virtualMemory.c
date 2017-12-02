@@ -14,6 +14,10 @@ static struct PML4 *pml4;
 uint64_t get_kernbase(){
   return kernbase;
 }
+
+uint64_t get_stack_top(){
+  return USER_VIRTUAL_STACK_TOP;
+}
 void mapKernelMemory(){
   //uint64_t physbase = get_ker_physbase();
   //uint64_t physfree = get_ker_physfree();
@@ -338,8 +342,8 @@ void* stackForUser(Task *uthread){
     mm->count++;
     new_vma->next=NULL;
     new_vma->grows_down=1;
-    new_vma->v_start=USER_VIRTUAL_STACK_TOP;
-    new_vma->v_end=USER_VIRTUAL_STACK_TOP+0x1000;
+    new_vma->v_start=USER_VIRTUAL_STACK_TOP-0x1000;
+    new_vma->v_end=USER_VIRTUAL_STACK_TOP;
     new_vma->mmsz=0x1000;
     //new_vma->v_flags=elf_p_hdr->p_flags;//TODO: So many other details can be stored in VMA struct, Not sure what flags to set to stack.
     

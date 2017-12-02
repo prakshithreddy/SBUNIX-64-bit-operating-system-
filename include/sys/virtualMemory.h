@@ -22,6 +22,7 @@ void mapVideoMemory(uint64_t vga_virtual_address);
 void* kmalloc();//returns virtual address, to be called only after paging only by kernel.
 uint64_t getCr3();
 uint64_t get_kernbase();
+uint64_t get_stack_top();
 uint64_t mapAHCI(uint64_t abar_phys);
 void* stackForUser(Task *uthread);
 

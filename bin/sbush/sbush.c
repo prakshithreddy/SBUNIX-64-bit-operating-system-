@@ -13,11 +13,11 @@ int main(int argc, char *argv[], char *envp[]){
     int pid = syscall(1,1,2,3,4,5,6);
     if(pid == 0)
     {
-         while(1)syscall(10,1,2,3,4,5,6);
+        syscall(10,1,2,3,4,5,6);
     }
     else
     {
-        while(1);//syscall(20,1,2,3,4,5,6);
+        syscall(20,1,2,3,4,5,6);
     }
     
     //syscall(10,1,2,3,4,5,6);
@@ -30,7 +30,7 @@ int main(int argc, char *argv[], char *envp[]){
 //    char *s = (void*)(0x0);
 //    //kprintf("%p",s);
 //    *s='a';
-//
+//    
 //    syscall(argc,1,2,3,4,5,6);
-   
+     while(1);
 }

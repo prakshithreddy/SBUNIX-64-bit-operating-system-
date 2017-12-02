@@ -226,15 +226,15 @@ uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
     uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
     
     if(pml_entry&PRESENT){
-        pdpt = (struct PDPT*)(pml_entry);
+        pdpt = (struct PDPT*)(pml_entry&FRAME);
         v_pdpt = (struct PDPT*)((uint64_t)pdpt+get_kernbase());
         uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
         if(pdpt_entry&PRESENT){
-            pdt = (struct PDT*)(pdpt_entry);
+            pdt = (struct PDT*)(pdpt_entry&FRAME);
             v_pdt = (struct PDT*)((uint64_t)pdt+get_kernbase());
             uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
             if(pdt_entry&PRESENT){
-                pt = (struct PT*)(pdt_entry);
+                pt = (struct PT*)(pdt_entry&FRAME);
                 v_pt = (struct PT*)((uint64_t)pt+get_kernbase());
                 return v_pt->entries[get_PT_INDEX((uint64_t)v_addr)];
             }
@@ -249,19 +249,27 @@ uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
 void copyParentCr3Entries(Task* task)
 {
     VMA* vma = runningThread->memMap.mmap;
+    uint64_t temp = get_stack_top();
     while(vma!=NULL)
     {
         uint64_t start = vma->v_start;
         while(start<vma->v_end)
-        {
-            mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
-            start = start + 0x1000;
+        {   
+            if(vma->v_end!=temp){
+                mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
+                start = start + 0x1000;
+            }
         }
-        
         vma=vma->next;
     }
 }
 
+void copyStacktoChild(Task* task)
+{
+    uint64_t cur_stack_start = (runningThread->regs.userRsp)&FRAME;
+    mapPageForUser(0xFFFFFF7F00000000-0x1000,(task->regs.userRsp-0x1000)-get_kernbase(),task->regs.cr3+get_kernbase());
+    memcpy((void *)cur_stack_start,(void *)(0xFFFFFF7F00000000-0x1000),4096);
+}
 //fork process code starts here.
 
 void createChildTask(Task *task){
@@ -270,7 +278,7 @@ void createChildTask(Task *task){
     pidCount+=1; //next process takes the next id
     task->ppid_t = runningThread->pid_t; //setting the Pid of the parent for COW
     
-    task->regs.rax=userRax;
+    task->regs.rax=0;
     task->regs.rbx=userRbx;
     task->regs.rcx=userRcx;
     task->regs.rdx=userRdx;
@@ -279,10 +287,10 @@ void createChildTask(Task *task){
     task->regs.rflags=userRflags;
     task->regs.rip=(uint64_t)userRIP;
     task->regs.cr3=(uint64_t)getNewPML4ForUser();
+    task->regs.userRsp=(uint64_t)kmalloc()+0x1000;
     
     copyParentCr3Entries(task);
-    
-    task->regs.userRsp=(uint64_t)userRSP;
+    //copyStacktoChild(task);
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000;
     task->regs.count=0;
     task->regs.add=0;
