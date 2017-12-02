@@ -282,7 +282,7 @@ void createChildTask(Task *task){
     
     copyParentCr3Entries(task);
     
-    task->regs.userRsp=userRsp;
+    task->regs.userRsp=userRSP;
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000;
     task->regs.count=0;
     task->regs.add=0;
@@ -300,7 +300,7 @@ void addChildToQueue(Task* task)
 
 int fork()
 {
-    Task* child = (uint64_t*)kmalloc();
+    Task* child = (Task*)kmalloc();
     createChildTask(child);
     addChildToQueue(child);
     return child->pid_t;
