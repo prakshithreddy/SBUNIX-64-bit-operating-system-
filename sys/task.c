@@ -248,7 +248,7 @@ uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
 
 void copyParentCr3Entries(Task* task)
 {
-    VMA* vma = runningThread->memMap->mmap;
+    VMA* vma = runningThread->memMap.mmap;
     uint64_t temp = get_stack_top();
     uint64_t cur_stack_start = (runningThread->regs.userRsp)&FRAME;
     while(vma!=NULL)
@@ -292,8 +292,8 @@ void copyVMA(Task* task,VMA* vma)
         VMA* newVma = (VMA*)kmalloc();
         if(newVma!=NULL)
         {
-            newVma->v_mm = newMM;
-            newMM->count+=1;
+            newVma->v_mm = &task->memMap;
+            task->memMap.count+=1;
             newVma->grows_down=vma->grows_down;
             newVma->v_start=vma->v_start;
             newVma->v_end=vma->v_end;
@@ -345,7 +345,7 @@ void createChildTask(Task *task){
     task->regs.add=0;
     //task->next=0;
    // task->memMap.mmap=runningThread->memMap.mmap;
-    copyVMA(task,runningThread->memMap->mmap);
+    copyVMA(task,runningThread->memMap.mmap);
     _prepareInitialKernelStack(&task->regs);
 }
 
