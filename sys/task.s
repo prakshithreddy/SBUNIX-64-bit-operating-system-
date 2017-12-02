@@ -206,7 +206,7 @@ _moveToNextProcess:
 
     //done : saved the state of the first process
 
-    movq 80(%rsi),%rax //loading the user cr3 val
+    movq 80(%rdi),%rax //loading the user cr3 val
     movq %rax, %cr3
 
     movq $0x23,%rax
