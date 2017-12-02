@@ -301,6 +301,8 @@ void copyVMA(VMA* vma)
             newVma->v_end=vma->v_end;
             newVma->mmsz=vma->mmsz;
             newVma->v_flags = vma->v_flags;
+            newVma->v_offset = vma->v_offset;
+            newVMA->v_file = vma->v_file;
             
             VMA* temp = newMM->mmap;
             if(temp==NULL)
