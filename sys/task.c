@@ -212,6 +212,100 @@ void switchToUserMode()
 }
 
 
+void getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
+    
+    struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
+    struct PDT *pdt;
+    struct PT *pt;
+    struct PDPT *v_pdpt;
+    struct PDT *v_pdt;
+    struct PT *v_pt;
+    
+    struct PML4 *curr_pml4=(struct PML4*)cr3+get_kernbase();
+    
+    uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
+    
+    if(pml_entry&PRESENT){
+        pdpt = (struct PDPT*)(pml_entry);
+        v_pdpt = (struct PDPT*)((uint64_t)pdpt+kernbase);
+        uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
+        if(pdpt_entry&PRESENT){
+            pdt = (struct PDT*)(pdpt_entry);
+            v_pdt = (struct PDT*)((uint64_t)pdt+kernbase);
+            uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
+            if(pdt_entry&PRESENT){
+                pt = (struct PT*)(pdt_entry);
+                v_pt = (struct PT*)((uint64_t)pt+kernbase);
+                return v_pt->entries[get_PT_INDEX((uint64_t)v_addr)];
+            }
+            
+        }
+    }
+    return NULL;
+    
+}
+
+
+void copyParentCr3Entries(Task* task)
+{
+    VMA* vma = runningThread->memMap.mmap;
+    while(vma!=NULL)
+    {
+        uint64_t start = vma->v_start;
+        while(start<vma->end)
+        {
+            mapPageForUser(start,getPhysicalPageAddr(start,runningThread->regs.cr3),task->regs.cr3+get_kernbase());
+            start = start + 0x1000;
+        }
+        
+        vma=vma->next;
+    }
+}
+
+//fork process code starts here.
+
+void createChildTask(Task *task){
+    
+    task->pid_t = pidCount+1;
+    pidCount+=1; //next process takes the next id
+    task->ppid_t = parentPid; //setting the Pid of the parent for COW
+    
+    task->regs.rax=userRax;
+    task->regs.rbx=userRbx;
+    task->regs.rcx=userRcx;
+    task->regs.rdx=userRdx;
+    task->regs.rsi=userRsi;
+    task->regs.rdi=userRdi;
+    task->regs.rflags=userRflags;
+    task->regs.rip=(uint64_t)userRIP;
+    task->regs.cr3=(uint64_t)getNewPML4ForUser();
+    
+    copyParentCr3Entries(task)
+    
+    task->regs.userRsp=userRsp;
+    task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000;
+    task->regs.count=0;
+    task->regs.add=0;
+    //task->next=0;
+    task->memMap.mmap=runningThread->memMap.mmap;
+    _prepareInitialKernelStack(&task->regs);
+}
+
+void addChildToQueue(Task* task)
+{
+    task->next = runningThread->next;
+    runningThread->next = task;
+
+}
+
+void fork()
+{
+    Task* child = (uint64_t*)kmalloc();
+    createChildTask(child);
+    addChildToQueue(child);
+    return child->pid_t;
+}
+
 void initUserProcess()
 {
     

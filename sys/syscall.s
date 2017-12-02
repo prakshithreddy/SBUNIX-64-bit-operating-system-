@@ -28,10 +28,7 @@ _syscallEntry:
     movq %rsi,userRsi
     movq %rdi,userRdi
     movq %rbp,userRbp
-    pushfq
-    popq %rax
-    movq %rax,userRflags
-    movq userRax,%rax
+    movq %r11,userRflags
 
     movq (kernelRSP),%rsp
     pushq (userRSP)
