@@ -239,7 +239,7 @@ _moveToNextProcess:
     movq 56(%rsi),%rbp
     movq $0,%rax
 
-    sysretq
+    iretq
 
 _pushVal:
     movq %rsp,currentRSP // will be restored later
