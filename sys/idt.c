@@ -426,7 +426,7 @@ void _hndlr_isr14(){
     }
     else if(us&rw&p)
     {
-//        Task* runningThread = getRunningThread();
+        Task* runningThread = getRunningThread();
 //        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
 //        if(pNum==-1)
 //        {
@@ -439,8 +439,8 @@ void _hndlr_isr14(){
         int pageCount=1;
         uint64_t phyAddr = getPhysicalPageAddr(pagefaultAt&FRAME,getRunCr3());
         phyAddr&=FRAME;
-        Task* temp = getRunningThread()->next;
-        while(temp!=getRunningThread())
+        Task* temp = runningThread->next;
+        while(temp!=runningThread)
         {
             uint64_t tempPhy = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
             if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
