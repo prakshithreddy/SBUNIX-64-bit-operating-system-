@@ -350,16 +350,16 @@ void createChildTask(Task *task){
 }
 
 
-bool isPartofCurrentVma(uint64_t addr)
+int isPartofCurrentVma(uint64_t addr)
 {
     VMA* vma = runningThread->memMap.mmap;
     while(vma!=NULL)
     {
-        if(vma->v_start&FRAME==addr) return true;
+        if((vma->v_start&FRAME)==addr) return 1;
         vma=vma->next;
     }
     
-    return false;
+    return 0;
 }
 
 
