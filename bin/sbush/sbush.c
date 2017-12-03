@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[]){
 
         int* a = (int*)syscall(99,4096,0,0,0,0,0);
         a1[3] = 786;
-        while(1);syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
+        while(1)syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
     }
     else
     {
