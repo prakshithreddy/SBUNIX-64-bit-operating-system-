@@ -321,7 +321,7 @@ void copyParentCr3Entries(Task* task)
                 uint64_t phy_child_stack = (uint64_t)kmalloc();
                 phy_child_stack-=get_kernbase();
                 mapPageForUser(start&FRAME,phy_child_stack,task->regs.cr3+get_kernbase());
-                memcpy((void *)start&FRAME,(void *)(phy_child_stack+get_kernbase()),4096);
+                memcpy((void *)(start&FRAME),(void *)(phy_child_stack+get_kernbase()),4096);
                 start = start + 0x1000;
                 cur_stack_start+=0x1000;
             }
