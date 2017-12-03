@@ -409,31 +409,54 @@ void _hndlr_isr14(){
             mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
             
-            Task* runningThread = getRunningThread();
-            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
-            if(pNum==-1)
-            {
-                kprintf("ERROR");
-                while(1);
-                
-            }
-            makePageCopiesForChilden(pNum,runningThread);
-            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+//            Task* runningThread = getRunningThread();
+//            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+//            if(pNum==-1)
+//            {
+//                kprintf("ERROR");
+//                while(1);
+//
+//            }
+//            makePageCopiesForChilden(pNum,runningThread);
+//            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
             
         }
     }
     else if(us&rw&p)
     {
-        Task* runningThread = getRunningThread();
-        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
-        if(pNum==-1)
+//        Task* runningThread = getRunningThread();
+//        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+//        if(pNum==-1)
+//        {
+//            kprintf("ERROR");
+//            while(1);
+//
+//        }
+//        makePageCopiesForChilden(pNum,runningThread);
+//        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+        int pageCount=1;
+        uint64_t phyAddr = getPhysicalPageAddr(pagefaultAt&FRAME,getRunCr3());
+        
+        Task* temp = getRunningThread()->next;
+        while(temp!=getRunningThread())
         {
-            kprintf("ERROR");
-            while(1);
+            if(getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3)==phyAddr) pageCount+=1; //how many cr3 contain this phy address,virtual address combo
+            temp=temp->next;
+        }
+        
+        if(pageCount==1)
+        {
+            markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0);
             
         }
-        makePageCopiesForChilden(pNum,runningThread);
-        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+        else
+        {
+            uint64_t newPage = (uint64_t)kmalloc();
+            newPage-=get_kernbase();
+            mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
+            memcpy((void *)pagefaultAt&FRAME,(void *)(newPage+get_kernbase()),4096);
+            
+        }
         
     }
     else
