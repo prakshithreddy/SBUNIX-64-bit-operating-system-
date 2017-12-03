@@ -518,7 +518,7 @@ uint64_t getPageNumFromAddr(uint64_t addr)
     return -1;
 }
 
-uint64_t* malloc(uint64_t size)
+uint64_t malloc(uint64_t size)
 {
     VMA* temp = runningThread->memMap.mmap;
     VMA* newVma = (VMA*)kmalloc();
