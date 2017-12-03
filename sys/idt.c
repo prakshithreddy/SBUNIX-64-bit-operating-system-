@@ -7,6 +7,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 #include<sys/task.h>
+#include<sys/tarfs.h>
 
 uint64_t switchRsp=0;
 uint64_t switchRbx=0;
