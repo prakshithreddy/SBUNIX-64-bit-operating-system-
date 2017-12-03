@@ -66,7 +66,7 @@ void _switchThread_(Registers *from, Registers *to);
 void createNewTask(Task *kthread, uint64_t function, uint64_t rflags,uint64_t cr3,int parentPid);
 void switchToUserMode();
 int fork();
-uint64* malloc(uint64_t size);
+uint64_t* malloc(uint64_t size);
 
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
