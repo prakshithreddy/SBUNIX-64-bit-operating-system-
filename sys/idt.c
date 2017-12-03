@@ -457,7 +457,7 @@ void _hndlr_isr14(){
     
         if(pageCount==1)
         {
-            pageDeAllocator(void*(phyAddr&=FRAME));
+            pageDeAllocator((void*)(phyAddr&=FRAME));
             
         }
     }
