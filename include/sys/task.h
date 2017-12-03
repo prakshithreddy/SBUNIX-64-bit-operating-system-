@@ -70,6 +70,8 @@ void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
 int isPartofCurrentVma(uint64_t addr);
 uint64_t getNextPageNum();
+uint64_t getPageNumFromAddr(uint64_t addr);
 int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw);
+void makePageCopiesForChilden(uint64_t pNum,int isParent,Task* task);
 
 #endif

@@ -416,7 +416,7 @@ void _hndlr_isr14(){
             while(1);
             
         }
-        if(!runnningThread->ppid_t)
+        if(!runningThread->ppid_t)
         {
             //parent
             //go to the childs and make copy of the that frame
