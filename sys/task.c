@@ -451,6 +451,7 @@ void makeParentCr3asReadOnly()
         {
             if(vma->v_end != temp){
                 markPageAsRW(start&FRAME,runningThread->regs.cr3+get_kernbase(),1);
+                invlpg(start&FRAME);
             }
             else{
                 //this is stack leave it

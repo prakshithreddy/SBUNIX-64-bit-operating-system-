@@ -411,6 +411,7 @@ void _hndlr_isr14(){
             mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
             
+            
 //            Task* runningThread = getRunningThread();
 //            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
 //            if(pNum==-1)
@@ -461,8 +462,7 @@ void _hndlr_isr14(){
             memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
             
         }
-        invlpg(phyAddr&=FRAME);
-        invlpg(phyAddr);
+        
     }
     else
     {
