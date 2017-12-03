@@ -461,6 +461,7 @@ void _hndlr_isr14(){
             memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
             
         }
+        invlpg(phyAddr&=FRAME);
     }
     else
     {
