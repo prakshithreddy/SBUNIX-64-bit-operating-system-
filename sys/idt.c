@@ -390,6 +390,7 @@ void _hndlr_isr14(){
     int rw = errorCode&0x1;
     errorCode>>=1;
     int us = errorCode&0x1;
+    errorCode>>=1;
     
     //kprintf("%d %d %d",us,rw,p);
     
@@ -407,6 +408,43 @@ void _hndlr_isr14(){
         {
             mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
+            
+            Task* runningThread = getRunningThread();
+            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+            if(pNum==-1)
+            {
+                kprintf("ERROR");
+                while(1);
+                
+            }
+            if(!runningThread->ppid_t)
+            {
+                //parent
+                //go to the childs and make copy of the that frame
+                makePageCopiesForChilden(pNum,runningThread); //1 - parent
+                markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0); //0 enable write
+            }
+            else
+            {
+                //child
+                //find the parent
+                Task* temp = runningThread->next;
+                while(temp!=NULL&&temp->next!=temp)
+                {
+                    if(temp->pid_t == runningThread->ppid_t) break;
+                }
+                if(temp!=runningThread)
+                {
+                    makePageCopiesForChilden(pNum,temp);
+                    markPageAsRW(pagefaultAt&FRAME,(temp->regs.cr3+get_kernbase()),0); //0enable write
+                }
+                else
+                {
+                    kprintf("Error");
+                    while(1);
+                }
+                
+            }
         }
     }
     else if(us&rw&p)
