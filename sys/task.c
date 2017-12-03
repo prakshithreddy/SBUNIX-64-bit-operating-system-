@@ -203,6 +203,51 @@ void runNextTask()
     _moveToNextProcess(&prev->regs, &runningThread->regs);
 }
 
+int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
+    
+    struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
+    struct PDT *pdt;
+    struct PT *pt;
+    struct PDPT *v_pdpt;
+    struct PDT *v_pdt;
+    struct PT *v_pt;
+    
+    struct PML4 *curr_pml4=(struct PML4*)(cr3+get_kernbase());
+    
+    uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
+    
+    if(pml_entry&PRESENT){
+        pdpt = (struct PDPT*)(pml_entry&FRAME);
+        v_pdpt = (struct PDPT*)((uint64_t)pdpt+get_kernbase());
+        uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
+        if(pdpt_entry&PRESENT){
+            pdt = (struct PDT*)(pdpt_entry&FRAME);
+            v_pdt = (struct PDT*)((uint64_t)pdt+get_kernbase());
+            uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
+            if(pdt_entry&PRESENT){
+                pt = (struct PT*)(pdt_entry&FRAME);
+                v_pt = (struct PT*)((uint64_t)pt+get_kernbase());
+                if(rw)
+                {
+                    //setPage as read only
+                    v_pt->entries[get_PT_INDEX((uint64_t)v_addr)] = v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]&MAKERDONLY;
+                }
+                else
+                {
+                    //setPage as writable
+                    v_pt->entries[get_PT_INDEX((uint64_t)v_addr)] = v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]|WRITEABLE;
+                    
+                }
+                return 0;
+                
+            }
+            
+        }
+    }
+    return -1;
+    
+}
+
 void switchToUserMode()
 {
     Task *last = runningThread;
@@ -402,59 +447,38 @@ void associateChildToParent(Task* task)
     
 }
 
+void makeParentCr3asReadOnly(Task* task)
+{
+    VMA* vma = runningThread->memMap.mmap;
+    uint64_t temp = get_stack_top();
+    uint64_t cur_stack_start = (runningThread->regs.userRsp)&FRAME;
+    while(vma!=NULL)
+    {
+        uint64_t start = vma->v_start;
+        while(start<vma->v_end)
+        {
+            if(vma->v_end != temp){
+                markPageAsRW(start&FRAME,runningThread->regs.cr3+get_kernbase(),1);
+            }
+            else{
+                //this is stack leave it
+            }
+        }
+        vma=vma->next;
+    }
+}
+
 int fork()
 {
     Task* child = (Task*)kmalloc();
     createChildTask(child);
     associateChildToParent(child);
     addChildToQueue(child);
+    makeParentCr3asReadOnly()
     return child->pid_t;
 }
 
-int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
-    
-    struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
-    struct PDT *pdt;
-    struct PT *pt;
-    struct PDPT *v_pdpt;
-    struct PDT *v_pdt;
-    struct PT *v_pt;
-    
-    struct PML4 *curr_pml4=(struct PML4*)(cr3+get_kernbase());
-    
-    uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
-    
-    if(pml_entry&PRESENT){
-        pdpt = (struct PDPT*)(pml_entry&FRAME);
-        v_pdpt = (struct PDPT*)((uint64_t)pdpt+get_kernbase());
-        uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
-        if(pdpt_entry&PRESENT){
-            pdt = (struct PDT*)(pdpt_entry&FRAME);
-            v_pdt = (struct PDT*)((uint64_t)pdt+get_kernbase());
-            uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
-            if(pdt_entry&PRESENT){
-                pt = (struct PT*)(pdt_entry&FRAME);
-                v_pt = (struct PT*)((uint64_t)pt+get_kernbase());
-                if(rw)
-                {
-                    //setPage as read only
-                    v_pt->entries[get_PT_INDEX((uint64_t)v_addr)] = v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]&MAKERDONLY;
-                }
-                else
-                {
-                    //setPage as writable
-                    v_pt->entries[get_PT_INDEX((uint64_t)v_addr)] = v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]|WRITEABLE;
-                    
-                }
-                return 0;
-                
-            }
-            
-        }
-    }
-    return -1;
-    
-}
+
 
 void makePageCopiesForChilden(uint64_t pNum,Task* task)
 {
