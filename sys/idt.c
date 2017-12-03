@@ -404,9 +404,10 @@ void _hndlr_isr14(){
     if(us&rw&!p)
     {
         kprintf("Handling page fault ");
-        void *ptr=pageAllocator();
+        
         if(isPartofCurrentVma(pagefaultAt&FRAME))
         {
+            void *ptr=pageAllocator();
             mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
             
