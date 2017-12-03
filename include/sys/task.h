@@ -63,5 +63,6 @@ void switchToUserMode();
 int fork();
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
+int isPartofCurrentVma(pagefaultAt&FRAME);
 
 #endif
