@@ -526,13 +526,13 @@ uint64_t* malloc(uint64_t size)
     if(temp==NULL)
     {
         newVma->pageNumber = getNextPageNum();
-        newVma->v_mm = runningThread->memMap;
+        newVma->v_mm = &runningThread->memMap;
         newVma->v_start = 0x0;
-        newVma->v_end = v_start+size;
+        newVma->v_end = newVma->v_start+size;
         newVma->mmsz = size;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
-        newVma->v_file = NULL;
+        newVma->v_file = 0;
         newVma->next=NULL;
         newVma->v_offset=0;
         
@@ -549,13 +549,13 @@ uint64_t* malloc(uint64_t size)
         }
         
         newVma->pageNumber = getNextPageNum();
-        newVma->v_mm = runningThread->memMap;
+        newVma->v_mm = &runningThread->memMap;
         newVma->v_start = end;
-        newVma->v_end = v_start+size;
+        newVma->v_end = newVma->v_start+size;
         newVma->mmsz = size;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
-        newVma->v_file = NULL;
+        newVma->v_file = 0;
         newVma->next=NULL;
         newVma->v_offset=0;
         
