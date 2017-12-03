@@ -468,7 +468,7 @@ void makeParentCr3asReadOnly()
     }
 }
 
-int fork()
+uint64_t fork()
 {
     Task* child = (Task*)kmalloc();
     createChildTask(child);
