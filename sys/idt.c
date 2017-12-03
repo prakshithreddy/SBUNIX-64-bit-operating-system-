@@ -408,17 +408,17 @@ void _hndlr_isr14(){
         {
             mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
-//
-//            Task* runningThread = getRunningThread();
-//            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
-//            if(pNum==-1)
-//            {
-//                kprintf("ERROR");
-//                while(1);
-//
-//            }
-//            makePageCopiesForChilden(pNum,runningThread);
-//            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+            
+            Task* runningThread = getRunningThread();
+            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+            if(pNum==-1)
+            {
+                kprintf("ERROR");
+                while(1);
+                
+            }
+            makePageCopiesForChilden(pNum,runningThread);
+            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
             
         }
     }
@@ -434,16 +434,6 @@ void _hndlr_isr14(){
         }
         makePageCopiesForChilden(pNum,runningThread);
         markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
-        
-        VMA* vma = runningThread->memMap.mmap;
-        while(vma!=NULL)
-        {
-            if(vma->pageNumber==pNum) {
-                vma->pageNumber = getNextPageNum();
-                break;
-            }
-            vma=vma->next;
-        }
         
     }
     else
