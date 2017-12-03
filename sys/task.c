@@ -349,6 +349,20 @@ void createChildTask(Task *task){
     _prepareInitialKernelStack(&task->regs);
 }
 
+
+bool isPartofCurrentVma(uint64_t addr)
+{
+    VMA* vma = runningThread->memMap.mmap;
+    while(vma!=NULL)
+    {
+        if(vma->v_start&FRAME==addr) return true;
+        vma=vma->next;
+    }
+    
+    return false;
+}
+
+
 void addChildToQueue(Task* task)
 {
     task->next = runningThread->next;

@@ -385,22 +385,36 @@ void _hndlr_isr14(){
    
     kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
     
-//    if(errorCode&0x4)
-//    {
-//        kprintf("Handling page fault ");
-//        void *ptr=pageAllocator();
-//        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
-//        memset((uint64_t)ptr+get_kernbase());
-//
-//    }
-//
-//    else
-//    {
-        kprintf("Page fault cannot be handled.. Kill the process....! :-/");
+    int p = pagefaultAt&0x1;
+    pagefaultAt>>=1;
+    int rw = pagefaultAt&0x1;
+    pagefaultAt>>=1;
+    int us = pagefaultAt&0x1;
+    
+    //At this stage if the page fault is not zero.. the error is valid error and not be handled
+    if(pagefaultAt!=0)
+    {
+        kprintf("Kill this bad guy..");
         while(1);
+    }
+    if(p&rw&!p)
+    {
+        kprintf("Handling page fault ");
+        void *ptr=pageAllocator();
+        if(isPartofCurrentVma(pagefaultAt&FRAME))
+        {
+            mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
+            memset((uint64_t)ptr+get_kernbase());
+        }
+    }
+    else if(p&rw&p)
+    {
+        //MVP
+        //parent and child can write to the same page.
+        //create a copy of the current page that the child/parent is trying to acess and assign one copy to each child process that contains that page.
         
-//    }
-
+        
+    }
     
 }
 
