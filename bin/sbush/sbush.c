@@ -26,7 +26,7 @@ int main(int argc, char *argv[], char *envp[]){
     }
     else
     {
-          a1[0] = 10;
+          //a1[0] = 10;
         while(1)syscall(20,a1[0],2,3,4,5,6);
     }
     
