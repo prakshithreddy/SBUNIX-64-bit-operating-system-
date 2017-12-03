@@ -456,7 +456,7 @@ int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
     
 }
 
-void makePageCopiesForChilden(uint64_t pNum,int isParent,Task* task)
+void makePageCopiesForChilden(uint64_t pNum,Task* task)
 {
     Task* tempTask = task->child;
     while(tempTask!=NULL)
