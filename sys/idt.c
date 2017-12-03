@@ -455,7 +455,7 @@ void _hndlr_isr14(){
             uint64_t newPage = (uint64_t)kmalloc();
             newPage-=get_kernbase();
             mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
-            memcpy((void *)pagefaultAt&FRAME,(void *)(newPage+get_kernbase()),4096);
+            memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
             
         }
         
