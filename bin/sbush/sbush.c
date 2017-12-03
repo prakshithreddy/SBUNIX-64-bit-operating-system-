@@ -15,9 +15,15 @@ int main(int argc, char *argv[], char *envp[]){
     {
         //99malloc syscall
         int* a = (int*)syscall(99,4096,0,0,0,0,0);
+        int* b = (int*)syscall(99,4096,0,0,0,0,0);
+        int* c = (int*)syscall(99,4096,0,0,0,0,0);
+        int* d = (int*)syscall(99,4096,0,0,0,0,0);
+        int* e = (int*)syscall(99,4096,0,0,0,0,0);
+        int* f = (int*)syscall(99,4096,0,0,0,0,0);
+      //  int* g = (int*)syscall(99,4096,0,0,0,0,0);
         
         
-        while(1)syscall(10,1,2,3,4,5,(uint64_t)a);
+        while(1)syscall(10,(uint64_t)a,(uint64_t)b,(uint64_t)c,(uint64_t)d,(uint64_t)e,(uint64_t)f);
     }
     else
     {

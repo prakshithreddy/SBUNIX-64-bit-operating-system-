@@ -37,7 +37,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
     {
         case 1: kprintf("Fork System Call\n"); return (void*)fork();
         case 99: kprintf("Fork System Call\n"); return (void*)malloc(paramB);
-            //as
+
                 
     }
     
