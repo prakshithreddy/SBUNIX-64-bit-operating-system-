@@ -448,16 +448,17 @@ void _hndlr_isr14(){
             temp=temp->next;
         }
         
-        
-        uint64_t newPage = (uint64_t)kmalloc();
-        newPage-=get_kernbase();
-        mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
-        memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
-        
-    
         if(pageCount==1)
         {
-            pageDeAllocator((void*)(phyAddr&=FRAME));
+            markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0);
+            
+        }
+        else
+        {
+            uint64_t newPage = (uint64_t)kmalloc();
+            newPage-=get_kernbase();
+            mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
+            memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
             
         }
     }
