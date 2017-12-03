@@ -447,7 +447,7 @@ void associateChildToParent(Task* task)
     
 }
 
-void makeParentCr3asReadOnly(Task* task)
+void makeParentCr3asReadOnly()
 {
     VMA* vma = runningThread->memMap.mmap;
     uint64_t temp = get_stack_top();
