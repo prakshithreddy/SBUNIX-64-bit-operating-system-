@@ -66,6 +66,6 @@ int fork();
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
 int isPartofCurrentVma(uint64_t addr);
-uint64_t getNextpageNum();
+uint64_t getNextPageNum();
 
 #endif
