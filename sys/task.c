@@ -316,7 +316,10 @@ void copyParentCr3Entries(Task* task)
             if(vma->v_end != temp){
                 uint64_t phyAdr = getPhysicalPageAddr(start,runningThread->regs.cr3);
                 if(phyAdr!=-1)
+                {
                     mapPageForUser(start&FRAME,phyAdr,task->regs.cr3+get_kernbase());
+                    markPageAsRW(start&FRAME,task->regs.cr3+get_kernbase(),1);
+                }
                 start = start + 0x1000;
             }
             else{

@@ -17,12 +17,13 @@ int main(int argc, char *argv[], char *envp[]){
     if(pid == 0)
     {
         //99malloc syscall
-        int* a = (int*)syscall(99,4096,0,0,0,0,0);
-        
-//        int* g = (int*)syscall(99,4096,0,0,0,0,0);
-        a1[1] = 786;
-        
-        while(1)syscall(10,(uint64_t)a,a1[0],a[1],0,0,0);
+//        int* a = (int*)syscall(99,4096,0,0,0,0,0);
+//
+////        int* g = (int*)syscall(99,4096,0,0,0,0,0);
+//        a1[1] = 786;
+//
+        //while(1)syscall(10,(uint64_t)a,a1[0],a[1],0,0,0);
+        while(1);
     }
     else
     {
