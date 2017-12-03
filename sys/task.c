@@ -429,24 +429,6 @@ void addChildToQueue(Task* task)
 
 }
 
-void associateChildToParent(Task* task)
-{
-    Task* temp = runningThread->child;
-    if(temp==NULL)
-    {
-        runningThread->child = task;
-        task->child = NULL;
-    }
-    else
-    {
-        while(temp->child!=NULL) temp=temp->child;
-        temp->child=task;
-        task->child=NULL;
-        
-    }
-    
-}
-
 void makeParentCr3asReadOnly()
 {
     VMA* vma = runningThread->memMap.mmap;
@@ -472,7 +454,7 @@ uint64_t fork()
 {
     Task* child = (Task*)kmalloc();
     createChildTask(child);
-    associateChildToParent(child);
+    
     addChildToQueue(child);
     makeParentCr3asReadOnly();
     return child->pid_t;
@@ -482,8 +464,8 @@ uint64_t fork()
 
 void makePageCopiesForChilden(uint64_t pNum,Task* task)
 {
-    Task* tempTask = task->child;
-    while(tempTask!=NULL)
+    Task* tempTask = task->next;
+    while(tempTask!=task)
     {
         VMA* tempVMA = tempTask->memMap.mmap;
         while(tempVMA!=NULL)

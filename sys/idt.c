@@ -417,34 +417,9 @@ void _hndlr_isr14(){
                 while(1);
                 
             }
-            if(!runningThread->ppid_t)
-            {
-                //parent
-                //go to the childs and make copy of the that frame
-                makePageCopiesForChilden(pNum,runningThread); //1 - parent
-                markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0); //0 enable write
-            }
-            else
-            {
-                //child
-                //find the parent
-                Task* temp = runningThread->next;
-                while(temp!=NULL&&temp->next!=temp)
-                {
-                    if(temp->pid_t == runningThread->ppid_t) break;
-                }
-                if(temp!=runningThread)
-                {
-                    makePageCopiesForChilden(pNum,temp);
-                    markPageAsRW(pagefaultAt&FRAME,(temp->regs.cr3+get_kernbase()),0); //0enable write
-                }
-                else
-                {
-                    kprintf("Error");
-                    while(1);
-                }
-                
-            }
+            makePageCopiesForChilden(pNum,runningThread);
+            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+            
         }
     }
     else if(us&rw&p)
@@ -457,34 +432,8 @@ void _hndlr_isr14(){
             while(1);
             
         }
-        if(!runningThread->ppid_t)
-        {
-            //parent
-            //go to the childs and make copy of the that frame
-            makePageCopiesForChilden(pNum,runningThread); //1 - parent
-            markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0); //0 enable write
-        }
-        else
-        {
-            //child
-            //find the parent
-            Task* temp = runningThread->next;
-            while(temp!=NULL&&temp->next!=temp)
-            {
-                if(temp->pid_t == runningThread->ppid_t) break;
-            }
-            if(temp!=runningThread)
-            {
-                makePageCopiesForChilden(pNum,temp);
-                markPageAsRW(pagefaultAt&FRAME,(temp->regs.cr3+get_kernbase()),0); //0enable write
-            }
-            else
-            {
-                kprintf("Error");
-                while(1);
-            }
-            
-        }
+        makePageCopiesForChilden(pNum,runningThread);
+        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
         
     }
     else
