@@ -439,7 +439,7 @@ void _hndlr_isr14(){
         while(vma!=NULL)
         {
             if(vma->pageNumber==pNum) {
-                vma->pageNumber = getPageNumber();
+                vma->pageNumber = getNextPageNum();
                 break;
             }
             vma=vma->next;
