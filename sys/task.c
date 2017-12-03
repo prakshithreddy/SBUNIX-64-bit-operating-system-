@@ -451,7 +451,6 @@ void makeParentCr3asReadOnly(Task* task)
 {
     VMA* vma = runningThread->memMap.mmap;
     uint64_t temp = get_stack_top();
-    uint64_t cur_stack_start = (runningThread->regs.userRsp)&FRAME;
     while(vma!=NULL)
     {
         uint64_t start = vma->v_start;
