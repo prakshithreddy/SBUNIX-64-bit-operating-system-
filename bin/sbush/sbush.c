@@ -10,7 +10,7 @@ uint64_t syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t pa
 int main(int argc, char *argv[], char *envp[]){
     argc+=1;
     
-    int pid = syscall(1,1,2,3,4,5,6);
+    int pid = (int)syscall(1,1,2,3,4,5,6);
     if(pid == 0)
     {
         //99malloc syscall
