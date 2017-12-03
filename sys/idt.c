@@ -410,6 +410,12 @@ void _hndlr_isr14(){
     else if(us&rw&p)
     {
         uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+        if(pNum==-1)
+        {
+            kprintf("ERROR");
+            while(1);
+            
+        }
         if(!runnningThread->ppid_t)
         {
             //parent

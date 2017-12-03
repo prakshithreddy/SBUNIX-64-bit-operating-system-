@@ -462,7 +462,7 @@ void makePageCopiesForChilden(uint64_t pNum,int isParent,Task* task)
             if(tempVMA->pageNumber == pNum)
             {
                 //copy this page
-                uint64_t virAddr = (tempVMA->v_start&Frame);
+                uint64_t virAddr = (tempVMA->v_start&FRAME);
                 uint64_t newPage = (uint64_t)kmalloc();
                 newPage-=get_kernbase();
                 mapPageForUser(virAddr,newPage,tempTask->regs.cr3+get_kernbase());
@@ -486,6 +486,7 @@ uint64_t getPageNumFromAddr(uint64_t addr)
         
         temp=temp->next;
     }
+    return -1;
 }
 
 void initUserProcess()
