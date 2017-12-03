@@ -409,6 +409,7 @@ void _hndlr_isr14(){
     }
     else if(us&rw&p)
     {
+        runningThread = getRunningThread();
         uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
         if(pNum==-1)
         {

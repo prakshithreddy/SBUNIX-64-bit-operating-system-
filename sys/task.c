@@ -31,6 +31,11 @@ uint64_t* getRunKRsp()
     return (uint64_t*)runningThread->regs.kernelRsp;
 }
 
+Task* getRunningThread()
+{
+    return runningThread;
+}
+
 uint64_t getNextPageNum()
 {
     pageNum+=1;
