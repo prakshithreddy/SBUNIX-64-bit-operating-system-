@@ -385,14 +385,16 @@ void _hndlr_isr14(){
    
     kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
     
-    int p = pagefaultAt&0x1;
-    pagefaultAt>>=1;
-    int rw = pagefaultAt&0x1;
-    pagefaultAt>>=1;
-    int us = pagefaultAt&0x1;
+    int p = errorCode&0x1;
+    errorCode>>=1;
+    int rw = errorCode&0x1;
+    errorCode>>=1;
+    int us = errorCode&0x1;
+    
+    //kprintf("%d %d %d",us,rw,p);
     
     //At this stage if the page fault is not zero.. the error is valid error and not be handled
-    if(pagefaultAt!=0)
+    if(errorCode!=0)
     {
         kprintf("Kill this bad guy..");
         while(1);
@@ -447,7 +449,11 @@ void _hndlr_isr14(){
         }
         
     }
-    else while(1);
+    else
+    {
+        kprintf("Error");
+        while(1);
+    }
     
 }
 
