@@ -462,6 +462,7 @@ void _hndlr_isr14(){
             
         }
         invlpg(phyAddr&=FRAME);
+        invlpg(phyAddr);
     }
     else
     {
