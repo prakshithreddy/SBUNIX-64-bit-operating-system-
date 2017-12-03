@@ -511,7 +511,7 @@ uint64_t getPageNumFromAddr(uint64_t addr)
     VMA* temp = runningThread->memMap.mmap;
     while(temp!=NULL)
     {
-        if(temp->v_start == addr) return temp->pageNumber;
+        if((temp->v_start&FRAME) == addr) return temp->pageNumber;
         
         temp=temp->next;
     }
