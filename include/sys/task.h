@@ -1,8 +1,8 @@
 #ifndef _TASK_H
 #define _TASK_H
-
-#include<sys/defs.h>
 #include<dirent.h>
+#include<sys/defs.h>
+
 typedef struct {
     uint64_t rax, rbx, rcx, rdx, rsi, rdi, userRsp, rbp, rip, rflags, cr3,kernelRsp,count,add;
 } Registers;
@@ -49,8 +49,8 @@ typedef struct Task {
   Registers regs;
   struct Task *next;
   struct mm_struct memMap;
-  File files[50];
-  Directory directories[50];
+  uint64_t fd_pointers[20];//Each page contains 5 FD's.. Each entry of this page is the starting adress of the pages allocated for FD's. Initialize fd[0] with new page.
+  int fd_count;//Need to initialize this with 5. If user requests for 6th then, a page will be allocated and fd_pointers[1] will be filled with that adress.
 } Task;
 
 void runNextTask();
@@ -63,5 +63,6 @@ void switchToUserMode();
 int fork();
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
+Task* getRunTask();
 
 #endif

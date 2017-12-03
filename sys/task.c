@@ -35,6 +35,9 @@ uint64_t getRunCr3()
     return runningThread->regs.cr3;
 }
 
+Task* getRunTask(){
+    return runningThread;
+}
 void createThread(Task *task, void(*function)(), uint64_t rflags, uint64_t *pml4){
     task->regs.rax=0;
     task->regs.rbx=0;
@@ -69,6 +72,10 @@ void initMultiTasking() {
     mainThread.next = &otherThread;
     otherThread.next = &mainThread;
     runningThread = &mainThread;
+    //*****************
+    runningThread->fd_pointers[0]=(uint64_t)kmalloc();
+    runningThread->fd_count=5;
+    //*******************
     yield();
     kprintf("Multitasking Success\n");
     //yield();
