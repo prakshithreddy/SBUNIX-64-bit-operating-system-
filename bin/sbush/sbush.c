@@ -13,6 +13,9 @@ int main(int argc, char *argv[], char *envp[]){
     int pid = syscall(1,1,2,3,4,5,6);
     if(pid == 0)
     {
+        //99malloc syscall
+        int* a = (int*)syscall(99,4096,0,0,0,0,0);
+        
         while(1)syscall(10,1,2,3,4,5,6);
     }
     else

@@ -496,7 +496,7 @@ void makePageCopiesForChilden(uint64_t pNum,Task* task)
                 newPage-=get_kernbase();
                 mapPageForUser(virAddr,newPage,tempTask->regs.cr3+get_kernbase());
                 memcpy((void *)virAddr,(void *)(newPage+get_kernbase()),4096);
-                
+                tempVMA->pageNumber = getNextPageNum();
             }
             tempVMA=tempVMA->next;
         }
@@ -516,6 +516,54 @@ uint64_t getPageNumFromAddr(uint64_t addr)
         temp=temp->next;
     }
     return -1;
+}
+
+uint64* malloc(uint64_t size)
+{
+    VMA* temp = runningThread->memMap.mmap;
+    VMA* newVma = (VMA*)kmalloc();
+    
+    if(temp==NULL)
+    {
+        newVma->pageNumber = getNextPageNum();
+        newVma->v_mm = runningThread->memMap;
+        newVma->v_start = 0x0;
+        newVma->v_end = v_start+size;
+        newVma->mmsz = size;
+        newVma->v_flags = 0;
+        newVma->grows_down = 0;
+        newVma->v_file = NULL;
+        newVma->next=NULL;
+        newVma->v_offset=0;
+        
+        runningThread->memMap.mmap=newVma;
+        
+    }
+    else
+    {
+        uint64_t end=temp->v_end;
+        while(temp->next!=NULL)
+        {
+            end = temp->next->v_end;
+            temp = temp->next;
+        }
+        
+        newVma->pageNumber = getNextPageNum();
+        newVma->v_mm = runningThread->memMap;
+        newVma->v_start = end;
+        newVma->v_end = v_start+size;
+        newVma->mmsz = size;
+        newVma->v_flags = 0;
+        newVma->grows_down = 0;
+        newVma->v_file = NULL;
+        newVma->next=NULL;
+        newVma->v_offset=0;
+        
+        temp->next = newVma->next;
+        temp->next = newVma;
+    }
+    return newVma->v_start;
+    
 }
 
 void initUserProcess()
