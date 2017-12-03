@@ -43,7 +43,7 @@ typedef struct mm_struct {
 }MM;
 
 
-typedef struct Task {
+struct Task {
   /*int  priority;
   int  state;*/  //TODO: these two variables might be used later	
   int pid_t;
@@ -54,7 +54,9 @@ typedef struct Task {
   File files[50];
   Directory directories[50];
   Task* child;
-} Task;
+};
+
+typedef struct Task Task;
 
 void runNextTask();
 void initMultiTasking();
