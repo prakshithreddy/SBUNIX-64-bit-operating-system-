@@ -13,7 +13,7 @@ uint64_t* currentRsp;
 uint64_t currentRAX;
 
 void initUserProcess();
-static int pageNum;
+
 
 typedef struct vma_struct{                                                                                   
     struct mm_struct *v_mm;// associated mm_struct
