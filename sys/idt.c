@@ -434,7 +434,16 @@ void _hndlr_isr14(){
         }
         makePageCopiesForChilden(pNum,runningThread);
         markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
-        runningThread->pageNumber = getNextPageNum();;
+        
+        VMA* vma = runningThread->memMap.mmap;
+        while(vma!=NULL)
+        {
+            if(vma->pageNumber==pNum) {
+                vma->pageNumber = getPageNumber();
+                break;
+            }
+            vma=vma->next;
+        }
         
     }
     else
