@@ -120,6 +120,7 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,T
     }
     new_vma=(VMA *)kmalloc();//TODO: Allocating a full page for just one VMA struct, which is too expensive, SOL1: Can assume that one page is sufficient 
                              //for all the mallocs that will be done by the user. SOL2: Find a new way.. :P
+    new_vma->pageNumber = getNextPageNum();
     if(vma_start==NULL){
         mm->mmap = new_vma;
     }

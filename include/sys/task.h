@@ -14,6 +14,7 @@ uint64_t currentRAX;
 
 void initUserProcess();
 
+
 typedef struct vma_struct{                                                                                   
     struct mm_struct *v_mm;// associated mm_struct
     uint64_t v_start;//VMA start, inclusive
@@ -23,7 +24,8 @@ typedef struct vma_struct{
     uint64_t grows_down;//Indicator for stack
     uint64_t v_file;//mapped file, if any
     struct vma_struct  *next;//list of VMA's 
-    uint64_t v_offset;//file offset  
+    uint64_t v_offset;//file offset
+    uint64_t pageNumber;
 }VMA;
 
 
@@ -41,7 +43,7 @@ typedef struct mm_struct {
 }MM;
 
 
-typedef struct Task {
+typedef struct Task{
   /*int  priority;
   int  state;*/  //TODO: these two variables might be used later	
   int pid_t;
@@ -58,11 +60,20 @@ void initMultiTasking();
 void createThread(Task* task, void(*function)(), uint64_t rflags, uint64_t *pml4);
 void yield();
 void _switchThread_(Registers *from, Registers *to);
-void createNewTask(Task *kthread, uint64_t function, uint64_t rflags,uint64_t cr3,int parentPid);
+void createNewTask(Task *kthread, uint64_t function, uint64_t rflags,uint64_t cr3);
 void switchToUserMode();
-int fork();
+uint64_t fork();
+uint64_t malloc(uint64_t size);
+uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3);
+
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
 Task* getRunTask();
+int isPartofCurrentVma(uint64_t addr);
+uint64_t getNextPageNum();
+uint64_t getPageNumFromAddr(uint64_t addr);
+int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw);
+void makePageCopiesForChilden(uint64_t pNum,Task* task);
+Task* getRunningThread();
 
 #endif

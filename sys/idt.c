@@ -385,22 +385,62 @@ void _hndlr_isr14(){
    
     kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
     
-//    if(errorCode&0x4)
-//    {
-//        kprintf("Handling page fault ");
-//        void *ptr=pageAllocator();
-//        mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
-//        memset((uint64_t)ptr+get_kernbase());
-//
-//    }
-//
-//    else
-//    {
-        kprintf("Page fault cannot be handled.. Kill the process....! :-/");
+    int p = errorCode&0x1;
+    errorCode>>=1;
+    int rw = errorCode&0x1;
+    errorCode>>=1;
+    int us = errorCode&0x1;
+    errorCode>>=1;
+    
+    //kprintf("%d %d %d",us,rw,p);
+    
+    //At this stage if the page fault is not zero.. the error is valid error and not be handled
+    if(errorCode!=0)
+    {
+        kprintf("Kill this bad guy..");
         while(1);
+    }
+    if(us&rw&!p)
+    {
+        kprintf("Handling page fault ");
+        void *ptr=pageAllocator();
+        if(isPartofCurrentVma(pagefaultAt&FRAME))
+        {
+            mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
+            memset((uint64_t)ptr+get_kernbase());
+            
+            Task* runningThread = getRunningThread();
+            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+            if(pNum==-1)
+            {
+                kprintf("ERROR");
+                while(1);
+                
+            }
+            makePageCopiesForChilden(pNum,runningThread);
+            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+            
+        }
+    }
+    else if(us&rw&p)
+    {
+        Task* runningThread = getRunningThread();
+        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+        if(pNum==-1)
+        {
+            kprintf("ERROR");
+            while(1);
+            
+        }
+        makePageCopiesForChilden(pNum,runningThread);
+        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
         
-//    }
-
+    }
+    else
+    {
+        kprintf("Error");
+        while(1);
+    }
     
 }
 

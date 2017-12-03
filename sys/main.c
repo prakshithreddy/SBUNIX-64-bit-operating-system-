@@ -69,7 +69,6 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   getDirEntries(fd,buf,4096);
   struct dirent *dbuf=(struct dirent *)buf;
   kprintf("%s",dbuf->d_name);
-  while(1);
   initUserProcess();
   
     

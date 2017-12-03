@@ -29,17 +29,19 @@ uint64_t readMSR(uint32_t msrAddr)
     return (uint64_t)msrHigh<<32|(uint64_t)msrLow;
 }
 
-uint64_t syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t paramD,uint64_t paramE,uint64_t paramF,uint64_t syscallNum) {
+void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t paramD,uint64_t paramE,uint64_t paramF,uint64_t syscallNum) {
     
     kprintf("\n%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
     
     switch(syscallNum)
     {
-        case 1: kprintf("Fork System Call\n"); return fork();
+        case 1: kprintf("Fork System Call\n"); return (void*)fork();
+        case 99: kprintf("Fork System Call\n"); return (void*)malloc(paramA);
+
                 
     }
     
-    return 100;
+    return (void*)100;
     
 }
 
