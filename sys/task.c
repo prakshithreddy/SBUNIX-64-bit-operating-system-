@@ -211,6 +211,8 @@ void runNextTask()
 
 int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
     
+    invlpg(v_addr);
+    
     struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
     struct PDT *pdt;
     struct PT *pt;
@@ -451,7 +453,7 @@ void makeParentCr3asReadOnly()
         {
             if(vma->v_end != temp){
                 markPageAsRW(start&FRAME,runningThread->regs.cr3+get_kernbase(),1);
-                invlpg(start&FRAME);
+                
             }
             else{
                 //this is stack leave it
