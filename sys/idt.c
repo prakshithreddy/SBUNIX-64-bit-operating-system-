@@ -442,8 +442,8 @@ void _hndlr_isr14(){
         Task* temp = getRunningThread()->next;
         while(temp!=getRunningThread())
         {
-            uint64_t temp = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
-            if(temp!=-1 && (temp&FRAME)==phyAddr)
+            uint64_t tempPhy = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
+            if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
                 pageCount+=1; //how many cr3 contain this phy address,virtual address combo
             temp=temp->next;
         }
