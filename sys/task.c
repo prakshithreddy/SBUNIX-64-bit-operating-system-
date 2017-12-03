@@ -31,7 +31,7 @@ uint64_t* getRunKRsp()
     return (uint64_t*)runningThread->regs.kernelRsp;
 }
 
-uint64_t getNextpageNum()
+uint64_t getNextPageNum()
 {
     pageNum+=1;
     return pageNum;
