@@ -10,17 +10,21 @@ struct dirent {
     unsigned long  d_off;
     unsigned short d_reclen;
     char           d_name[NAME_MAX+1];
-};
+}Dirent;
 
-typedef struct file{
-    uint64_t f_start;
-    uint64_t f_offset;
-    char fileName[256];
-}File;
+typedef struct fileDescriptor{
+    uint64_t fd;
+    uint64_t start;
+    uint64_t offset;
+    char d_prev_dir[NAME_MAX+1];
+    char name[NAME_MAX+1];
+}FileDescriptor;
 
 typedef struct directory{
     uint64_t d_start;
-    char dirName[256];
+    uint64_t d_offset;
+    char dirName[NAME_MAX+1];
+    char* d_prev_dir;
 }Directory;
 
 typedef struct DIR DIR;

@@ -5,6 +5,7 @@
 #include<sys/virtualMemory.h>
 #include<sys/phyMemMapper.h>
 #include<sys/task.h>
+#include<dirent.h>
 
 #define MAX_SEGMENTS 100
 #define ELF_PT_LOAD 1
@@ -18,14 +19,38 @@ void initTarfs(){
     tar_file_start = (struct posix_header_ustar *)(BINARY_TARFS_START);
 }
 
-int strcmp(char *str1,char *str2){
+int strcmp(char *str1,char *str2){//returns 0 if equal, 1 str1>str2 else -1 if str1<str2
   int i=0;
-  while(*(str1+i) != '\0' || *(str2+i) != '\0'){
+  while(*(str1+i) != '\0' && *(str2+i) != '\0'){
     if(*(str1+i) == *(str2+i))
       i++;
     else{
       return *(str1+i) - *(str2+i);
     }
+  }
+  return *(str1+i) - *(str2+i);
+}
+
+void strcpy(char *src,char *dest){//Str Copy will be used only forcopying file names with less than 256 characters as of now,..
+  int i=0;
+  while(*(src+i) != '\0' && i<256){
+    *(dest+i)=*(src+i);
+    i++;
+  }
+  if(i==256){//TODO: Change this 256 if character count of a filename is increased.
+    kprintf("FileName/DirName Exceeded 256 characters...My OS Doesnt allow you to do that :D\n");
+  }
+}
+
+int startswith(char *parent,char * child){//returns 0 if child's name starts with parent's name.
+  while(*parent!='\0'){
+      if(*parent==*child){
+          parent++;
+          child++;
+      }
+      else{
+          return -1;
+      }
   }
   return 0;
 }
@@ -40,7 +65,7 @@ int toInteger(char *s){
   return num;
 }
 
-void memcpy(void *src,void *dest,size_t n){
+void memcpy(void *src,void *dest,size_t n){//Doesnot care about source, copies from src to dest.
     unsigned char *s=src;
     unsigned char *d=dest;
     while(n>0){
@@ -49,6 +74,19 @@ void memcpy(void *src,void *dest,size_t n){
       d++;
       n--;
     }
+}
+
+int memread(void *src,void *dest,size_t n){//only copies data if NULL is not present in src
+    unsigned char *s=src;
+    unsigned char *d=dest;
+    int y=n;
+    while(n>0 && *s!='\0'){
+      *d=*s;
+      s++;
+      d++;
+      n--;
+    }
+    return y-n;
 }
 
 void memset_file(void *str, int c, size_t n){
@@ -219,4 +257,378 @@ uint64_t loadFile(char *file,uint64_t pml4,Task *uthread){
     return elf_file->e_entry;
 }
 
+uint64_t get_file_address(char* file){
+    uint64_t search_pointer = BINARY_TARFS_START;
+    struct posix_header_ustar *tar_file_pointer = tar_file_start; 
+    int file_found=0;
+    while(search_pointer<BINARY_TARFS_END){
+        if (strcmp(tar_file_pointer->name,"")!=0){
+            //kprintf("    *  %s, size: %s\n",tar_file_pointer->name,tar_file_pointer->size);
+        }
+        if (strcmp(tar_file_pointer->name,file)==0){
+            file_found=1;
+            break;
+        }
+        char *f_size=tar_file_pointer->size;
+        int size = toInteger(f_size);
+        int residue = size%512;
+        if(residue>0){
+          size=size+(512-residue);
+        }
+        search_pointer=search_pointer+size+512;
+        tar_file_pointer = (struct posix_header_ustar *)search_pointer;
+    }
+    if(tar_file_pointer->size>0 && file_found==1){
+        kprintf("File Found: %s\n");
+        return (uint64_t)tar_file_pointer+512;
+    }
+    kprintf("Warning: File %s not found\n",file);
+    return 0;
+}
 
+uint64_t get_dir_address(char* dir){
+    uint64_t search_pointer = BINARY_TARFS_START;
+    struct posix_header_ustar *tar_file_pointer = tar_file_start; 
+    int dir_found=0;
+    while(search_pointer<BINARY_TARFS_END){
+        if (strcmp(tar_file_pointer->name,"\0")!=0){
+            kprintf("    *  %s, size: %s\n",tar_file_pointer->name,tar_file_pointer->size);
+        }
+        if (strcmp(tar_file_pointer->name,dir)==0){
+            dir_found=1;
+            break;
+        }
+        char *f_size=tar_file_pointer->size;
+        int size = toInteger(f_size);
+        int residue = size%512;
+        if(residue>0){
+          size=size+(512-residue);
+        }
+        search_pointer=search_pointer+size+512;
+        tar_file_pointer = (struct posix_header_ustar *)search_pointer;
+    }
+    char *f_size=tar_file_pointer->size;
+    int size = toInteger(f_size);
+    if(size==0 && dir_found==1){
+        kprintf("Dir Found: %s\n");
+        return (uint64_t)tar_file_pointer;
+    }
+    kprintf("Warning: Dir %s not found\n",dir);
+    return 0;
+}
+
+struct fileDescriptor* get_fd_address(int fd){
+    Task *currentTask=(Task *)getRunTask();
+    int page=fd/5;
+    int number=fd%5;
+    uint64_t page_address = currentTask->fd_pointers[page];
+    if(page_address!=0){
+        struct fileDescriptor *fd_array=(struct fileDescriptor *)page_address;
+        fd_array=fd_array+number;
+        return fd_array;
+    }
+    kprintf("Looks Like an invalid FD..");
+    return NULL;
+}
+
+int openFile(char* fileName){
+    Task *currentTask=(Task *)getRunTask();
+    uint64_t start=get_file_address(fileName);
+    if(start==0){
+        kprintf("Invalid File Specified..\n");
+        return -1;
+    }
+    for(int page=0;page<20;page++){
+        uint64_t page_address = currentTask->fd_pointers[page];
+        if(page_address==0){
+            currentTask->fd_pointers[page]=(uint64_t)kmalloc();
+            page_address=currentTask->fd_pointers[page];
+            currentTask->fd_count+=5;
+        }
+        struct fileDescriptor *fd_array=(struct fileDescriptor *)page_address;
+        for(int fd=0;fd<5;fd++){
+            if(((5*page)+fd)>2){//checking if fd is not 0,1,2 because they are reserved.
+                if(fd_array->name[0]=='\0'){
+                   strcpy(fileName,fd_array->name);
+                   fd_array->start=start;
+                   fd_array->offset=start;
+                   fd_array->d_prev_dir[0]='\0';
+                   int file_fd = (5*page+fd);
+                   kprintf("FD for above file: %d\n",file_fd);
+                   return file_fd;
+                   break; 
+                }
+            }
+            fd_array++;
+        }
+    }
+    kprintf("Trying to open more than 100 FD's..My OS allows user to open only 100 FD's per process.\n");
+    return -1;
+}
+
+int readFile(int fd,char *buf,int count){
+    if(fd<0){
+        kprintf("Invalid FD provided..\n");
+        return -1;
+    }
+    struct fileDescriptor *fd_struct=get_fd_address(fd);
+    if(fd_struct==NULL){
+        return -1;
+    }
+    uint64_t start;
+    if(fd_struct->name[0]!= '\0'){
+        start = fd_struct->offset;
+    }
+    else{
+        kprintf("Incorrect File Descriptor..");
+        return -1;
+    }
+    int val=memread((char *)start,buf,count);
+    fd_struct->offset+=val;
+    return val;
+}
+
+int closeFile(int fd){
+    if(fd<0){
+        kprintf("Invalid FD provided..\n");
+        return -1;
+    }
+    struct fileDescriptor *fd_struct=get_fd_address(fd);
+    if(fd_struct==NULL){
+        return -1;
+    }
+    if(fd_struct->name[0]!='\0'){
+        fd_struct->name[0]='\0';
+    }
+    else{
+        kprintf("Err: Trying to close an unopened file\n");
+    }
+    return 0;
+}
+
+
+int openDirectory(char* dirName){
+    Task *currentTask=(Task *)getRunTask();
+    uint64_t start=get_dir_address(dirName);
+    if(start==0){
+        kprintf("Invalid Directory Specified..\n");
+        return -1;
+    }
+    for(int page=0;page<20;page++){
+        uint64_t page_address = currentTask->fd_pointers[page];
+        if(page_address==0){
+            currentTask->fd_pointers[page]=(uint64_t)kmalloc();
+            page_address=currentTask->fd_pointers[page];
+            currentTask->fd_count+=5;
+        }
+        struct fileDescriptor *fd_array=(struct fileDescriptor *)page_address;
+        for(int fd=0;fd<5;fd++){
+            if(((5*page)+fd)>2){//checking if fd is not 0,1,2 because they are reserved.
+                if(fd_array->name[0]=='\0'){
+                   strcpy(dirName,fd_array->name);
+                   fd_array->start=start;
+                   fd_array->offset=start;
+                   fd_array->d_prev_dir[0]='\0';
+                   int dir_fd = (5*page+fd);
+                   kprintf("FD for above file: %d\n",dir_fd);
+                   return dir_fd;
+                   break; 
+                }
+            }
+            fd_array++;
+        }
+    }
+    kprintf("Trying to open more than 100 FD's..My OS allows user to open only 100 FD's per process. :D\n");
+    return -1;
+}
+
+int get_sub_directory(char *parent,char *child,char *dbuf,int count){
+    char *buf=dbuf;
+    while(*parent!='\0'){
+      if(*parent==*child){
+          parent++;
+          child++;
+      }
+      else{
+			*buf='\0';
+			return -1;
+      }
+    }
+    while((*child !='/') && (*child !='\0')){
+        *buf=*child;
+        child++;
+        buf++;
+		    count--;
+		    if(count==0){
+			    break;
+		    }
+    }
+    if(count>0){
+      if(*child!='\0'){
+        if(*child=='/'){
+          *buf='/';
+          count--;
+          buf++;
+        }
+      }
+      if(count>0){
+        *buf='\0';
+      }
+    }
+	if(count!=0)
+    buf='\0';
+  return 0;
+}
+
+int get_sub_direntry(char *parent,char *child,char *dbuf,int count){
+    char *buf=dbuf;
+    while(*parent!='\0'){
+      if(*parent==*child){
+          parent++;
+          child++;
+      }
+      else{
+			*buf='\0';
+			return -1;
+      }
+    }
+    struct dirent *dir=(struct dirent*)buf;
+    if(count<sizeof(struct dirent)){
+      *buf='\0';
+			return -1;
+    }
+    dir->d_reclen = sizeof(struct dirent);
+    dir->d_ino = 0;//TODO: For Now.
+    dir->d_off = 0;//TODO:No idea where it is being used..
+    int i=0;
+    while((*child !='/') && (*child !='\0')){
+        dir->d_name[i]=*child;
+        child++;
+        i++;
+		    count--;
+		    if(count==0){
+			    break;
+		    }
+    }
+    if(i<255){
+      if(*child!='\0'){
+        if(*child=='/'){
+          dir->d_name[i]='/';
+          i++;
+        }
+      }
+      if(i<255){
+        dir->d_name[i]='\0';
+      }
+    }
+  return 0;
+}
+
+int readDir(int fd,char *buf,int count){
+    if(fd<0){
+        kprintf("Invalid FD provided..\n");
+        return -1;
+    }
+    //Task *currentTask=(Task *)getRunTask();
+    uint64_t start;
+    struct posix_header_ustar *tar_file_pointer;
+    struct fileDescriptor *fd_struct=get_fd_address(fd);
+    if(fd_struct==NULL){
+        return -1;
+    }
+    if(fd_struct->name[0] != '\0'){
+        start = fd_struct->offset;
+        start = start+512;
+        while(start<BINARY_TARFS_END){
+          tar_file_pointer = (struct posix_header_ustar *)start;
+          if(startswith(fd_struct->name,tar_file_pointer->name)==0){
+              get_sub_directory(fd_struct->name,tar_file_pointer->name,buf,count);
+              if((strcmp(buf,fd_struct->d_prev_dir))){
+                  strcpy(buf,fd_struct->d_prev_dir);
+                  fd_struct->offset=start;
+                  return 0;
+              }
+          }
+		      else{
+			      *buf='\0';
+			      return -1;
+		      }
+          char *f_size=tar_file_pointer->size;
+          int size = toInteger(f_size);
+          int residue = size%512;
+          if(residue>0){
+            size=size+(512-residue);
+          }
+          start=start+size+512;
+        }
+    }
+    kprintf("Incorrect FD...\n");
+    return -1;
+}
+
+int closeDir(int fd){
+    //Task *currentTask=(Task *)getRunTask();
+    if(fd<0){
+        kprintf("Invalid FD provided..\n");
+        return -1;
+    }
+    struct fileDescriptor *fd_struct=get_fd_address(fd);
+    if(fd_struct==NULL){
+        return -1;
+    }
+    if(fd_struct->name[0]!='\0'){
+        fd_struct->name[0]='\0';
+    }
+    else{
+        kprintf("Err: Trying to close an unopened Directory FD\n");
+    }
+    return 0;
+}
+
+int getDirEntries(int fd,char *buf,int count){
+    if(fd<0){
+        kprintf("Invalid FD provided..\n");
+        return -1;
+    }
+    struct fileDescriptor *fd_struct=get_fd_address(fd);
+    if(fd_struct==NULL){
+        return -1;
+    }
+    //Task *currentTask=(Task *)getRunTask();
+    uint64_t start;
+    struct posix_header_ustar *tar_file_pointer;
+    if(fd_struct->name[0] != '\0'){
+        start = fd_struct->start;
+        start = start+512;
+        char prev_dir[NAME_MAX+1];
+        prev_dir[0]='\0';
+        struct dirent *dir;
+        while(start<BINARY_TARFS_END){
+          tar_file_pointer = (struct posix_header_ustar *)start;
+          if(startswith(fd_struct->name,tar_file_pointer->name)==0){//if it starts with parent directory name then enter otherwise skip.
+              int x = get_sub_direntry(fd_struct->name,tar_file_pointer->name,buf,count);
+              if(x==0){
+                dir=(struct dirent *)buf;
+                if((strcmp(dir->d_name,prev_dir))){//checking if the prev_dir is the same as cur_dir
+                  strcpy(dir->d_name,prev_dir);
+                  buf+=sizeof(Dirent); //if yes then keeping that direntry in the output
+                  count-=sizeof(Dirent);
+                }
+              }
+          }
+		      else{//if not as parent.. buf will be pointing to end of direntries thus writing a null there and returning 0.
+			      *buf='\0';
+			      return 0;
+		      }
+          char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
+          int size = toInteger(f_size);
+          int residue = size%512;
+          if(residue>0){
+            size=size+(512-residue);
+          }
+          start=start+size+512;
+        }
+    }
+  *buf='\0';
+  return -1;
+}
