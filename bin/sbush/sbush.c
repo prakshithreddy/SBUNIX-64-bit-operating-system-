@@ -11,7 +11,7 @@ int main(int argc, char *argv[], char *envp[]){
     argc+=1;
     
     int* a1 = (int*)syscall(99,4096,0,0,0,0,0);
-    
+    a1[0] = 10;
     uint64_t pid = (uint64_t)syscall(1,1,2,3,4,5,(uint64_t)a1);
     
     if(pid == 0)
@@ -20,13 +20,13 @@ int main(int argc, char *argv[], char *envp[]){
         int* a = (int*)syscall(99,4096,0,0,0,0,0);
         
 //        int* g = (int*)syscall(99,4096,0,0,0,0,0);
-        a1[0] = 786;
+        a1[1] = 786;
         
-        while(1)syscall(10,(uint64_t)a,a1[0],0,0,0,0);
+        while(1)syscall(10,(uint64_t)a,a1[0],a[1],0,0,0);
     }
     else
     {
-          a1[0] = 10;
+          a1[0] = 11;
         while(1)syscall(20,7654,2,3,4,5,6);
     }
     
