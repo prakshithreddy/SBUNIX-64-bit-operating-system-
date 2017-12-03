@@ -144,11 +144,11 @@ void pushSomeArgsToUser(uint64_t userRsp)
     _pushVal(userRsp,123);
 }
 
-void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3,int parentPid){
+void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
     task->pid_t = pidCount+1;
     pidCount+=1; //next process takes the next id
-    task->ppid_t = parentPid; //setting the Pid of the parent for COW
+    task->ppid_t = 0; //setting the Pid of the parent for COW
     task->regs.rax=0;
     task->regs.rbx=0;
     task->regs.rcx=0;
@@ -582,7 +582,7 @@ void initUserProcess()
     //createNewTask((Task*)((uint64_t)userThread1+get_kernbase()),(uint64_t)userProcess1,mainThread.regs.rflags,U1_cr3);
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3,-1);
+    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     mainThread.next = userThread2;
     //mainThread.next = userThread3;
