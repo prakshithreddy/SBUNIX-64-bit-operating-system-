@@ -440,7 +440,7 @@ void _hndlr_isr14(){
             }
             else
             {
-                kprintf("Error")
+                kprintf("Error");
                 while(1);
             }
             
