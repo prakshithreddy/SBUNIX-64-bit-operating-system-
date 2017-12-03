@@ -167,7 +167,6 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->regs.add=0;
     task->next=0;
     //task->memMap.mmap=((void *)0);
-    task->child=NULL;
     _prepareInitialKernelStack(&task->regs);
 }
 
