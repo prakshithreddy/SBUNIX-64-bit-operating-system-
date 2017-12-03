@@ -397,7 +397,7 @@ void _hndlr_isr14(){
         kprintf("Kill this bad guy..");
         while(1);
     }
-    if(p&rw&!p)
+    if(us&rw&!p)
     {
         kprintf("Handling page fault ");
         void *ptr=pageAllocator();
@@ -407,14 +407,15 @@ void _hndlr_isr14(){
             memset((uint64_t)ptr+get_kernbase());
         }
     }
-    else if(p&rw&p)
+    else if(us&rw&p)
     {
         //MVP
         //parent and child can write to the same page.
         //create a copy of the current page that the child/parent is trying to acess and assign one copy to each child process that contains that page.
-        
+        while(1);
         
     }
+    else while(1);
     
 }
 
