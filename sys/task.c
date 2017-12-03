@@ -462,6 +462,7 @@ void makeParentCr3asReadOnly()
             else{
                 //this is stack leave it
             }
+            start+=0x1000;
         }
         vma=vma->next;
     }
