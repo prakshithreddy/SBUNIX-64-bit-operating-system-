@@ -23,8 +23,8 @@ int main(int argc, char *argv[], char *envp[]){
     }
     else
     {
-          a1[0] = 11;
-        while(1)syscall(20,a1[0],2,a1[3],4,5,6);
+          a1[1] = 11;
+        while(1)syscall(20,a1[0],2,a1[1],4,5,6);
     }
     
     //syscall(10,1,2,3,4,5,6);
