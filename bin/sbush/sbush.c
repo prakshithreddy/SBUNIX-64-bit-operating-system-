@@ -15,6 +15,7 @@ int main(int argc, char *argv[], char *envp[]){
     {
         //99malloc syscall
         int* a = (int*)syscall(99,4096,0,0,0,0,0);
+        a=a+10;
         
         while(1)syscall(10,1,2,3,4,5,6);
     }
