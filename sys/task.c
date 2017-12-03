@@ -463,6 +463,8 @@ uint64_t fork()
 
 void makePageCopiesForChilden(uint64_t pNum,Task* task)
 {
+    uint64_t newPage = (uint64_t)kmalloc();
+    
     Task* tempTask = task->next;
     while(tempTask!=task)
     {
@@ -473,11 +475,12 @@ void makePageCopiesForChilden(uint64_t pNum,Task* task)
             {
                 //copy this page
                 uint64_t virAddr = (tempVMA->v_start&FRAME);
-                uint64_t newPage = (uint64_t)kmalloc();
                 newPage-=get_kernbase();
                 mapPageForUser(virAddr,newPage,tempTask->regs.cr3+get_kernbase());
+                markPageAsRW(virAddr,tempTask->regs.cr3,1);
                 memcpy((void *)virAddr,(void *)(newPage+get_kernbase()),4096);
-                tempVMA->pageNumber = getNextPageNum();
+
+                newPage+=get_kernbase();
             }
             tempVMA=tempVMA->next;
         }

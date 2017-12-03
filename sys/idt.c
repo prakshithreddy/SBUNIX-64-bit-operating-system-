@@ -7,7 +7,6 @@
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 #include<sys/task.h>
-#include<sys/tarfs.h>
 
 uint64_t switchRsp=0;
 uint64_t switchRbx=0;
@@ -404,13 +403,12 @@ void _hndlr_isr14(){
     if(us&rw&!p)
     {
         kprintf("Handling page fault ");
-        
+        void *ptr=pageAllocator();
         if(isPartofCurrentVma(pagefaultAt&FRAME))
         {
-            void *ptr=pageAllocator();
             mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
-            
+//
 //            Task* runningThread = getRunningThread();
 //            uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
 //            if(pNum==-1)
@@ -426,39 +424,17 @@ void _hndlr_isr14(){
     }
     else if(us&rw&p)
     {
-//        Task* runningThread = getRunningThread();
-//        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
-//        if(pNum==-1)
-//        {
-//            kprintf("ERROR");
-//            while(1);
-//
-//        }
-//        makePageCopiesForChilden(pNum,runningThread);
-//        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
-        int pageCount=1;
-        uint64_t phyAddr = getPhysicalPageAddr(pagefaultAt&FRAME,getRunCr3());
-        
-        Task* temp = getRunningThread()->next;
-        while(temp!=getRunningThread())
+        Task* runningThread = getRunningThread();
+        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+        if(pNum==-1)
         {
-            if(getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3)==phyAddr) pageCount+=1; //how many cr3 contain this phy address,virtual address combo
-            temp=temp->next;
-        }
-        
-        if(pageCount==1)
-        {
-            markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0);
+            kprintf("ERROR");
+            while(1);
             
         }
-        else
-        {
-            uint64_t newPage = (uint64_t)kmalloc();
-            newPage-=get_kernbase();
-            mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
-            memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
-            
-        }
+        makePageCopiesForChilden(pNum,runningThread);
+        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
+        runningThread->pageNumber = getNextPageNum();;
         
     }
     else
