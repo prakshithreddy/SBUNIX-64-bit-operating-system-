@@ -299,7 +299,7 @@ void copyVMA(Task* task,VMA* vma)
         VMA* newVma = (VMA*)kmalloc();
         if(newVma!=NULL)
         {
-            new_vma->pageNumber = getNextPageNum();
+            newVma->pageNumber = getNextPageNum();
             newVma->v_mm = &task->memMap;
             task->memMap.count+=1;
             newVma->grows_down=vma->grows_down;
