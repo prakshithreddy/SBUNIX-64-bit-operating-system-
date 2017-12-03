@@ -13,6 +13,7 @@ static Task mainThread;
 static Task otherThread;
 
 static int pidCount = 0;
+static int pageNum = 0;
 
 Task *userThread1;
 Task *userThread2;
@@ -28,6 +29,12 @@ uint64_t currentRAX;
 uint64_t* getRunKRsp()
 {
     return (uint64_t*)runningThread->regs.kernelRsp;
+}
+
+uint64_t getNextpageNum()
+{
+    pageNum+=1;
+    return pageNum;
 }
 
 uint64_t getRunCr3()
@@ -292,6 +299,7 @@ void copyVMA(Task* task,VMA* vma)
         VMA* newVma = (VMA*)kmalloc();
         if(newVma!=NULL)
         {
+            new_vma->pageNumber = getNextPageNum();
             newVma->v_mm = &task->memMap;
             task->memMap.count+=1;
             newVma->grows_down=vma->grows_down;

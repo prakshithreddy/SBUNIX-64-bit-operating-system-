@@ -13,6 +13,7 @@ uint64_t* currentRsp;
 uint64_t currentRAX;
 
 void initUserProcess();
+static int pageNum;
 
 typedef struct vma_struct{                                                                                   
     struct mm_struct *v_mm;// associated mm_struct
@@ -23,7 +24,8 @@ typedef struct vma_struct{
     uint64_t grows_down;//Indicator for stack
     uint64_t v_file;//mapped file, if any
     struct vma_struct  *next;//list of VMA's 
-    uint64_t v_offset;//file offset  
+    uint64_t v_offset;//file offset
+    uint64_t pageNumber;
 }VMA;
 
 
@@ -64,5 +66,6 @@ int fork();
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
 int isPartofCurrentVma(uint64_t addr);
+uint64_t getNextpageNum();
 
 #endif
