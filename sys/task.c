@@ -212,7 +212,7 @@ int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
     struct PDT *v_pdt;
     struct PT *v_pt;
     
-    struct PML4 *curr_pml4=(struct PML4*)(cr3+get_kernbase());
+    struct PML4 *curr_pml4=(struct PML4*)(cr3);
     
     uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
     
