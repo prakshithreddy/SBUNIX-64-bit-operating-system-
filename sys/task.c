@@ -473,7 +473,7 @@ int fork()
     createChildTask(child);
     associateChildToParent(child);
     addChildToQueue(child);
-    makeParentCr3asReadOnly()
+    makeParentCr3asReadOnly();
     return child->pid_t;
 }
 
