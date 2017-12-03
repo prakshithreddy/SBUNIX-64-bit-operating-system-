@@ -350,16 +350,16 @@ void copyVMA(Task* task,VMA* vma)
         VMA* newVma = (VMA*)kmalloc();
         if(newVma!=NULL)
         {
-            newVma->pageNumber = getNextPageNum();
+            newVma->pageNumber = oldHead->pageNumber;
             newVma->v_mm = &task->memMap;
             task->memMap.count+=1;
-            newVma->grows_down=vma->grows_down;
-            newVma->v_start=vma->v_start;
-            newVma->v_end=vma->v_end;
-            newVma->mmsz=vma->mmsz;
-            newVma->v_flags = vma->v_flags;
-            newVma->v_offset = vma->v_offset;
-            newVma->v_file = vma->v_file;
+            newVma->grows_down=oldHead->grows_down;
+            newVma->v_start=oldHead->v_start;
+            newVma->v_end=oldHead->v_end;
+            newVma->mmsz=oldHead->mmsz;
+            newVma->v_flags = oldHead->v_flags;
+            newVma->v_offset = oldHead->v_offset;
+            newVma->v_file = oldHead->v_file;
             
             VMA* temp = task->memMap.mmap;
             if(temp==NULL)
