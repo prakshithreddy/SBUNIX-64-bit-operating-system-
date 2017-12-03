@@ -162,6 +162,7 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3,in
     task->regs.add=0;
     task->next=0;
     //task->memMap.mmap=((void *)0);
+    task->child=NULL;
     _prepareInitialKernelStack(&task->regs);
 }
 
@@ -378,10 +379,29 @@ void addChildToQueue(Task* task)
 
 }
 
+void associateChildToParent(Task* task)
+{
+    Task* temp = runningThread->child;
+    if(temp==NULL)
+    {
+        runningThread->child = task;
+        task->child = NULL;
+    }
+    else
+    {
+        while(temp->child!=NULL) temp=temp->child;
+        temp->child=task;
+        task->child=NULL;
+        
+    }
+    
+}
+
 int fork()
 {
     Task* child = (Task*)kmalloc();
     createChildTask(child);
+    associateChildToParent(child);
     addChildToQueue(child);
     return child->pid_t;
 }

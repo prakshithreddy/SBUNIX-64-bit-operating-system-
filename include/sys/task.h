@@ -53,6 +53,7 @@ typedef struct Task {
   struct mm_struct memMap;
   File files[50];
   Directory directories[50];
+  Task* child;
 } Task;
 
 void runNextTask();
