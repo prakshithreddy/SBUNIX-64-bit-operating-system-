@@ -458,8 +458,10 @@ void _hndlr_isr14(){
         {
             uint64_t newPage = (uint64_t)kmalloc();
             newPage-=get_kernbase();
+            phyAddr+=get_kernbase();
             mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
-            memcpy((void *)(pagefaultAt&FRAME),(void *)(newPage+get_kernbase()),4096);
+            invlpg(pagefaultAt&FRAME);
+            memcpy((void *)phyAddr,(void *)(pagefaultAt&FRAME),4096);
             
         }
         
