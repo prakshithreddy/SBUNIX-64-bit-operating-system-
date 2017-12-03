@@ -27,7 +27,7 @@ int main(int argc, char *argv[], char *envp[]){
     else
     {
           //a1[0] = 10;
-        while(1)syscall(20,a1[0],2,3,4,5,6);
+        while(1)syscall(20,7654,2,3,4,5,6);
     }
     
     //syscall(10,1,2,3,4,5,6);
