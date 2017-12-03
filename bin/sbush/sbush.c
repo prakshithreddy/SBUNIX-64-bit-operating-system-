@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[]){
         //99malloc syscall
         int* a = (int*)syscall(99,4096,0,0,0,0,0);
         
-        i//nt* g = (int*)syscall(99,4096,0,0,0,0,0);
+//        int* g = (int*)syscall(99,4096,0,0,0,0,0);
         a1[0] = 786;
         
         while(1)syscall(10,12,a1[0],0,0,0,0);
