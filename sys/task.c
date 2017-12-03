@@ -406,6 +406,88 @@ int fork()
     return child->pid_t;
 }
 
+int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
+    
+    struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
+    struct PDT *pdt;
+    struct PT *pt;
+    struct PDPT *v_pdpt;
+    struct PDT *v_pdt;
+    struct PT *v_pt;
+    
+    struct PML4 *curr_pml4=(struct PML4*)(cr3+get_kernbase());
+    
+    uint64_t pml_entry = curr_pml4->entries[get_PML4_INDEX((uint64_t)v_addr)];
+    
+    if(pml_entry&PRESENT){
+        pdpt = (struct PDPT*)(pml_entry&FRAME);
+        v_pdpt = (struct PDPT*)((uint64_t)pdpt+get_kernbase());
+        uint64_t pdpt_entry = v_pdpt->entries[get_PDPT_INDEX((uint64_t)v_addr)];
+        if(pdpt_entry&PRESENT){
+            pdt = (struct PDT*)(pdpt_entry&FRAME);
+            v_pdt = (struct PDT*)((uint64_t)pdt+get_kernbase());
+            uint64_t pdt_entry = v_pdt->entries[get_PDT_INDEX((uint64_t)v_addr)];
+            if(pdt_entry&PRESENT){
+                pt = (struct PT*)(pdt_entry&FRAME);
+                v_pt = (struct PT*)((uint64_t)pt+get_kernbase());
+                if(rw)
+                {
+                    //setPage as read only
+                    v_pt->entries[get_PT_INDEX((uint64_t)v_addr)] = v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]&MAKERDONLY;
+                }
+                else
+                {
+                    //setPage as writable
+                    v_pt->entries[get_PT_INDEX((uint64_t)v_addr)] = v_pt->entries[get_PT_INDEX((uint64_t)v_addr)]|WRITEABLE;
+                    
+                }
+                return 0;
+                
+            }
+            
+        }
+    }
+    return -1;
+    
+}
+
+void makePageCopiesForChilden(uint64_t pNum,int isParent,Task* task)
+{
+    Task* tempTask = task->child;
+    while(tempTask!=NULL)
+    {
+        VMA* tempVMA = tempTask->memMap.mmap;
+        while(tempVMA!=NULL)
+        {
+            if(tempVMA->pageNumber == pNum)
+            {
+                //copy this page
+                uint64_t virAddr = (tempVMA->v_start&Frame);
+                uint64_t newPage = (uint64_t)kmalloc();
+                newPage-=get_kernbase();
+                mapPageForUser(virAddr,newPage,tempTask->regs.cr3+get_kernbase());
+                memcpy((void *)virAddr,(void *)(newPage+get_kernbase()),4096);
+                
+            }
+            tempVMA=tempVMA->next;
+        }
+        
+        tempTask=tempTask->next;
+    }
+    
+}
+
+uint64_t getPageNumFromAddr(uint64_t addr)
+{
+    VMA* temp = runningThread->memMap.mmap;
+    while(temp!=NULL)
+    {
+        if(temp->v_start == addr) return temp->pageNumber;
+        
+        temp=temp->next;
+    }
+}
+
 void initUserProcess()
 {
     

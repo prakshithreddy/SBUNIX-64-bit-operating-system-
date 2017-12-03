@@ -403,16 +403,41 @@ void _hndlr_isr14(){
         void *ptr=pageAllocator();
         if(isPartofCurrentVma(pagefaultAt&FRAME))
         {
-            mapPageForUser(pagefaultAt,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
+            mapPageForUser(pagefaultAt&FRAME,(uint64_t)ptr,(uint64_t)(getRunCr3()+get_kernbase()));
             memset((uint64_t)ptr+get_kernbase());
         }
     }
     else if(us&rw&p)
     {
-        //MVP
-        //parent and child can write to the same page.
-        //create a copy of the current page that the child/parent is trying to acess and assign one copy to each child process that contains that page.
-        while(1);
+        uint64_t pNum = getPageNumFromAddr(pagefaultAt&FRAME);
+        if(!runnningThread->ppid_t)
+        {
+            //parent
+            //go to the childs and make copy of the that frame
+            makePageCopiesForChilden(pNum,runningThread); //1 - parent
+            markPageAsRW(pagefaultAt&FRAME,(getRunCr3()+get_kernbase()),0); //0 enable write
+        }
+        else
+        {
+            //child
+            //find the parent
+            Task* temp = runningThread->next;
+            while(temp!=NULL&&temp->next!=temp)
+            {
+                if(temp->pid_t == runningThread->ppid_t) break;
+            }
+            if(temp!=runningThread)
+            {
+                makePageCopiesForChilden(pNum,temp);
+                markPageAsRW(pagefaultAt&FRAME,(temp->regs.cr3+get_kernbase()),0); //0enable write
+            }
+            else
+            {
+                kprintf("Error")
+                while(1);
+            }
+            
+        }
         
     }
     else while(1);

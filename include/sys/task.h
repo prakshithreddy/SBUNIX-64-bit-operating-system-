@@ -70,5 +70,6 @@ void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
 int isPartofCurrentVma(uint64_t addr);
 uint64_t getNextPageNum();
+int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw);
 
 #endif
