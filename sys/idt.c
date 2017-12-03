@@ -438,11 +438,13 @@ void _hndlr_isr14(){
 //        markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
         int pageCount=1;
         uint64_t phyAddr = getPhysicalPageAddr(pagefaultAt&FRAME,getRunCr3());
-        
+        phyAddr&=FRAME;
         Task* temp = getRunningThread()->next;
         while(temp!=getRunningThread())
         {
-            if(getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3)==phyAddr) pageCount+=1; //how many cr3 contain this phy address,virtual address combo
+            uint64_t temp = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
+            if(temp!=-1 && (temp&FRAME)==phyAddr)
+                pageCount+=1; //how many cr3 contain this phy address,virtual address combo
             temp=temp->next;
         }
         
