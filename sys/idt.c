@@ -487,7 +487,7 @@ void _hndlr_isr14(){
             newPage-=get_kernbase();
             phyAddr+=get_kernbase();
             mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
-            invlpg(pagefaultAt&FRAME);
+            invlpg(pagefaultAt&FRAME);  //do at every change of page table entry for the current tlb
             memcpy((void *)phyAddr,(void *)(pagefaultAt&FRAME),4096);
             
         }

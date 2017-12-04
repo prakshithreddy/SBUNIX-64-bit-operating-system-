@@ -181,6 +181,7 @@ _moveToNextProcess:
 _pushVal:
     movq %rsp,currentRSP // will be restored later
     movq %rax,currentRAX
+    movq %rax,currentRAX
     movq %rdi,%rsp //loaded the kernel RSP of the current process
     pushq %rsi
     movq currentRAX,%rax

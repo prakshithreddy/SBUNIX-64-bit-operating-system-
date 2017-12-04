@@ -65,7 +65,7 @@ void switchToUserMode();
 uint64_t fork();
 uint64_t malloc(uint64_t size);
 uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3);
-
+void* exec(void* path,void* args,void* envp);
 void addCurrentTasktoRunQueue(Task* task);
 void markPagesAsReadOnly(uint64_t cr3);
 Task* getRunTask();

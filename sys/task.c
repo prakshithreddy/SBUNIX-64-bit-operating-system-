@@ -16,7 +16,7 @@ static int pidCount = 0;
 static int pageNum = 0;
 
 Task *userThread1;
-Task *userThread2;
+
 //Task *userThread3;
 
 //Task *vir_userThread1;
@@ -146,9 +146,14 @@ void _prepareInitialKernelStack(Registers* current);
 
 void _pushVal(uint64_t userRsp,int val);
 
-void pushSomeArgsToUser(uint64_t userRsp)
+void pushSomeArgsToUser(uint64_t userRsp,uint64_t val,uint64_t cr3)
 {
-    _pushVal(userRsp,123);
+    uint64_t tempCr3;
+    __asm__ __volatile__("mov %%cr3,%0":"=b"((uint64_t)tempCr3)::);
+    __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)cr3):);
+    invlpg(userRsp);
+    _pushVal(userRsp,val);
+    __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)tempCr3):);
 }
 
 void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
@@ -166,8 +171,46 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->regs.rip=(uint64_t)function;
     task->regs.cr3=cr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
-    pushSomeArgsToUser(task->regs.userRsp);
+    
+    //This portion code is temporary : must be removed;
+    
+    pushSomeArgsToUser(task->regs.userRsp,123,cr3);
     task->regs.userRsp-=8;
+    pushSomeArgsToUser(task->regs.userRsp,123,cr3);
+    task->regs.userRsp-=8;
+
+    pushSomeArgsToUser(task->regs.userRsp,123,cr3);
+    task->regs.userRsp-=8;
+    
+    //------------------------------------
+
+    task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
+    task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
+    task->regs.count=0;
+    task->regs.add=0;
+    task->next=0;
+    //task->memMap.mmap=((void *)0);
+    _prepareInitialKernelStack(&task->regs);
+}
+
+
+void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
+    
+    task->pid_t = runningThread->pid_t;
+    pidCount=0; //next process takes the next id
+    task->ppid_t = 0; //setting the Pid of the parent for COW
+    task->regs.rax=0;
+    task->regs.rbx=0;
+    task->regs.rcx=0;
+    task->regs.rdx=0;
+    task->regs.rsi=0;
+    task->regs.rdi=0;
+    task->regs.rflags=rflags;
+    task->regs.rip=(uint64_t)function;
+//    task->regs.cr3=cr3;
+//    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
+//    pushSomeArgsToUser(task->regs.userRsp);
+//    task->regs.userRsp-=8;
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
@@ -445,7 +488,7 @@ int isPartofCurrentVma(uint64_t addr)
 }
 
 
-void addChildToQueue(Task* task)
+void addToQueue(Task* task)
 {
     task->next = runningThread->next;
     runningThread->next = task;
@@ -479,7 +522,7 @@ uint64_t fork()
     Task* child = (Task*)kmalloc();
     createChildTask(child);
     
-    addChildToQueue(child);
+    addToQueue(child);
     makeParentCr3asReadOnly();
     return child->pid_t;
 }
@@ -533,7 +576,7 @@ uint64_t malloc(uint64_t size)
     {
         newVma->pageNumber = getNextPageNum();
         newVma->v_mm = &runningThread->memMap;
-        newVma->v_start = 0x0;
+        newVma->v_start = 0x2000;
         newVma->v_end = newVma->v_start+size;
         newVma->mmsz = size;
         newVma->v_flags = 0;
@@ -573,29 +616,101 @@ uint64_t malloc(uint64_t size)
     
 }
 
+void* exec(void* path,void* args,void* envp)
+{
+    
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[3],((char**)envp)[2]);
+    
+    Task *task = (Task*)kmalloc();
+    uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
+    task->regs.cr3=newCr3;
+    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
+    
+
+
+    char* newPage = (char*)kmalloc();
+    //newPage-=get_kernbase();  //phyAddr
+    
+    int i=0;
+    int k=0;
+
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+    task->regs.userRsp-=8;
+
+    while(((char**)envp)[i]!=NULL)
+    {
+        int j=0;
+        while(((char**)envp)[i][j]!='\0'&&k<=510) //only 512 chars
+        {
+            newPage[k] = ((char**)envp)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        k++;
+        i+=1;
+    }
+    
+    //emptyString to mark the end of the string
+    newPage[k] = '\0';
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0,(uint64_t)newPage,newCr3+get_kernbase());
+    
+    
+    newPage = (char*)kmalloc();
+    //newPage-=get_kernbase();  //phyAddr
+    
+    i=0;
+    k=0;
+    
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000,task->regs.cr3);
+    task->regs.userRsp-=8;
+    
+    while(((char**)args)[i]!=NULL)
+    {
+        int j=0;
+        while(((char**)args)[i][j]!='\0'&&k<=510)
+        {
+            newPage[k] = ((char**)args)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        k++;
+        i+=1;
+    }
+    
+    //emptyString to mark the end of the string
+    newPage[k] = '\0';
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
+    
+    i=(i==0)?0:i-1;
+    
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+    task->regs.userRsp-=8;
+
+    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
+    kprintf("Entry Point: %p\n",entryPoint);
+    createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
+    addToQueue(task);
+    
+    return 0;
+}
+
 void initUserProcess()
 {
     
-    //uint64_t U1_cr3 = (uint64_t)getNewPML4ForUser();
     uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-    
-    //userThread1 = (Task*)kmallocForUser(U1_cr3);
-    //userThread2 = (Task*)kmallocForUser(U2_cr3);
-    userThread2 = (Task*)kmalloc();
-    //vir_userThread1 = (Task*)((uint64_t)userThread1+get_kernbase());
-    //vir_userThread2 = (Task*)((uint64_t)userThread2+get_kernbase());
-    
-    //createNewTask((Task*)((uint64_t)userThread1+get_kernbase()),(uint64_t)userProcess1,mainThread.regs.rflags,U1_cr3);
+    Task *userThread2 = (Task*)kmalloc();
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     mainThread.next = userThread2;
-    //mainThread.next = userThread3;
-    //userThread3->next = userThread1;
-    //vir_userThread1->next = vir_userThread2;
-//    userThread2->next = &mainThread;
-    userThread2->next = userThread2; //temp, just to see what happens :P
+    userThread2->next = userThread2;
     
     enableIntr();
     switchToUserMode();
