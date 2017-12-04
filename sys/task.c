@@ -661,7 +661,7 @@ void* exec(void* path,void* args,void* envp)
     newPage-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
 
-    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),taski));
+    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     addToQueue(task);
