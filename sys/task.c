@@ -666,8 +666,6 @@ void* exec(void* path,void* args,void* envp)
     i=0;
     k=0;
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000,task->regs.cr3);
-    task->regs.userRsp-=8;
     
     while(((char**)args)[i]!=NULL)
     {
