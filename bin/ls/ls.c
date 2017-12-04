@@ -9,5 +9,6 @@ void* syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t param
 
 int main(int argc, char *argv[], char *envp[]){
     
-    while(1);
+    
+    while(1)syscall((void*)54,(void*)(uint64_t)1,(void*)2,(void*)(uint64_t)3,(void*)(uint64_t)5,(void*)5,(void*)6);;
 }
