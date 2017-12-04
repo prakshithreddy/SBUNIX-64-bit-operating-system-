@@ -627,7 +627,7 @@ void* exec(void* path,void* args,void* envp)
     newPage[k] = '\0';
     
     newPage-=get_kernbase();
-    mapPageForUser(0,newPage,newCr3+get_kernbase());
+    mapPageForUser(0,(uint64_t)newPage,newCr3+get_kernbase());
     
     
     newPage = (char*)kmalloc();
@@ -657,9 +657,9 @@ void* exec(void* path,void* args,void* envp)
     newPage[k] = '\0';
     
     newPage-=get_kernbase();
-    mapPageForUser(0x1000,newPage,newCr3+get_kernbase());
+    mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
 
-    uint64_t entryPoint = (loadFile(((char*)path),(U2_cr3+get_kernbase()),userThread2));
+    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread.regs.rflags,newCr3);
     addToQueue(task);
