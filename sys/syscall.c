@@ -33,6 +33,9 @@ uint64_t readMSR(uint32_t msrAddr)
 void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t paramD,uint64_t paramE,uint64_t paramF,uint64_t syscallNum) {
     
     kprintf("\n%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
+    char* p =  (char*)paramB;
+    kprintf("%s",p);
+    
     
     switch(syscallNum)
     {
