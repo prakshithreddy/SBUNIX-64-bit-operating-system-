@@ -196,6 +196,14 @@ void kprintf(const char *fmt, ...)
             }
             fmt+=1;
         }
+        else if(*fmt == '\b'){//TODO: Make sure it can handle \b just after \n,\r. For now not handling it.
+            if(vm_adr == next_line_adr-160){
+                next_line_adr=next_line_adr-160;
+            }
+            vm_adr-=2;
+            *vm_adr=0x20;
+            fmt+=1;
+        }
         else if(*fmt != '%'){
             *vm_adr = *fmt;
             fmt+=1;

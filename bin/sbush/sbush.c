@@ -19,12 +19,20 @@ int main(int argc, char *argv[], char *envp[]){
 
         int* a = (int*)syscall(99,2000,0,0,0,0,0);
         a1[3] = 786;
-        while(1)syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
+        syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
+        char *c=(char *)syscall(99,2000,0,0,0,0,0);
+        *c='\0';
+        while(1){
+            syscall(5,0,(uint64_t)c,64,0,0,0);
+            syscall(6,1,(uint64_t)c,0,0,0,0);
+        }
+            
     }
     else
     {
           a1[1] = 11;
-        while(1)syscall(20,a1[0],2,a1[1],a1[3],5,6);
+        syscall(20,a1[0],2,a1[1],a1[3],5,6);
+        while(1);
     }
     
     //syscall(10,1,2,3,4,5,6);

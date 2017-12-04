@@ -2,6 +2,7 @@
 #include<sys/defs.h>
 #include<sys/virtualMemory.h>
 #include<sys/kprintf.h>
+#include<sys/tarfs.h>
 
 #include<sys/task.h>
 
@@ -31,14 +32,22 @@ uint64_t readMSR(uint32_t msrAddr)
 
 void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t paramD,uint64_t paramE,uint64_t paramF,uint64_t syscallNum) {
     
-    kprintf("\n%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
+    //kprintf("\n%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
     
     switch(syscallNum)
     {
         case 1: kprintf("Fork System Call\n"); return (void*)fork();
-        case 99: kprintf("Fork System Call\n"); return (void*)malloc(paramA);
-
-                
+        case 99: kprintf("Malloc System Call\n"); return (void*)malloc(paramA);
+        case 5: //kprintf("Read File System Call\n"); 
+                return (void *)readFile(paramA,(char *)paramB,paramC);
+        case 6: //kprintf("Write File System Call\n");
+                return (void *)writeFile(paramA,(char *)paramB,paramC);  
+        case 7: kprintf("Close File System Call\n");return (void*)closeFile(paramA);
+        case 8: kprintf("Open File System Call");return (void*)openFile((char *)paramA);
+        case 9: kprintf("Open Dir System Call");return (void*)openDirectory((char *)paramA);
+        case 10: kprintf("Close Dir System Call");return (void*)closeDir(paramA);
+        case 11: kprintf("Read Dir System Call");return (void*)readDir(paramA,(char *)paramB,paramC);
+        case 12: kprintf("Get Dents System Call");return (void*)getDirEntries(paramA,(char *)paramB,paramC);  
     }
     
     return (void*)100;
