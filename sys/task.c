@@ -567,33 +567,28 @@ void* exec(void* path,void* args,void* envp)
 {
     
     //as
-    kprintf("%s %s %s\n",((char**)path)[0],((char**)path)[0],((char**)path)[0]);
+    kprintf("%s %s %s\n",((char**)path)[0],((char*)path),((char**)path)[0]);
+    
+//    uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
+//    userThread2 = (Task*)kmalloc();
+//    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
+//    kprintf("Entry Point: %p\n",hello_entrypoint);
+//    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+    
     return 0;
 }
 
 void initUserProcess()
 {
     
-    //uint64_t U1_cr3 = (uint64_t)getNewPML4ForUser();
     uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-    
-    //userThread1 = (Task*)kmallocForUser(U1_cr3);
-    //userThread2 = (Task*)kmallocForUser(U2_cr3);
     userThread2 = (Task*)kmalloc();
-    //vir_userThread1 = (Task*)((uint64_t)userThread1+get_kernbase());
-    //vir_userThread2 = (Task*)((uint64_t)userThread2+get_kernbase());
-    
-    //createNewTask((Task*)((uint64_t)userThread1+get_kernbase()),(uint64_t)userProcess1,mainThread.regs.rflags,U1_cr3);
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     mainThread.next = userThread2;
-    //mainThread.next = userThread3;
-    //userThread3->next = userThread1;
-    //vir_userThread1->next = vir_userThread2;
-//    userThread2->next = &mainThread;
-    userThread2->next = userThread2; //temp, just to see what happens :P
+    userThread2->next = userThread2;
     
     enableIntr();
     switchToUserMode();
