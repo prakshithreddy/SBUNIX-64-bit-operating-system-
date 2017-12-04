@@ -17,11 +17,11 @@ int main(int argc, char *argv[], char *envp[]){
     if(pid == 0)
     {
 
-        char* a = (char*)syscall((void*)99,(void*)(10*sizeof(int)),(void*)0(void*),(void*)0,(void*)0,(void*)0,(void*)0);
+        char* a = (char*)syscall((void*)99,(void*)(10*sizeof(int)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         a1[3] = 786;
-        for(int i=0;i<10;i++) a[i] = char(65+i);
+        for(int i=0;i<10;i++) a[i] = (char)65+i);
         //syscall(78,)
-        while(1)syscall((void*)10,((void*))a,(void*)a1[0],(void*)a1[1],(void*)a1[3],(void*)0,(void*)0);
+        while(1)syscall((void*)10,(void*)a,(void*)a1[0],(void*)a1[1],(void*)a1[3],(void*)0,(void*)0);
     }
     else
     {
