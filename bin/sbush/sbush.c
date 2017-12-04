@@ -26,12 +26,12 @@ int main(int argc, char *argv[], char *envp[]){
         a[0] = "bin/ls";
         
         syscall((void*)78,(void*)a[0],(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
-        while(1) syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)0);
+        while(1) syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)argc);
     }
     else
     {
           a1[1] = 11;
-        while(1) syscall((void*)20,(void*)(uint64_t)a1[0],(void*)2,(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)5,(void*)6);
+        while(1) syscall((void*)20,(void*)(uint64_t)a1[0],(void*)2,(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)5,(void*)argc);
     }
     
     //syscall(10,1,2,3,4,5,6);
