@@ -595,7 +595,7 @@ void* exec(void* path,void* args,void* envp)
     
     //s
     //as
-    kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[9]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[8],((char**)envp)[9]);
     
 ////    //
 ////
