@@ -606,7 +606,7 @@ void* exec(void* path,void* args,void* envp)
     int i=0;
     int k=0;
 
-    _pushVal(userRsp,(uint64_t)0);
+    _pushVal(task->regs.userRsp,(uint64_t)0);
     task->regs.userRsp-=8;
 
     while(((char**)envp)[i]!=NULL)
@@ -636,7 +636,7 @@ void* exec(void* path,void* args,void* envp)
     int i=0;
     int k=0;
     
-    _pushVal(userRsp,(uint64_t)0x1000);
+    _pushVal(task->regs.userRsp,(uint64_t)0x1000);
     task->regs.userRsp-=8;
     
     while(((char**)envp)[i]!=NULL)
