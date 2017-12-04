@@ -18,6 +18,25 @@ uint64_t switchRdi=0;
 uint64_t switchRbp=0;
 
 uint64_t errorCode;
+char *stdStart;
+char *writePosition;
+char *readPosition;
+char *end;
+int indicator;
+int readline;
+
+char * get_input_buf(){
+    return stdStart;
+}
+
+void set_input_buf(uint64_t page){
+    stdStart=(char *)page;
+    writePosition=(char *)page;
+    readPosition=(char *)page;
+    end=(char *)(page+0x1000);
+    indicator=0;
+    readline=0;
+}
 
 typedef struct registers
 {
@@ -92,9 +111,9 @@ void _key_press_handler(registers_t regs){
             case 58:
                 keypress_bar("LAST PRESSED: Caps",14);break;
             case 14:
-                keypress_bar("LAST PRESSED: Backspace",14);break;
+                keypress_bar("LAST PRESSED: Backspace",14);handleBackspace();break;
             case 28:
-                keypress_bar("LAST PRESSED: Enter",14);break;
+                keypress_bar("LAST PRESSED: Enter",14);writeChar('\n',0);kprintf("\n");break;
             case 77:
                 keypress_bar("LAST PRESSED: Right Arrow",14);break;
             case 75:
@@ -118,7 +137,7 @@ void _key_press_handler(registers_t regs){
             case 80:
                 keypress_bar("LAST PRESSED: Down Arrow",14);break;
             case 57:
-                keypress_bar("LAST PRESSED: Space",14);break;
+                keypress_bar("LAST PRESSED: Space",14);writeChar(0x20,0);kprintf(" ");break;
             case 56:
                 keypress_bar("LAST PRESSED: Alt",14);break;
             case 15:
@@ -156,18 +175,26 @@ void _key_press_handler(registers_t regs){
                     //shift = 0;
                     char s[] = {'L','A','S','T',' ','P','R','E','S','S','E','D',':',' ','s','h','i','f','t','+','\'',kbdus[a],'\'','=','\'',CAPS_kbdus[a],'\'','\0'};
                     keypress_bar(s,14);
+                    kprintf("%c",CAPS_kbdus[a]);
+                    writeChar(CAPS_kbdus[a],0);
                 }
                 else if (control)
                 {
                     //control=0;
                     char s[] = {'L','A','S','T',' ','P','R','E','S','S','E','D',':',' ','^',CAPS_kbdus[a],'\0'};
                     keypress_bar(s,14);
-                    
+                    //kprintf("^%c",CAPS_kbdus[a]);
+                    //writeChar(CAPS_kbdus[a],1);
+                    if(CAPS_kbdus[a]=='H'){
+                      handleBackspace();
+                    }
                 }
                 else
                 {
                     char s[]={'L','A','S','T',' ','P','R','E','S','S','E','D',':',' ',kbdus[a],'\0'};
                     keypress_bar(s,14);
+                    kprintf("%c",kbdus[a]);
+                    writeChar(kbdus[a],0);
                 }
         }
     }
@@ -570,4 +597,75 @@ void init_idt()
     
     __asm__ __volatile__("lidt %0" : : "m" (idtp));
     
+}
+
+void writeChar(char c,int specialCharacter){//writePosition is place where character will be written
+  if(specialCharacter==1){
+      *writePosition='^';
+      writePosition++;
+      if(writePosition==end){
+          writePosition=stdStart;
+          indicator=1;
+      }
+  }
+  *writePosition=c;
+  writePosition++;
+  if(writePosition==end){
+      if(readPosition!=stdStart){
+        writePosition=stdStart;
+        indicator=1;
+      }
+      else{
+        kprintf("Warning: Input Buffer Full.. Cant Take more input.. Please Type Enter");
+      }
+  }
+  if(writePosition==readPosition-1){//TODO: In this situation if its a correct command execute it, otherwise discard saying wrong command.
+    kprintf("Warning: Input Buffer Full..Cant Take more input..Please Type Enter");
+  }
+  if(c=='\n'){
+      readline+=1;
+  }
+}
+
+char readChar(){//readPosition is place where character will be read from
+  char c='\0';
+  if(((((uint64_t)writePosition>(uint64_t)readPosition) && (indicator==0)) || (((uint64_t)readPosition>(uint64_t)writePosition)&&(indicator==1))) && (readline>0)){
+      c=*readPosition;
+      if(c=='\n'){
+          readline-=1;
+      }
+      *readPosition='\0';
+      readPosition++;
+      if(readPosition==end+1){
+          readPosition=stdStart;indicator=0;
+      }
+  }
+  else{
+      //runNextTask();
+      return '\0';
+  }
+  return c;
+}
+
+void handleBackspace(){
+    if(((uint64_t)(writePosition)==(uint64_t)(readPosition))){
+        *writePosition='\0';
+    }
+    if(((uint64_t)(writePosition)>(uint64_t)(readPosition) && (indicator==0))&&(*(writePosition-1)!='\n')){
+        writePosition--;
+        if(writePosition==stdStart-1){
+          writePosition=stdStart;
+        }
+        *writePosition='\0';
+        kprintf("\b");
+    }
+    if((((uint64_t)readPosition>(uint64_t)writePosition)&&(indicator==1)) && (*(writePosition-1)!='\n')){
+        writePosition--;
+        if(writePosition==stdStart-1){
+          writePosition=end;
+          indicator=0;
+        }
+        *writePosition='\0';
+        kprintf("\b");
+    }
 }

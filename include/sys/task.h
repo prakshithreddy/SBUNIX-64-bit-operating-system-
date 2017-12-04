@@ -75,5 +75,6 @@ uint64_t getPageNumFromAddr(uint64_t addr);
 int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw);
 void makePageCopiesForChilden(uint64_t pNum,Task* task);
 Task* getRunningThread();
+void init_terminal();
 
 #endif

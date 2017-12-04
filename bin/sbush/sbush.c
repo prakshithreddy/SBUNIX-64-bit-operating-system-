@@ -17,6 +17,13 @@ int main(int argc, char *argv[], char *envp[]){
     if(pid == 0)
     {
         a1[3] = 786;
+        //syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
+        //char *c=(char *)syscall(99,2000,0,0,0,0,0);
+        //*c='\0';
+        //while(1){
+            //syscall(5,0,(uint64_t)c,64,0,0,0);
+            //syscall(6,1,(uint64_t)c,0,0,0,0);
+        //}
         char** a = (char**)syscall((void*)99,(void*)(4*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
         //for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);

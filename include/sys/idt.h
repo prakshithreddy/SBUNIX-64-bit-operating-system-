@@ -21,4 +21,9 @@ uint64_t switchRbp;
 
 uint64_t errorCode;
 
+void handleBackspace();
+char readChar();
+void writeChar(char c,int specialCharacter);
+void set_input_buf(uint64_t page);
+char * get_input_buf();
 #endif

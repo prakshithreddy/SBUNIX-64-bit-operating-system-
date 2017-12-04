@@ -216,6 +216,11 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
     task->regs.count=0;
     task->regs.add=0;
     task->next=0;
+    task->fd_pointers[0]=(uint64_t)kmalloc();
+    for(int i=1;i<20;i++){
+      task->fd_pointers[i]=0;
+    }
+    task->fd_count=5;
     //task->memMap.mmap=((void *)0);
     _prepareInitialKernelStack(&task->regs);
 }
@@ -299,6 +304,10 @@ int markPageAsRW(uint64_t v_addr,uint64_t cr3,int rw){
     
 }
 
+void init_terminal(){//TODO: ***Very Important::::SBUSH Taske atmost 64 characters of command, stdin takes 512 characters at max.. Handle that correctly..*****
+    set_input_buf((uint64_t)kmalloc());
+}
+
 void switchToUserMode()
 {
     Task *last = runningThread;
@@ -316,6 +325,7 @@ void switchToUserMode()
     }
     uint64_t tssAddr = runningThread->regs.kernelRsp;
     set_tss_rsp((void*)(tssAddr));
+    init_terminal();
     _switchToRingThree(&last->regs, &runningThread->regs);
     
 }

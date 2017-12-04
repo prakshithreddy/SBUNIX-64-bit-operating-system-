@@ -6,6 +6,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/task.h>
 #include<dirent.h>
+#include<sys/idt.h>
 
 #define MAX_SEGMENTS 100
 #define ELF_PT_LOAD 1
@@ -331,7 +332,7 @@ struct fileDescriptor* get_fd_address(int fd){
     return NULL;
 }
 
-int openFile(char* fileName){
+int64_t openFile(char* fileName){
     Task *currentTask=(Task *)getRunTask();
     uint64_t start=get_file_address(fileName);
     if(start==0){
@@ -366,10 +367,28 @@ int openFile(char* fileName){
     return -1;
 }
 
-int readFile(int fd,char *buf,int count){
+uint64_t readFile(int fd,char *buf,int count){
     if(fd<0){
         kprintf("Invalid FD provided..\n");
         return -1;
+    }
+    if(fd==0){
+        char *dbuf=buf;
+        *dbuf='0';
+        
+        while(count>0){
+            *dbuf=readChar();
+            if(*dbuf=='\0'){
+              break;
+            }
+            else if(*dbuf=='\n'){
+              *dbuf='\0';
+              break;
+            }
+            dbuf++;
+            count--;
+        }
+        return 0;
     }
     struct fileDescriptor *fd_struct=get_fd_address(fd);
     if(fd_struct==NULL){
@@ -388,14 +407,14 @@ int readFile(int fd,char *buf,int count){
     return val;
 }
 
-int closeFile(int fd){
+uint64_t closeFile(int fd){
     if(fd<0){
         kprintf("Invalid FD provided..\n");
-        return -1;
+        return 1;
     }
     struct fileDescriptor *fd_struct=get_fd_address(fd);
     if(fd_struct==NULL){
-        return -1;
+        return 1;
     }
     if(fd_struct->name[0]!='\0'){
         fd_struct->name[0]='\0';
@@ -406,8 +425,22 @@ int closeFile(int fd){
     return 0;
 }
 
+uint64_t writeFile(int fd,char *buf,int count){
+    if(fd==1){
+      kprintf("%s",buf);
+      return count;
+    }
+    if(fd==2){
+      kprintf("%s",buf);
+      return count;//TODO: For now returning the inpute count, but not the actual count.
+    }
+    else{
+      kprintf("Does not support write system call for now..");
+      return 0;
+    }
+}
 
-int openDirectory(char* dirName){
+int64_t openDirectory(char* dirName){
     Task *currentTask=(Task *)getRunTask();
     uint64_t start=get_dir_address(dirName);
     if(start==0){
@@ -524,17 +557,17 @@ int get_sub_direntry(char *parent,char *child,char *dbuf,int count){
   return 0;
 }
 
-int readDir(int fd,char *buf,int count){
+uint64_t readDir(int fd,char *buf,int count){
     if(fd<0){
         kprintf("Invalid FD provided..\n");
-        return -1;
+        return 0;
     }
     //Task *currentTask=(Task *)getRunTask();
     uint64_t start;
     struct posix_header_ustar *tar_file_pointer;
     struct fileDescriptor *fd_struct=get_fd_address(fd);
     if(fd_struct==NULL){
-        return -1;
+        return 0;
     }
     if(fd_struct->name[0] != '\0'){
         start = fd_struct->offset;
@@ -546,12 +579,12 @@ int readDir(int fd,char *buf,int count){
               if((strcmp(buf,fd_struct->d_prev_dir))){
                   strcpy(buf,fd_struct->d_prev_dir);
                   fd_struct->offset=start;
-                  return 0;
+                  return count;
               }
           }
 		      else{
 			      *buf='\0';
-			      return -1;
+			      return 0;
 		      }
           char *f_size=tar_file_pointer->size;
           int size = toInteger(f_size);
@@ -563,18 +596,18 @@ int readDir(int fd,char *buf,int count){
         }
     }
     kprintf("Incorrect FD...\n");
-    return -1;
+    return 0;
 }
 
-int closeDir(int fd){
+uint64_t closeDir(int fd){
     //Task *currentTask=(Task *)getRunTask();
     if(fd<0){
         kprintf("Invalid FD provided..\n");
-        return -1;
+        return 1;
     }
     struct fileDescriptor *fd_struct=get_fd_address(fd);
     if(fd_struct==NULL){
-        return -1;
+        return 1;
     }
     if(fd_struct->name[0]!='\0'){
         fd_struct->name[0]='\0';
@@ -585,14 +618,15 @@ int closeDir(int fd){
     return 0;
 }
 
-int getDirEntries(int fd,char *buf,int count){
+uint64_t getDirEntries(int fd,char *buf,int count){
     if(fd<0){
         kprintf("Invalid FD provided..\n");
-        return -1;
+        return 0;
     }
+    int y=count;
     struct fileDescriptor *fd_struct=get_fd_address(fd);
     if(fd_struct==NULL){
-        return -1;
+        return 0;
     }
     //Task *currentTask=(Task *)getRunTask();
     uint64_t start;
@@ -618,7 +652,7 @@ int getDirEntries(int fd,char *buf,int count){
           }
 		      else{//if not as parent.. buf will be pointing to end of direntries thus writing a null there and returning 0.
 			      *buf='\0';
-			      return 0;
+			      return y-count;
 		      }
           char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
           int size = toInteger(f_size);
@@ -630,5 +664,5 @@ int getDirEntries(int fd,char *buf,int count){
         }
     }
   *buf='\0';
-  return -1;
+  return 0;
 }

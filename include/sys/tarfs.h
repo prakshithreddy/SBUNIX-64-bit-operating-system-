@@ -34,12 +34,13 @@ struct posix_header_ustar {
 };
 
 void memcpy(void *src,void *dest,size_t n);
-int getDirEntries(int fd,char *buf,int count);
-int closeDir(int fd);
-int readDir(int fd,char *buf,int count);
-int openDirectory(char* dirName);
-int closeFile(int fd);
-int readFile(int fd,char *buf,int count);
-int openFile(char* fileName);
+uint64_t getDirEntries(int fd,char *buf,int count);
+uint64_t closeDir(int fd);
+uint64_t readDir(int fd,char *buf,int count);
+int64_t openDirectory(char* dirName);
+uint64_t closeFile(int fd);
+uint64_t readFile(int fd,char *buf,int count);
+uint64_t writeFile(int fd,char *buf,int count);
+int64_t openFile(char* fileName);
 
 #endif
