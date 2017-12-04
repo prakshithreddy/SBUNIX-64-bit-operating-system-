@@ -653,6 +653,8 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
+        task->regs.userRsp-=8;
         i+=1;
     }
     
@@ -683,6 +685,8 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
+        task->regs.userRsp-=8;
         i+=1;
     }
     
