@@ -77,5 +77,6 @@ void makePageCopiesForChilden(uint64_t pNum,Task* task);
 Task* getRunningThread();
 void init_terminal();
 void* printMe(void* path,void* args,void* envp);
+void* waitpid(void* pid,void* status,void* flags);
 
 #endif

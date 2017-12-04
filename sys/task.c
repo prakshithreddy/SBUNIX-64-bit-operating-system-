@@ -703,10 +703,10 @@ void* exec(void* path,void* args,void* envp)
 }
 
 
-void* exec(void* pid,void* status,void* envp)
+void* waitpid(void* pid,void* status,void* flags)
 {
     
-    kprintf("%d %d %d\n",(uint64_t)pid,(uint64_t*)status,(uint64_t)envp);
+    kprintf("%d %d %d\n",(uint64_t)pid,(uint64_t*)status,(uint64_t)flags);
     
     
     
