@@ -166,8 +166,35 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->regs.rip=(uint64_t)function;
     task->regs.cr3=cr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
-    pushSomeArgsToUser(task->regs.userRsp);
-    task->regs.userRsp-=8;
+//    pushSomeArgsToUser(task->regs.userRsp);
+//    task->regs.userRsp-=8;
+    task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
+    task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
+    task->regs.count=0;
+    task->regs.add=0;
+    task->next=0;
+    //task->memMap.mmap=((void *)0);
+    _prepareInitialKernelStack(&task->regs);
+}
+
+
+void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
+    
+    task->pid_t = pidCount+1;
+    pidCount+=1; //next process takes the next id
+    task->ppid_t = 0; //setting the Pid of the parent for COW
+    task->regs.rax=0;
+    task->regs.rbx=0;
+    task->regs.rcx=0;
+    task->regs.rdx=0;
+    task->regs.rsi=0;
+    task->regs.rdi=0;
+    task->regs.rflags=rflags;
+    task->regs.rip=(uint64_t)function;
+    task->regs.cr3=cr3;
+//    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
+//    pushSomeArgsToUser(task->regs.userRsp);
+//    task->regs.userRsp-=8;
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
@@ -570,12 +597,70 @@ void* exec(void* path,void* args,void* envp)
     //as
     kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[9]);
     
-    uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-    Task *userThread2 = (Task*)kmalloc();
-    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
-    kprintf("Entry Point: %p\n",hello_entrypoint);
-    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
-    
+////    //
+////
+////    Task *task = (Task*)kmalloc();
+////    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
+////
+////
+////    char* newPage = (char*)kmalloc();
+////    //newPage-=get_kernbase();  //phyAddr
+////    
+////    int i=0;
+////    int k=0;
+////
+////    _pushVal(userRsp,(uint64_t)newPage);
+////    task->regs.userRsp-=8;
+////
+////    while(((char**)args)[i]!=NULL)
+////    {
+////        int j=0;
+////        while(((char**)args)[i][j]!='\0')
+////        {
+////            newPage[k] = ((char**)args)[i][j];
+////            k++;
+////            j++;
+////        }
+////        newPage[k] = '\0';
+////        k++;
+////        _pushVal(userRsp,(uint64_t)k);
+////        task->regs.userRsp-=8;
+////        i+=1;
+////    }
+////
+////    _pushVal(userRsp,123);
+////    task->regs.userRsp-=8;
+////
+////    i=0;
+////
+////    while(((char**)envp)[i]!=NULL)
+////    {
+////        int j=0;
+////        while(((char**)args)[i][j]!='\0')
+////        {
+////            newPage[i][j] = ((char**)args)[i][j];
+////            j++;
+////        }
+////        newPage[i][j] = '\0';
+////        _pushVal(userRsp,123);
+////        task->regs.userRsp-=8;
+////        i+=1;
+////    }
+////
+//     // creating a stack for the user process
+//
+//
+//    mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
+//    invlpg(pagefaultAt&FRAME);  //do at every change of page table entry for the current tlb
+//    memcpy((void *)phyAddr,(void *)(pagefaultAt&FRAME),4096);
+//
+//
+//    uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
+//
+//    uint64_t entryPoint = (loadFile(((char*)path),(U2_cr3+get_kernbase()),userThread2));
+//    kprintf("Entry Point: %p\n",hello_entrypoint);
+//    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+//
     return 0;
 }
 
