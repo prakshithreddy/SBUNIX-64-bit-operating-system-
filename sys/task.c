@@ -597,7 +597,7 @@ void* exec(void* path,void* args,void* envp)
     
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
-    task->regs.cr3=cr3;
+    task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
     
 
