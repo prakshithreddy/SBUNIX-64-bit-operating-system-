@@ -146,9 +146,10 @@ void _prepareInitialKernelStack(Registers* current);
 
 void _pushVal(uint64_t userRsp,int val);
 
-void pushSomeArgsToUser(uint64_t userRsp)
+void pushSomeArgsToUser(uint64_t userRsp,uint64_t val)
 {
-    _pushVal(userRsp,123);
+    invlpg(userRsp);
+    _pushVal(userRsp,val);
 }
 
 void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
@@ -169,12 +170,12 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
     //This portion code is temporary : must be removed;
     
-    pushSomeArgsToUser(task->regs.userRsp);
+    pushSomeArgsToUser(task->regs.userRsp,123);
     task->regs.userRsp-=8;
-    pushSomeArgsToUser(task->regs.userRsp);
+    pushSomeArgsToUser(task->regs.userRsp,123);
     task->regs.userRsp-=8;
 
-    pushSomeArgsToUser(task->regs.userRsp);
+    pushSomeArgsToUser(task->regs.userRsp,123);
     task->regs.userRsp-=8;
     
     //------------------------------------
@@ -619,15 +620,15 @@ void* exec(void* path,void* args,void* envp)
     int i=0;
     int k=0;
 
-    _pushVal(task->regs.userRsp,(uint64_t)0);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0);
     task->regs.userRsp-=8;
 
     while(((char**)envp)[i]!=NULL)
     {
         int j=0;
-        while(((char**)args)[i][j]!='\0'&&k<=510) //only 512 chars
+        while(((char**)envp)[i][j]!='\0'&&k<=510) //only 512 chars
         {
-            newPage[k] = ((char**)args)[i][j];
+            newPage[k] = ((char**)envp)[i][j];
             k++;
             j++;
         }
@@ -649,10 +650,10 @@ void* exec(void* path,void* args,void* envp)
     i=0;
     k=0;
     
-    _pushVal(task->regs.userRsp,(uint64_t)0x1000);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000);
     task->regs.userRsp-=8;
     
-    while(((char**)envp)[i]!=NULL)
+    while(((char**)args)[i]!=NULL)
     {
         int j=0;
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -674,7 +675,7 @@ void* exec(void* path,void* args,void* envp)
     
     i=(i==0)?0:i-1;
     
-    _pushVal(task->regs.userRsp,(uint64_t)i);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i);
     task->regs.userRsp-=8;
 
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
