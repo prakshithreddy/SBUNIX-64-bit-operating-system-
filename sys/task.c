@@ -614,7 +614,7 @@ void* exec(void* path,void* args,void* envp)
     while(((char**)envp)[i]!=NULL)
     {
         int j=0;
-        while(((char**)args)[i][j]!='\0')
+        while(((char**)args)[i][j]!='\0'&&k<=510) //only 512 chars
         {
             newPage[k] = ((char**)args)[i][j];
             k++;
@@ -644,7 +644,7 @@ void* exec(void* path,void* args,void* envp)
     while(((char**)envp)[i]!=NULL)
     {
         int j=0;
-        while(((char**)args)[i][j]!='\0')
+        while(((char**)args)[i][j]!='\0'&&k<=510)
         {
             newPage[k] = ((char**)args)[i][j];
             k++;
