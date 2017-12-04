@@ -22,9 +22,9 @@ int main(int argc, char *argv[], char *envp[]){
         for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
         for(int i=0;i<10;i++) a[i] = (char*)"a=test";
-        char temp[] = "aaaaaaa";
+        char* temp = "aaaaaaa";
         
-        syscall((void*)78,(void*)&temp,(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
+        syscall((void*)78,(void*)temp,(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
         while(1);//syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)0);
     }
     else
