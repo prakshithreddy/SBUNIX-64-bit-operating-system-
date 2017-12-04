@@ -10,23 +10,23 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 int main(int argc, char *argv[], char *envp[]){
     argc+=1;
     
-    int* a1 = (int*)syscall(99,2000,0,0,0,0,0);
+    int* a1 = (int*)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     a1[0] = 10;
     uint64_t pid = (uint64_t)syscall(1,1,2,3,4,5,(uint64_t)a1);
     
     if(pid == 0)
     {
 
-        char* a = (char*)syscall(99,10*sizeof(int),0,0,0,0,0);
+        char* a = (char*)syscall((void*)99,(void*)(10*sizeof(int)),(void*)0(void*),(void*)0,(void*)0,(void*)0,(void*)0);
         a1[3] = 786;
         for(int i=0;i<10;i++) a[i] = char(65+i);
         //syscall(78,)
-        while(1)syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
+        while(1)syscall((void*)10,((void*))a,(void*)a1[0],(void*)a1[1],(void*)a1[3],(void*)0,(void*)0);
     }
     else
     {
           a1[1] = 11;
-        while(1)syscall(20,a1[0],2,a1[1],a1[3],5,6);
+        while(1)syscall((void*)20,(void*)a1[0],(void*)2,(void*)a1[1],(void*)a1[3],(void*)5,(void*)6);
     }
     
     //syscall(10,1,2,3,4,5,6);
