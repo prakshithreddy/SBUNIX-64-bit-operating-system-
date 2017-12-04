@@ -639,11 +639,14 @@ void* exec(void* path,void* args,void* envp)
     int i=0;
     int k=0;
 
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
-    task->regs.userRsp-=8;
+//    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+//    task->regs.userRsp-=8;
 
     while(((char**)envp)[i]!=NULL)
     {
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
+        task->regs.userRsp-=8;
+        
         int j=0;
         while(((char**)envp)[i][j]!='\0'&&k<=510) //only 512 chars
         {
@@ -653,13 +656,12 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
-        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
-        task->regs.userRsp-=8;
+        
         i+=1;
     }
     
-    //emptyString to mark the end of the string
-    newPage[k] = '\0';
+//    //emptyString to mark the end of the string
+//    newPage[k] = '\0';
     
     newPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newPage,newCr3+get_kernbase());
@@ -677,6 +679,10 @@ void* exec(void* path,void* args,void* envp)
     while(((char**)args)[i]!=NULL)
     {
         int j=0;
+        
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
+        task->regs.userRsp-=8;
+        
         while(((char**)args)[i][j]!='\0'&&k<=510)
         {
             newPage[k] = ((char**)args)[i][j];
@@ -685,13 +691,13 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
-        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
-        task->regs.userRsp-=8;
+//        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
+//        task->regs.userRsp-=8;
         i+=1;
     }
     
-    //emptyString to mark the end of the string
-    newPage[k] = '\0';
+//    //emptyString to mark the end of the string
+//    newPage[k] = NULL;
     
     newPage-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
