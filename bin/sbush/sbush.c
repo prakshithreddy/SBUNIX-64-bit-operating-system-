@@ -16,9 +16,12 @@ int main(int argc, char *argv[], char *envp[]){
     
     if(pid == 0)
     {
-        char* a = (char*)syscall((void*)99,(void*)(10*sizeof(int)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         a1[3] = 786;
-        for(int i=0;i<10;i++) a[i] = (char)(65+i);
+        char* a = (char*)syscall((void*)99,(void*)(10*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+        for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+        
+        for(int i=0;i<10;i++) a[i] = "a=test";
+        
         syscall((void*)78,(void*)a,(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
         while(1);//syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)0);
     }
