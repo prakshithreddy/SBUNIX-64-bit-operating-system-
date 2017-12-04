@@ -19,7 +19,7 @@ int main(int argc, char *argv[], char *envp[]){
         a1[3] = 786;
         char* a = (char*)syscall((void*)99,(void*)(10*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
-        for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+        for(int i=0;i<10;i++) a[i] = (char*)(uint64_t)syscall((void*)99,(void*)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
         for(int i=0;i<10;i++) a[i] = (char*)"a=test";
         
