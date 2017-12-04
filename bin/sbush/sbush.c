@@ -12,7 +12,7 @@ int main(int argc, char *argv[], char *envp[]){
     
     int* a1 = (int*)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     a1[0] = 10;
-    uint64_t pid = (uint64_t)syscall(1,1,2,3,4,5,(uint64_t)a1);
+    uint64_t pid = (uint64_t)syscall((void*)1,(void*)1,(void*)2,(void*)3,(void*)4,(void*)5,(uint64_t)a1);
     
     if(pid == 0)
     {
