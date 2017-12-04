@@ -563,6 +563,12 @@ uint64_t malloc(uint64_t size)
     
 }
 
+uint64t_t exec(char *path,char* args,char* envp)
+{
+    kprintf("%s %s %s\n",path,args,envp);
+    return 0;
+}
+
 void initUserProcess()
 {
     
