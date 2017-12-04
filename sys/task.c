@@ -569,7 +569,7 @@ uint64_t getPageNumFromAddr(uint64_t addr)
 
 void* printMe(void* path,void* args,void* envp)
 {
-    kprintf("%d %p\n",((uint64_t)path),&(((char**)args)[0]));//,((char**)envp)[2]);
+    kprintf("%d %p\n",((uint64_t)path),&(((char**)args)[1]));//,((char**)envp)[2]);
     return 0;
 }
 uint64_t malloc(uint64_t size)
