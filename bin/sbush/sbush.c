@@ -21,7 +21,7 @@ int main(int argc, char *argv[], char *envp[]){
         
         //for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
-        for(int i=0;i<10;i++) a[i] = (char*)"a=test";
+        for(int i=0;i<10;i++) a[i] = (char*)"a=testrteyterweretyruitytrewtyeu6ri7uyt";
         
         
         syscall((void*)78,(void*)a[0],(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
