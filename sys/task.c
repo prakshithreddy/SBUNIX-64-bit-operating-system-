@@ -146,10 +146,14 @@ void _prepareInitialKernelStack(Registers* current);
 
 void _pushVal(uint64_t userRsp,int val);
 
-void pushSomeArgsToUser(uint64_t userRsp,uint64_t val)
+void pushSomeArgsToUser(uint64_t userRsp,uint64_t val,uint64_t cr3)
 {
+    uint64_t tempCr3;
+    __asm__ __volatile__("mov %%cr3,%0":"=b"((uint64_t)tempCr3)::);
+    __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)cr3):);
     invlpg(userRsp);
     _pushVal(userRsp,val);
+    __asm__ __volatile__("mov %0,%%cr3":: "b"((uint64_t)tempCr3):);
 }
 
 void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
@@ -170,12 +174,12 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
     //This portion code is temporary : must be removed;
     
-    pushSomeArgsToUser(task->regs.userRsp,123);
+    pushSomeArgsToUser(task->regs.userRsp,123,cr3);
     task->regs.userRsp-=8;
-    pushSomeArgsToUser(task->regs.userRsp,123);
+    pushSomeArgsToUser(task->regs.userRsp,123,cr3);
     task->regs.userRsp-=8;
 
-    pushSomeArgsToUser(task->regs.userRsp,123);
+    pushSomeArgsToUser(task->regs.userRsp,123,cr3);
     task->regs.userRsp-=8;
     
     //------------------------------------
@@ -620,7 +624,7 @@ void* exec(void* path,void* args,void* envp)
     int i=0;
     int k=0;
 
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
     task->regs.userRsp-=8;
 
     while(((char**)envp)[i]!=NULL)
@@ -650,7 +654,7 @@ void* exec(void* path,void* args,void* envp)
     i=0;
     k=0;
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000,task->regs.cr3);
     task->regs.userRsp-=8;
     
     while(((char**)args)[i]!=NULL)
@@ -675,7 +679,7 @@ void* exec(void* path,void* args,void* envp)
     
     i=(i==0)?0:i-1;
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
     task->regs.userRsp-=8;
 
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
