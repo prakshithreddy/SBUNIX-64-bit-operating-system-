@@ -166,8 +166,19 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->regs.rip=(uint64_t)function;
     task->regs.cr3=cr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
+    
+    //This portion code is temporary : must be removed;
+    
     pushSomeArgsToUser(task->regs.userRsp);
     task->regs.userRsp-=8;
+    pushSomeArgsToUser(task->regs.userRsp);
+    task->regs.userRsp-=8;
+
+    pushSomeArgsToUser(task->regs.userRsp);
+    task->regs.userRsp-=8;
+    
+    //------------------------------------
+
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
