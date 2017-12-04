@@ -570,11 +570,11 @@ void* exec(void* path,void* args,void* envp)
     //as
     kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[9]);
     
-//    uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-//    userThread2 = (Task*)kmalloc();
-//    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
-//    kprintf("Entry Point: %p\n",hello_entrypoint);
-//    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+    uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
+    Task *userThread2 = (Task*)kmalloc();
+    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
+    kprintf("Entry Point: %p\n",hello_entrypoint);
+    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     return 0;
 }
