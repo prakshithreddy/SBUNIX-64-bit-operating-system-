@@ -180,8 +180,8 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
 
 void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
-    task->pid_t = pidCount+1;
-    pidCount+=1; //next process takes the next id
+    task->pid_t = runningThread->pid_t;
+    pidCount=0; //next process takes the next id
     task->ppid_t = 0; //setting the Pid of the parent for COW
     task->regs.rax=0;
     task->regs.rbx=0;
@@ -462,7 +462,7 @@ int isPartofCurrentVma(uint64_t addr)
 }
 
 
-void addChildToQueue(Task* task)
+void addToQueue(Task* task)
 {
     task->next = runningThread->next;
     runningThread->next = task;
@@ -496,7 +496,7 @@ uint64_t fork()
     Task* child = (Task*)kmalloc();
     createChildTask(child);
     
-    addChildToQueue(child);
+    addToQueue(child);
     makeParentCr3asReadOnly();
     return child->pid_t;
 }
@@ -550,7 +550,7 @@ uint64_t malloc(uint64_t size)
     {
         newVma->pageNumber = getNextPageNum();
         newVma->v_mm = &runningThread->memMap;
-        newVma->v_start = 0x0;
+        newVma->v_start = 0x2000;
         newVma->v_end = newVma->v_start+size;
         newVma->mmsz = size;
         newVma->v_flags = 0;
@@ -593,74 +593,77 @@ uint64_t malloc(uint64_t size)
 void* exec(void* path,void* args,void* envp)
 {
     
-    //s
-    //as
     kprintf("%s %s %s\n",((char*)path),((char**)args)[8],((char**)envp)[9]);
     
-////    //
-////
-////    Task *task = (Task*)kmalloc();
-////    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
-////
-////
-////    char* newPage = (char*)kmalloc();
-////    //newPage-=get_kernbase();  //phyAddr
-////    
-////    int i=0;
-////    int k=0;
-////
-////    _pushVal(userRsp,(uint64_t)newPage);
-////    task->regs.userRsp-=8;
-////
-////    while(((char**)args)[i]!=NULL)
-////    {
-////        int j=0;
-////        while(((char**)args)[i][j]!='\0')
-////        {
-////            newPage[k] = ((char**)args)[i][j];
-////            k++;
-////            j++;
-////        }
-////        newPage[k] = '\0';
-////        k++;
-////        _pushVal(userRsp,(uint64_t)k);
-////        task->regs.userRsp-=8;
-////        i+=1;
-////    }
-////
-////    _pushVal(userRsp,123);
-////    task->regs.userRsp-=8;
-////
-////    i=0;
-////
-////    while(((char**)envp)[i]!=NULL)
-////    {
-////        int j=0;
-////        while(((char**)args)[i][j]!='\0')
-////        {
-////            newPage[i][j] = ((char**)args)[i][j];
-////            j++;
-////        }
-////        newPage[i][j] = '\0';
-////        _pushVal(userRsp,123);
-////        task->regs.userRsp-=8;
-////        i+=1;
-////    }
-////
-//     // creating a stack for the user process
-//
-//
-//    mapPageForUser(pagefaultAt&FRAME,newPage,getRunCr3()+get_kernbase());
-//    invlpg(pagefaultAt&FRAME);  //do at every change of page table entry for the current tlb
-//    memcpy((void *)phyAddr,(void *)(pagefaultAt&FRAME),4096);
-//
-//
-//    uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
-//
-//    uint64_t entryPoint = (loadFile(((char*)path),(U2_cr3+get_kernbase()),userThread2));
-//    kprintf("Entry Point: %p\n",hello_entrypoint);
-//    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
-//
+    Task *task = (Task*)kmalloc();
+    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
+    uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
+
+
+    char* newPage = (char*)kmalloc();
+    //newPage-=get_kernbase();  //phyAddr
+    
+    int i=0;
+    int k=0;
+
+    _pushVal(userRsp,(uint64_t)0);
+    task->regs.userRsp-=8;
+
+    while(((char**)envp)[i]!=NULL)
+    {
+        int j=0;
+        while(((char**)args)[i][j]!='\0')
+        {
+            newPage[k] = ((char**)args)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        k++;
+        i+=1;
+    }
+    
+    //emptyString to mark the end of the string
+    newPage[k] = '\0';
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0,newPage,newCr3+get_kernbase());
+    
+    
+    newPage = (char*)kmalloc();
+    //newPage-=get_kernbase();  //phyAddr
+    
+    int i=0;
+    int k=0;
+    
+    _pushVal(userRsp,(uint64_t)0x1000);
+    task->regs.userRsp-=8;
+    
+    while(((char**)envp)[i]!=NULL)
+    {
+        int j=0;
+        while(((char**)args)[i][j]!='\0')
+        {
+            newPage[k] = ((char**)args)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        k++;
+        i+=1;
+    }
+    
+    //emptyString to mark the end of the string
+    newPage[k] = '\0';
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0x1000,newPage,newCr3+get_kernbase());
+
+    uint64_t entryPoint = (loadFile(((char*)path),(U2_cr3+get_kernbase()),userThread2));
+    kprintf("Entry Point: %p\n",entryPoint);
+    createNewExecTask(task,entryPoint,runningThread.regs.rflags,newCr3);
+    addToQueue(task);
+    
     return 0;
 }
 
