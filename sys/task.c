@@ -191,7 +191,7 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
     task->regs.rdi=0;
     task->regs.rflags=rflags;
     task->regs.rip=(uint64_t)function;
-    task->regs.cr3=cr3;
+//    task->regs.cr3=cr3;
 //    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
 //    pushSomeArgsToUser(task->regs.userRsp);
 //    task->regs.userRsp-=8;
@@ -596,8 +596,10 @@ void* exec(void* path,void* args,void* envp)
     kprintf("%s %s %s\n",((char*)path),((char**)args)[8],((char**)envp)[9]);
     
     Task *task = (Task*)kmalloc();
-    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
+    task->regs.cr3=cr3;
+    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
+    
 
 
     char* newPage = (char*)kmalloc();
@@ -659,7 +661,7 @@ void* exec(void* path,void* args,void* envp)
     newPage-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
 
-    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
+    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),taski));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     addToQueue(task);
