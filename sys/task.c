@@ -702,6 +702,17 @@ void* exec(void* path,void* args,void* envp)
     return 0;
 }
 
+
+void* exec(void* pid,void* status,void* envp)
+{
+    
+    kprintf("%d %d %d\n",(uint64_t)pid,(uint64_t*)status,(uint64_t)envp);
+    
+    
+    
+    return 0;
+}
+
 void initUserProcess()
 {
     
