@@ -17,7 +17,7 @@ int main(int argc, char *argv[], char *envp[]){
     if(pid == 0)
     {
         a1[3] = 786;
-        char** a = (char*)syscall((void*)99,(void*)(10*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+        char** a = (char**)syscall((void*)99,(void*)(10*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
         for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
