@@ -696,7 +696,7 @@ void* exec(void* path,void* args,void* envp)
     newPage-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
     
-    i=(i==0)?0:i-1;
+    i=(i==0)?0:i;
     
     pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
     task->regs.userRsp-=8;
