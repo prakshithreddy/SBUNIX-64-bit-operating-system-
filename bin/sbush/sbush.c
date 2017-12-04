@@ -17,12 +17,12 @@ int main(int argc, char *argv[], char *envp[]){
     if(pid == 0)
     {
         a1[3] = 786;
-        char** a = (char**)syscall((void*)99,(void*)(10*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+        char** a = (char**)syscall((void*)99,(void*)(4*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
         //for(int i=0;i<10;i++) a[i] = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         
-        for(int i=0;i<10;i++) a[i] = (char*)"a=kjhs";
-        a[8] = (char*)"a=kjhsqqqqqqkajhskjdasd";
+        for(int i=0;i<4;i++) a[i] = (char*)"a=kjhs";
+        a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
         
         
         syscall((void*)78,(void*)a[0],(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
