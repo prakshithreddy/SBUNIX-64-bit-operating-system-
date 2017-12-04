@@ -567,7 +567,7 @@ void* exec(void* path,void* args,void* envp)
 {
     
     //as
-    kprintf("%s %s %s\n",(char*)path,((char**)args)[0],((char**)path)[0]);
+    kprintf("%s %s %s\n",((char*)path)[0],((char**)args)[0],((char**)path)[0]);
     
 //    uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
 //    userThread2 = (Task*)kmalloc();
