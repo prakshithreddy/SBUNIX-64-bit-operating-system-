@@ -12,11 +12,10 @@ int main(int argc, char *argv[], char *envp[]){
     
     int* a1 = (int*)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     a1[0] = 10;
-    uint64_t pid = (uint64_t)syscall((void*)1,(void*)1,(void*)2,(void*)3,(void*)4,(void*)5,(void*)a1);
+    uint64_t pid = (uint64_t)syscall((void*)1,(void*)1,(void*)2,(void*)3,(void*)4,(void*)5,(void*2)a1);
     
     if(pid == 0)
     {
-
         char* a = (char*)syscall((void*)99,(void*)(10*sizeof(int)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
         a1[3] = 786;
         for(int i=0;i<10;i++) a[i] = (char)(65+i);
