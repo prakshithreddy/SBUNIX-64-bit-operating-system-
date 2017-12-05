@@ -682,13 +682,15 @@ uint64_t getDirEntries(int fd,char *buf,int count){
 }
 
 char *getCWD(char *dest,int count){
-    char *environ_main=(char **)0x1000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
+    char *environ_main=(char *)0x1000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
     char *buf=dest;
     int env_i =0;
     char temp[256];
     int arg_i=0;
+    char *env_entry;
+    env_entry=0;
     while(*(environ_main+env_i) != '\0'){
-      char *env_entry=environ_main+env_i;
+      env_entry=environ_main+env_i;
       while(env_entry[arg_i] != '='){
         temp[arg_i]=env_entry[arg_i];
         arg_i++;
@@ -709,6 +711,7 @@ char *getCWD(char *dest,int count){
         if(count>1){
           *buf='\0';
         }
+        break;
       }
       env_i+=0x1000;
   }
@@ -721,11 +724,12 @@ void get_between_2slashes(char *src,char *dest){
     if(*input=='/'){
         *output='\0';
     }
-    while(*input!='\0' || *input!='/'){
+    while(*input!='\0' && *input!='/'){
         *output=*input;
         output++;
         input++;
     }
+    *output='\0';
 }
 
 void remove_dotslash(char *src,char *dest,int d){
@@ -736,6 +740,7 @@ void remove_dotslash(char *src,char *dest,int d){
     if(*input=='/'){
         *output='/';
         input++;
+        output++;
     }
     else{
       char cwd[256];
@@ -787,7 +792,7 @@ void remove_dotslash(char *src,char *dest,int d){
       else{
         int i=0;
         while(temp_output[i]!='\0'){
-          *output=*temp_output;
+          *output=temp_output[i];
           output++;
           i++;
           input++;
@@ -808,7 +813,7 @@ void remove_dotslash(char *src,char *dest,int d){
 }
 
 int check_if_directory_present(char *buf){
-    int i=get_dir_address(buf);
+    uint64_t i=get_dir_address(buf);
     if(i>0){
       return 1;
     }
@@ -819,18 +824,20 @@ int64_t changeDirectory(char *buf){
     char *src=buf;
     char dest[256];
     remove_dotslash(src,dest,1);
-    if(!check_if_directory_present(dest+1)){
+    if(check_if_directory_present(dest+1)==0){
       kprintf(" %s Directory Not Found..",buf);
       return -1;
     }
     else{
       char test[256];
       char *env_value=getCWD(test,256);
-      while(*buf!='\0'){
-        *env_value=*buf;
+      int i=0;
+      while(dest[i]!='\0'){
+        *env_value=dest[i];
         env_value++;
-        buf++;
+        i++;
       }
+      *env_value='\0';
       return 0;
     }
     return -1;

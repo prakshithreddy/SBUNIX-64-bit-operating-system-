@@ -50,8 +50,8 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   //loadFile("rakshith",0xfffffffff);
   initMultiTasking();
   initSyscalls();
-  int fd = openDirectory("usr/");
-  char* buf=kmalloc();
+  //int fd = openDirectory("usr/");
+  //char* buf=kmalloc();
   /*int fd2 = openFile("usr/folder1/file1.txt");
   fd2++;
   int fd3 = openFile("usr/folder1/file1.txt");
@@ -63,12 +63,12 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   readFile(fd4,buf,3);
   kprintf("%d\n",sizeof(struct fileDescriptor));
   kprintf("%d\n",sizeof(struct Task));*/
-  while(!readDir(fd,buf,4096)){
-    kprintf("%s\n",buf);
-  }
-  getDirEntries(fd,buf,4096);
-  struct dirent *dbuf=(struct dirent *)buf;
-  kprintf("%s",dbuf->d_name);
+  //while(!readDir(fd,buf,4096)){
+    //kprintf("%s\n",buf);
+  //}
+  //getDirEntries(fd,buf,4096);
+  //struct dirent *dbuf=(struct dirent *)buf;
+  //kprintf("%s",dbuf->d_name);
   initUserProcess();
   
     

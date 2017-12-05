@@ -428,7 +428,7 @@ void _hndlr_isr14(){
         kprintf("Kill this bad guy..");
         while(1);
     }
-    if(us&rw&!p)
+    if((us&rw&!p) || ((!us)&rw&(!p)))
     {
         kprintf("Handling page fault ");
         
@@ -611,6 +611,7 @@ void writeChar(char c,int specialCharacter){//writePosition is place where chara
   *writePosition=c;
   writePosition++;
   if(writePosition==end){
+      readChar();
       if(readPosition!=stdStart){
         writePosition=stdStart;
         indicator=1;
@@ -619,7 +620,7 @@ void writeChar(char c,int specialCharacter){//writePosition is place where chara
         kprintf("Warning: Input Buffer Full.. Cant Take more input.. Please Type Enter");
       }
   }
-  if(writePosition==readPosition-1){//TODO: In this situation if its a correct command execute it, otherwise discard saying wrong command.
+  if((writePosition==readPosition-1) && (indicator=1)){//TODO: In this situation if its a correct command execute it, otherwise discard saying wrong command.
     kprintf("Warning: Input Buffer Full..Cant Take more input..Please Type Enter");
   }
   if(c=='\n'){

@@ -41,18 +41,18 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
     {
         case 1: kprintf("Fork System Call\n"); return (void*)fork();
         case 99: kprintf("Malloc System Call\n"); return (void*)malloc(paramA);
-        case 5: //kprintf("Read File System Call\n"); 
+        case 0: //kprintf("Read File System Call\n"); 
                 return (void *)readFile(paramA,(char *)paramB,paramC);
-        case 6: //kprintf("Write File System Call\n");
+        case 4: //kprintf("Write File System Call\n");
                 return (void *)writeFile(paramA,(char *)paramB,paramC);  
-        case 7: kprintf("Close File System Call\n");return (void*)closeFile(paramA);
-        case 8: kprintf("Open File System Call");return (void*)openFile((char *)paramA);
+        case 3: kprintf("Close File System Call\n");return (void*)closeFile(paramA);
+        case 2: kprintf("Open File System Call");return (void*)openFile((char *)paramA);
         case 9: kprintf("Open Dir System Call");return (void*)openDirectory((char *)paramA);
         case 10: kprintf("Close Dir System Call");return (void*)closeDir(paramA);
         case 11: kprintf("Read Dir System Call");return (void*)readDir(paramA,(char *)paramB,paramC);
         case 12: kprintf("Get Dents System Call");return (void*)getDirEntries(paramA,(char *)paramB,paramC);  
-        case 13: kprintf("Change Directory System Call");return (void*)changeDirectory((char *)paramA);
-        case 14: kprintf("Get Current Working Directory System Call");return (void*)getCWD((char *)paramA,paramB);
+        case 80: kprintf("Change Directory System Call");return (void*)changeDirectory((char *)paramA);
+        case 79: kprintf("Get Current Working Directory System Call");return (void*)getCWD((char *)paramA,paramB);
         case 78: kprintf("Exec System Call\n"); return (void*)exec((char*)paramA,(char*)paramB,(char*)paramC);
         case 88: kprintf("WaitPID System Call\n"); return (void*)waitpid((void*)paramA,(uint64_t*)paramB,(void*)paramC);
             case 420: kprintf("print System Call\n"); return (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC);
