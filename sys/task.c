@@ -714,7 +714,7 @@ void* waitpid(void* pid,void* status,void* flags)
     
     Task* tempTask = runningThread;
     
-    while(tempTask->next!=runningThread)
+    while(tempTask!=runningThread)
     {
         if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
         {
