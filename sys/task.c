@@ -712,7 +712,7 @@ void* waitpid(void* pid,void* status,void* flags)
     
     int* temp = (int*)status;
     
-    Task* tempTask = runningThread;
+    Task* tempTask = runningThread->next;
     
     while(tempTask!=runningThread)
     {
