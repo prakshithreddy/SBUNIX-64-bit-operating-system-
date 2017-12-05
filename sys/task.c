@@ -205,19 +205,19 @@ void pushInitialParamstoStack(Task* task)
     {
         if(z==i)
         {
-            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+            pushSomeArgsToUser(task->regs.userRsp,(void*)i,task->regs.cr3);
             i-=0x1000;
         }
         else
         {
-            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+            pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
         }
         
         task->regs.userRsp-=8;
         z-=0x1000;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,(char*)NULL,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
     task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
@@ -238,7 +238,7 @@ void pushInitialParamstoStack(Task* task)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
+        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k,task->regs.cr3);
         task->regs.userRsp-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -255,7 +255,7 @@ void pushInitialParamstoStack(Task* task)
     newPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)count,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
     task->regs.userRsp-=8;
     
     
@@ -828,12 +828,12 @@ void* exec(void* path,void* args,void* envp)
     {
         if(z==i)
         {
-            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)i,task->regs.cr3);
             i-=0x1000;
         }
         else
         {
-            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0,task->regs.cr3);
         }
         
         task->regs.userRsp-=8;
