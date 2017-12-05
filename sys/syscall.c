@@ -32,7 +32,10 @@ uint64_t readMSR(uint32_t msrAddr)
 
 void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t paramD,uint64_t paramE,uint64_t paramF,uint64_t syscallNum) {
     
-    //kprintf("\n%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
+    kprintf("\n%d %d %d %d %d %d %d",syscallNum,paramA,paramB,paramC,paramD,paramE,paramF);
+//    char* p =  (char*)paramB;
+//    kprintf("%s",p);
+//
     
     switch(syscallNum)
     {
@@ -51,6 +54,8 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 13: kprintf("Change Directory System Call");return (void*)changeDirectory((char *)paramA);
         case 14: kprintf("Get Current Working Directory System Call");return (void*)getCWD((char *)paramA,paramB);
         case 78: kprintf("Exec System Call\n"); return (void*)exec((char*)paramA,(char*)paramB,(char*)paramC);
+        case 88: kprintf("WaitPID System Call\n"); return (void*)waitpid((void*)paramA,(uint64_t*)paramB,(void*)paramC);
+            case 420: kprintf("print System Call\n"); return (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC);
     }
     
     return (void*)100;
