@@ -2,6 +2,7 @@
 #define _TARFS_H
 
 #include<sys/defs.h>
+#include<dirent.h>
 #include<sys/elf64.h>
 #include<sys/task.h>
 
@@ -36,11 +37,14 @@ struct posix_header_ustar {
 void memcpy(void *src,void *dest,size_t n);
 uint64_t getDirEntries(int fd,char *buf,int count);
 uint64_t closeDir(int fd);
-uint64_t readDir(int fd,char *buf,int count);
+struct dirent *readDir(int fd,char *buf,int count);
 int64_t openDirectory(char* dirName);
 uint64_t closeFile(int fd);
 uint64_t readFile(int fd,char *buf,int count);
 uint64_t writeFile(int fd,char *buf,int count);
 int64_t openFile(char* fileName);
+int64_t changeDirectory(char *buf);
+char *getCWD(char *dest,int count);
+void remove_dotslash(char *src,char *dest,int d);
 
 #endif

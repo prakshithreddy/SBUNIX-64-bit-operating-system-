@@ -293,7 +293,7 @@ uint64_t get_dir_address(char* dir){
     int dir_found=0;
     while(search_pointer<BINARY_TARFS_END){
         if (strcmp(tar_file_pointer->name,"\0")!=0){
-            kprintf("    *  %s, size: %s\n",tar_file_pointer->name,tar_file_pointer->size);
+            //kprintf("    *  %s, size: %s\n",tar_file_pointer->name,tar_file_pointer->size);
         }
         if (strcmp(tar_file_pointer->name,dir)==0){
             dir_found=1;
@@ -332,8 +332,11 @@ struct fileDescriptor* get_fd_address(int fd){
     return NULL;
 }
 
-int64_t openFile(char* fileName){
+int64_t openFile(char* file){
     Task *currentTask=(Task *)getRunTask();
+    char newFileName[256];
+    remove_dotslash(file,newFileName,0);
+    char *fileName=newFileName+1;
     uint64_t start=get_file_address(fileName);
     if(start==0){
         kprintf("Invalid File Specified..\n");
@@ -432,7 +435,7 @@ uint64_t writeFile(int fd,char *buf,int count){
     }
     if(fd==2){
       kprintf("%s",buf);
-      return count;//TODO: For now returning the inpute count, but not the actual count.
+      return count;//TODO: For now returning the input count, but not the actual count.
     }
     else{
       kprintf("Does not support write system call for now..");
@@ -440,8 +443,11 @@ uint64_t writeFile(int fd,char *buf,int count){
     }
 }
 
-int64_t openDirectory(char* dirName){
+int64_t openDirectory(char* dir){
     Task *currentTask=(Task *)getRunTask();
+    char newDirName[256];
+    remove_dotslash(dir,newDirName,1);
+    char *dirName=newDirName+1;
     uint64_t start=get_dir_address(dirName);
     if(start==0){
         kprintf("Invalid Directory Specified..\n");
@@ -557,7 +563,7 @@ int get_sub_direntry(char *parent,char *child,char *dbuf,int count){
   return 0;
 }
 
-uint64_t readDir(int fd,char *buf,int count){
+struct dirent * readDir(int fd,char *buf,int count){
     if(fd<0){
         kprintf("Invalid FD provided..\n");
         return 0;
@@ -566,8 +572,13 @@ uint64_t readDir(int fd,char *buf,int count){
     uint64_t start;
     struct posix_header_ustar *tar_file_pointer;
     struct fileDescriptor *fd_struct=get_fd_address(fd);
+    struct dirent *dir=(struct dirent *)buf;
     if(fd_struct==NULL){
         return 0;
+    }
+    if(count<sizeof(struct dirent)){
+      kprintf("Buffer size not sufficient for returning Dirent..");
+      return 0;
     }
     if(fd_struct->name[0] != '\0'){
         start = fd_struct->offset;
@@ -575,11 +586,14 @@ uint64_t readDir(int fd,char *buf,int count){
         while(start<BINARY_TARFS_END){
           tar_file_pointer = (struct posix_header_ustar *)start;
           if(startswith(fd_struct->name,tar_file_pointer->name)==0){
-              get_sub_directory(fd_struct->name,tar_file_pointer->name,buf,count);
-              if((strcmp(buf,fd_struct->d_prev_dir))){
-                  strcpy(buf,fd_struct->d_prev_dir);
+              get_sub_directory(fd_struct->name,tar_file_pointer->name,dir->d_name,count);
+              if((strcmp(dir->d_name,fd_struct->d_prev_dir))){
+                  strcpy(dir->d_name,fd_struct->d_prev_dir);
                   fd_struct->offset=start;
-                  return count;
+                  dir->d_reclen = sizeof(struct dirent);
+                  dir->d_ino = 0;//TODO: For Now.
+                  dir->d_off = 0;
+                  return dir;
               }
           }
 		      else{
@@ -666,3 +680,175 @@ uint64_t getDirEntries(int fd,char *buf,int count){
   *buf='\0';
   return 0;
 }
+
+char *getCWD(char *dest,int count){
+    char *environ_main=(char **)0x1000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
+    char *buf=dest;
+    int env_i =0;
+    char temp[256];
+    int arg_i=0;
+    while(*(environ_main+env_i) != '\0'){
+      char *env_entry=environ_main+env_i;
+      while(env_entry[arg_i] != '='){
+        temp[arg_i]=env_entry[arg_i];
+        arg_i++;
+      }
+      temp[arg_i]='\0';
+      arg_i++;
+      if(strcmp(temp,"PWD") == 0){
+        int start = arg_i;
+        while(env_entry[start] != '\0'){
+          *buf=env_entry[start];
+          start++;
+          buf++;
+          count--;
+          if(count==0){
+            break;
+          }
+        }
+        if(count>1){
+          *buf='\0';
+        }
+      }
+      env_i+=0x1000;
+  }
+  return ((char *)env_entry+arg_i);
+}
+
+void get_between_2slashes(char *src,char *dest){
+    char *input=src;
+    char *output=dest;
+    if(*input=='/'){
+        *output='\0';
+    }
+    while(*input!='\0' || *input!='/'){
+        *output=*input;
+        output++;
+        input++;
+    }
+}
+
+void remove_dotslash(char *src,char *dest,int d){
+    char temp_output[256];
+    temp_output[0]='\0';
+    char *input=src;
+    char *output=dest;
+    if(*input=='/'){
+        *output='/';
+        input++;
+    }
+    else{
+      char cwd[256];
+      getCWD(cwd,256);
+      int i=0;
+      while(cwd[i]!='\0'){
+        *output=cwd[i];
+        output++;
+        i++;
+      }
+      if(*(output-1)!='/'){
+        *output='/';
+        output++;
+      }
+    }
+    while(*input!='\0'){
+      get_between_2slashes(input,temp_output);
+      
+      if(!strcmp(temp_output,".")){
+          if(*(input+1)=='/'){
+            input+=2;
+          }
+          else{
+            input+=1;
+          }
+      }
+      else if(!strcmp(temp_output,"\0")){
+          input+=1;
+      }
+      else if(!strcmp(temp_output,"..")){
+          if(*(input+2)=='/'){
+            input+=3;
+          }
+          else{
+            input+=2;
+          }
+          output--;
+          if(output==dest){
+            output++;
+          }
+          else{
+            output--;
+            while(*output!='/'){
+              output--;
+            }
+            output++;
+          }
+      }
+      else{
+        int i=0;
+        while(temp_output[i]!='\0'){
+          *output=*temp_output;
+          output++;
+          i++;
+          input++;
+        }
+        if(*input=='/'){
+          *output='/';
+          output++;
+        }
+      }
+    }
+    if(d==1){
+        if(*(output-1)!='/'){
+          *output='/';
+          output++;
+        }
+    }
+    *output='\0';
+}
+
+int check_if_directory_present(char *buf){
+    int i=get_dir_address(buf);
+    if(i>0){
+      return 1;
+    }
+    return 0;
+}
+
+int64_t changeDirectory(char *buf){
+    char *src=buf;
+    char dest[256];
+    remove_dotslash(src,dest,1);
+    if(!check_if_directory_present(dest+1)){
+      kprintf(" %s Directory Not Found..",buf);
+      return -1;
+    }
+    else{
+      char test[256];
+      char *env_value=getCWD(test,256);
+      while(*buf!='\0'){
+        *env_value=*buf;
+        env_value++;
+        buf++;
+      }
+      return 0;
+    }
+    return -1;
+}
+/*void full_path_builder(char *input,char *output){
+    char temp_output[256];
+    remove_dotslash(char *input,char *temp_output);
+    if(*input=='/'){
+        *output=*input;
+        input++;
+        output++;
+        while(*input!='/'){
+            *output=*input;
+        }
+    
+    
+    }
+    else{
+    
+    }
+}*/

@@ -48,6 +48,8 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 10: kprintf("Close Dir System Call");return (void*)closeDir(paramA);
         case 11: kprintf("Read Dir System Call");return (void*)readDir(paramA,(char *)paramB,paramC);
         case 12: kprintf("Get Dents System Call");return (void*)getDirEntries(paramA,(char *)paramB,paramC);  
+        case 13: kprintf("Change Directory System Call");return (void*)changeDirectory((char *)paramA);
+        case 14: kprintf("Get Current Working Directory System Call");return (void*)getCWD((char *)paramA,paramB);
         case 78: kprintf("Exec System Call\n"); return (void*)exec((char*)paramA,(char*)paramB,(char*)paramC);
     }
     
