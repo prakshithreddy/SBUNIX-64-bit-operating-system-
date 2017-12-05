@@ -217,6 +217,8 @@ void pushInitialParamstoStack(Task* task)
         z-=0x1000;
     }
     
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
     
