@@ -718,19 +718,19 @@ void* waitpid(void* pid,void* status,void* flags)
     {
         if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
         {
-            return (void*)1;
-            temp[0]=1;
+            return (void*)(uint64_t)pid;
+            *temp=1;
         }
         else
         {
-            return 0;
-            temp[0] = -1;
+            return (void*)-1;
+            *temp = -1;
         }
         tempTask=tempTask->next;
     }
     
-    temp[0] = -1;
-    return 0;
+    *temp = -1;
+    return (void*)-1;
 }
 
 void initUserProcess()
