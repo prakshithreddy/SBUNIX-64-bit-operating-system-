@@ -223,6 +223,10 @@ void pushInitialParamstoStack(Task* task)
     i=0;
     int k=0;
     
+    int zz=0;
+    while(((char**)args)[zz]!=NULL) zz++;
+    
+    kprintf("ARGV COUNT %d",zz);
     
     while(((char**)args)[i]!=NULL)
     {
@@ -241,6 +245,8 @@ void pushInitialParamstoStack(Task* task)
         k++;
         i+=1;
     }
+    
+    
     
     
     newPage-=get_kernbase();
