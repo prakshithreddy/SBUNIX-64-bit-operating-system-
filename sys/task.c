@@ -173,6 +173,8 @@ void pushInitialParamstoStack(Task* task)
     args[2] = (char*)"-r";
     args[3] = NULL;
     
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     uint64_t envStart = 0x1000;
     int i=0;
@@ -217,7 +219,7 @@ void pushInitialParamstoStack(Task* task)
         z-=0x1000;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
     task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
@@ -789,6 +791,9 @@ void* exec(void* path,void* args,void* envp)
     task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
  
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
+    task->regs.userRsp-=8;
+    
     uint64_t envStart = 0x1000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
@@ -832,6 +837,8 @@ void* exec(void* path,void* args,void* envp)
         z-=0x1000;
     }
     
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
     
