@@ -225,6 +225,9 @@ void pushInitialParamstoStack(Task* task)
     int k=0;
     z=0;
     while(((char**)args)[z]!=NULL) z++;
+    
+    kprintf("%d",z);
+    
     while(z>=1)
     {
         int j=0;
