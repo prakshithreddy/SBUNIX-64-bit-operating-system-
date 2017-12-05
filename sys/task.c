@@ -715,13 +715,20 @@ void* waitpid(void* pid,void* status,void* flags)
     while(tempTask->next!=runningThread)
     {
         if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
+        {
             return 1;
+            (uint64_t*)status = 1;
+        }
         else
-            return 0;
+        {
+            return -1;
+            (uint64_t*)status = -1;
+        }
         tempTask=tempTask->next;
     }
     
-    return 0;
+    (uint64_t*)status = -1;
+    return -1;
 }
 
 void initUserProcess()
