@@ -223,8 +223,10 @@ void pushInitialParamstoStack(Task* task)
     i=0;
     int k=0;
     
+    while(((char**)args)[i]!=NULL) i++;
+    i--;
     
-    while(((char**)args)[i]!=NULL)
+    while(i>=0)
     {
         int j=0;
         
@@ -239,7 +241,7 @@ void pushInitialParamstoStack(Task* task)
         }
         newPage[k] = '\0';
         k++;
-        i+=1;
+        i--;
     }
     
     
@@ -828,8 +830,13 @@ void* exec(void* path,void* args,void* envp)
     i=0;
     int k=0;
     
+    while(((char**)args)[i]!=NULL) i++;
     
-    while(((char**)args)[i]!=NULL)
+    int numOfVectors = i;
+    
+    i--;
+    
+    while(i>=0)
     {
         int j=0;
         
@@ -844,7 +851,7 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
-        i+=1;
+        i--;
     }
     
     
@@ -895,7 +902,7 @@ void* exec(void* path,void* args,void* envp)
         temp->next = newVma;
     }
     
-    i=(i==0)?0:i;
+    i=(numOfVectors==0)?0:numOfVectors;
     pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
     task->regs.userRsp-=8;
 
