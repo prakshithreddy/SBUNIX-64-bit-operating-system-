@@ -233,6 +233,7 @@ void pushInitialParamstoStack(Task* task)
     int count=i;
     
     i--;
+    i=0;
     
     while(((char**)args)[i]!=NULL)
     {
@@ -249,7 +250,7 @@ void pushInitialParamstoStack(Task* task)
         }
         newPage[k] = '\0';
         k++;
-        i-=1;
+        i+=1;
     }
     
     newPage-=get_kernbase();
@@ -849,6 +850,8 @@ void* exec(void* path,void* args,void* envp)
     
     i--;
     
+    i=0;
+    
     while(((char**)args)[i]!=NULL)
     {
         int j=0;
@@ -864,7 +867,7 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
-        i-=1;
+        i+=1;
     }
     
     newPage-=get_kernbase();
