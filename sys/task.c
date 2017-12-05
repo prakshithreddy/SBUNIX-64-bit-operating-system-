@@ -856,46 +856,17 @@ void* exec(void* path,void* args,void* envp)
        
        VMA* newVma = (VMA*)kmalloc();
        VMA* temp = task->memMap.mmap;
-       if(temp==NULL)
-       {
-           newVma->pageNumber = getNextPageNum();
-           newVma->v_mm = &runningThread->memMap;
-           newVma->v_start = 0x0;
-           newVma->v_end = 0x22000;
-           newVma->mmsz = 0x22000;
-           newVma->v_flags = 0;
-           newVma->grows_down = 0;
-           newVma->v_file = 0;
-           newVma->next=NULL;
-           newVma->v_offset=0;
-           
-           runningThread->memMap.mmap=newVma;
-           
-       }
-       else
-       {
-           //        uint64_t end=0x22000;
-           while(temp->next!=NULL)
-           {
-               //            if(!temp->next->grows_down && !temp->next->v_file)
-               //                end = temp->next->v_end;
-               temp = temp->next;
-           }
-           
-           newVma->pageNumber = getNextPageNum();
-           newVma->v_mm = &runningThread->memMap;
-           newVma->v_start = 0;
-           newVma->v_end = 0x22000;
-           newVma->mmsz = 0x22000;
-           newVma->v_flags = 0;
-           newVma->grows_down = 0;
-           newVma->v_file = 0;
-           newVma->next=NULL;
-           newVma->v_offset=0;
-           
-           temp->next = newVma->next;
-           temp->next = newVma;
-       }
+       newVma->pageNumber = getNextPageNum();
+       newVma->v_mm = &task->memMap;
+       newVma->v_start = 0x0;
+       newVma->v_end = 0x20000;
+       newVma->mmsz = 0x20000;
+       newVma->v_flags = 0;
+       newVma->grows_down = 0;
+       newVma->v_file = 0;
+       newVma->next=NULL;
+       newVma->v_offset=0;
+       task->memMap.mmap=newVma;
        
        i=(i==0)?0:i;
        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
