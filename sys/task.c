@@ -243,7 +243,7 @@ void pushInitialParamstoStack(Task* task)
         newVma->v_mm = &runningThread->memMap;
         newVma->v_start = 0x0;
         newVma->v_end = newVma->v_start+size;
-        newVma->mmsz = size;
+        newVma->mmsz = 0x22000;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
         newVma->v_file = 0;
@@ -267,7 +267,7 @@ void pushInitialParamstoStack(Task* task)
         newVma->v_mm = &runningThread->memMap;
         newVma->v_start = end;
         newVma->v_end = newVma->v_start+size;
-        newVma->mmsz = size;
+        newVma->mmsz = 0x22000;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
         newVma->v_file = 0;
