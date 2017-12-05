@@ -70,7 +70,7 @@ int main(int argc, char *argv[], char *envp[]){
         //int64_t i = (int64_t)syscall((void*)88,(void*)2,(void*)&a1[0],(void*)3,(void*)4,(void*)5,(void*)a1);
         //syscall((void*)420,(void*)envp,(void*)0,(void*)0,(void*)(uint64_t)4,(void*)5,(void*)(int64_t)i);
 //=======
-    {
+    
           a1[1] = 11;
         char* temp = (char*)"bin/ls";
         //asdasd
