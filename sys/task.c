@@ -198,7 +198,7 @@ void pushInitialParamstoStack(Task* task)
         i+=1;
     }
     
-    i=((i-1)>0?(i-1)*0x1000:0;
+    i=((i-1)>0?(i-1)*0x1000:0);
     
     int z = 0x20000;
     
