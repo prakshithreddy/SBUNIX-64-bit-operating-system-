@@ -250,11 +250,11 @@ void pushInitialParamstoStack(Task* task)
         i-=1;
     }
     
-    
-    
-    
     newPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)count,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     
     VMA* newVma = (VMA*)kmalloc();
@@ -300,8 +300,7 @@ void pushInitialParamstoStack(Task* task)
         temp->next = newVma;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)count,task->regs.cr3);
-    task->regs.userRsp-=8;
+   
     
     
 }
