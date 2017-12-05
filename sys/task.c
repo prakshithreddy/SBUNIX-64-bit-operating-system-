@@ -726,6 +726,7 @@ void* waitpid(void* pid,void* status,void* flags)
         tempTask=tempTask->next;
     }
     
+    //adsdasd
     *temp = 0;
     return (void*)0;
 }
