@@ -634,10 +634,11 @@ void* exec(void* path,void* args,void* envp)
     task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
  
-    char** newEnvPage = (char*) kmalloc();
+    char** newEnvPage = (char**) kmalloc();
     newEnvPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newEnvPage,newCr3+get_kernbase());
     newEnvPage+=get_kernbase();
+    
     uint64_t envStart = 0x2000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
@@ -666,7 +667,7 @@ void* exec(void* path,void* args,void* envp)
     task->regs.userRsp-=8;
     
     
-    char** newArgvPage = (char*) kmalloc();
+    char** newArgvPage = (char**) kmalloc();
     newArgvPage-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)newArgvPage,newCr3+get_kernbase());
     newArgvPage+=get_kernbase();
