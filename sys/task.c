@@ -205,7 +205,7 @@ void pushInitialParamstoStack(Task* task)
     envC-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)envC,task->regs.cr3+get_kernbase());
     envC+=get_kernbase();
-    kprintf("%d",*envC);
+    kprintf("assssssssss %d",*envC);
     
     
     int z = 0x21000;
