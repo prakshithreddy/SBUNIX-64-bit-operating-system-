@@ -32,7 +32,7 @@ int main(int argc, char *argv[], char *envp[]){
         a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
         char* temp = (char*)"bin/ls";
         
-        syscall((void*)78,(void*)a[0],(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
+        syscall((void*)78,(void*)temp,(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
         while(1);// syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)(uint64_t)argc);
     }
     else
