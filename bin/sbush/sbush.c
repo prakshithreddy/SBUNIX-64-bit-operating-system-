@@ -25,15 +25,15 @@ int main(int argc, char *argv[], char *envp[]){
             //syscall(5,0,(uint64_t)c,64,0,0,0);
             //syscall(6,1,(uint64_t)c,0,0,0,0);
         //}
-        //char** a = (char**)syscall((void*)99,(void*)(4*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
-//
-       // /for(int i=0;i<1;i++)*/ //char* a = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
-//
-//        for(int i=0;i<4;i++) a[i] = (char*)"a=kjhs";
-//        a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
-       // a[0] = "bin/ls";
+        char** a = (char**)syscall((void*)99,(void*)(4*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+
+        //for(int i=0;i<1;i++)*/ //char* a = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+
+        for(int i=0;i<4;i++) a[i] = (char*)"a=kjhs";
+        a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
+        a[0] = "bin/ls";
         
-        syscall((void*)78,(void*)temp,(void*)argv,(void*)envp,(void*)1,(void*)2,(void*)3);
+        syscall((void*)78,(void*)temp,(void*)a,(void*)a,(void*)1,(void*)2,(void*)3);
         while(1);// syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)(uint64_t)argc);
     }
     else
