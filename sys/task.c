@@ -854,6 +854,10 @@ void* exec(void* path,void* args,void* envp)
     i=0;
     int k=0;
     
+    kprintf(">>>>>>%s",((char**)args)[0]);
+    kprintf(">>>>>>%s",((char**)args)[1]);
+    kprintf(">>>>>>%s",((char**)args)[2]);
+    
     
     while(((char**)args)[i]!=NULL) {
         kprintf(">>>>>>%s",((char**)args)[i]);
