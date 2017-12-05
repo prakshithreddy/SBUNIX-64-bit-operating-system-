@@ -258,8 +258,8 @@ void pushInitialParamstoStack(Task* task)
 //        uint64_t end=0x22000;
         while(temp->next!=NULL)
         {
-            if(!temp->next->grows_down && !temp->next->v_file)
-                end = temp->next->v_end;
+//            if(!temp->next->grows_down && !temp->next->v_file)
+//                end = temp->next->v_end;
             temp = temp->next;
         }
         
