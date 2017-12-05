@@ -39,6 +39,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
     
     switch(syscallNum)
     {
+        case 0: kprintf("Kill me System Call\n"); exit();
         case 1: kprintf("Fork System Call\n"); return (void*)fork();
         case 99: kprintf("Malloc System Call\n"); return (void*)malloc(paramA);
         case 0: //kprintf("Read File System Call\n"); 
