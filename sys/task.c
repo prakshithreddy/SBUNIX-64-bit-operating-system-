@@ -146,7 +146,7 @@ void _prepareInitialKernelStack(Registers* current);
 
 void _pushVal(uint64_t userRsp,int val);
 
-void pushSomeArgsToUser(uint64_t userRsp,uint64_t val,uint64_t cr3)
+void pushSomeArgsToUser(uint64_t userRsp,void* val,uint64_t cr3)
 {
     uint64_t tempCr3;
     __asm__ __volatile__("mov %%cr3,%0":"=b"((uint64_t)tempCr3)::);
@@ -217,7 +217,7 @@ void pushInitialParamstoStack(Task* task)
         z-=0x1000;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(char*)NULL,task->regs.cr3);
     task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
