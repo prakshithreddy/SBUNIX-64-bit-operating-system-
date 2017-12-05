@@ -721,11 +721,6 @@ void* waitpid(void* pid,void* status,void* flags)
             return (void*)(uint64_t)pid;
             *temp=1;
         }
-        else
-        {
-            return (void*)-1;
-            *temp = -1;
-        }
         tempTask=tempTask->next;
     }
     
