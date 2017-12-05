@@ -8,7 +8,7 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 }
 
 int main(int argc, char *argv[], char *envp[]){
-    argc+=1;
+    
     
     int* a1 = (int*)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     a1[0] = 10;
