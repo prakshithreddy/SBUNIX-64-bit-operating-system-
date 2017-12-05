@@ -16,7 +16,7 @@ int main(int argc, char *argv[], char *envp[]){
     
     if(pid == 0)
     {
-        a1[3] = 786;
+        //a1[3] = 786;
 //        char* temp = (char*)"bin/ls";
         //syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
         //char *c=(char *)syscall(99,2000,0,0,0,0,0);
