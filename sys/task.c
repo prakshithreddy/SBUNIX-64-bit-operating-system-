@@ -162,15 +162,16 @@ void pushInitialParamstoStack(Task* task)
 {
     char** envp = (char**)kmalloc();
     
-    for(int i=0;i<4;i++) envp[i] = (char*)"a=kjhs";
-    envp[3] = NULL;
-    envp[0] = "bin/ls";
+    envp[0] = (char*)"PWD=/";
+    envp[1] = (char*)"PATH=/:/bin:/usr";
+    envp[2] = NULL;
     
     char** args = (char**)kmalloc();
     
-    for(int i=0;i<4;i++) args[i] = (char*)"a=kjhs";
+    args[0] = (char*)"ls";
+    args[1] = (char*)"-l";
+    args[2] = (char*)"-r";
     args[3] = NULL;
-    args[0] = "bin/ls";
     
     
     char** newEnvPage = (char**) kmalloc();
