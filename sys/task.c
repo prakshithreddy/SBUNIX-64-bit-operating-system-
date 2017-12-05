@@ -199,7 +199,7 @@ void pushInitialParamstoStack(Task* task)
         newPage[k] = '\0';
         newPage-=get_kernbase();
         mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
-        newEnvPage[i] = (envStart);
+        newEnvPage[i] = (char*)(envStart);
         envStart+=0x1000;
         i+=1;
     }
