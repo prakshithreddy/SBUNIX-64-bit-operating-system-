@@ -726,8 +726,8 @@ void* waitpid(void* pid,void* status,void* flags)
         tempTask=tempTask->next;
     }
     
-    *temp = -1;
-    return (void*)-1;
+    *temp = 2;
+    return (void*)2;
 }
 
 void initUserProcess()
