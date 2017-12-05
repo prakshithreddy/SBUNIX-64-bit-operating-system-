@@ -718,7 +718,7 @@ void* waitpid(void* pid,void* status,void* flags)
     {
         if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
         {
-            return 1;
+            return (void*)1;
             temp[0]=1;
         }
         else
