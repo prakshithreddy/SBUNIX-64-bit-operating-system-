@@ -174,22 +174,15 @@ void pushInitialParamstoStack(Task* task)
     args[3] = NULL;
     
     
-    uint64_t* newEnvPage = (uint64_t*) kmalloc();
-    newEnvPage-=get_kernbase();
-    mapPageForUser(0,(uint64_t)newEnvPage,task->regs.cr3+get_kernbase());
-    newEnvPage+=get_kernbase();
-    
-   // newEnvPage[0] = "0x2000"
-    
-    uint64_t envStart = 0x2000;
+    uint64_t envStart = 0x1000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
     {
         char* newPage = (char*)kmalloc();
         int k=0;
-        
-        //        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)(i+1)*0x1000,task->regs.cr3);
-        //        task->regs.userRsp-=8;
+//
+//        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)envStart,task->regs.cr3);
+//        task->regs.userRsp-=8;
         
         int j=0;
         while(((char**)envp)[i][j]!='\0'&&k<=511) //only 512 chars
@@ -201,12 +194,29 @@ void pushInitialParamstoStack(Task* task)
         newPage[k] = '\0';
         newPage-=get_kernbase();
         mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
-        newEnvPage[i] = (envStart);
         envStart+=0x1000;
         i+=1;
     }
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
-    task->regs.userRsp-=8;
+    
+    i=((i-1)>0?(i-1)*0x1000:0;
+    
+    int z = 0x20000;
+    
+    while(z>=0x1000)
+    {
+        if(z==i)
+        {
+            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+            i-=0x1000;
+        }
+        else
+        {
+            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+        }
+        
+        task->regs.userRsp-=8;
+        z-=0x1000;
+    }
     
     
     char* newPage = (char*)kmalloc();
@@ -219,7 +229,7 @@ void pushInitialParamstoStack(Task* task)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
         task->regs.userRsp-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -235,7 +245,7 @@ void pushInitialParamstoStack(Task* task)
     
     
     newPage-=get_kernbase();
-    mapPageForUser(0x1000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
     
     VMA* newVma = (VMA*)kmalloc();
