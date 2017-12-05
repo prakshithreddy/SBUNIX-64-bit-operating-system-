@@ -866,7 +866,7 @@ void* exec(void* path,void* args,void* envp)
     
     i--;
     
-    while(((char**)args)[i]!=NULL)
+    while(i>=0)
     {
         int j=0;
         
