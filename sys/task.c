@@ -221,18 +221,18 @@ void pushInitialParamstoStack(Task* task)
     
     char* newPage = (char*)kmalloc();
     
-    i=0;
+    
     int k=0;
-    
-    
-    while(((char**)args)[i]!=NULL)
+    z=0;
+    while(((char**)args)[i]!=NULL) z++;
+    while(z>=1)
     {
         int j=0;
         
         pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
         task->regs.userRsp-=8;
         
-        while(((char**)args)[i][j]!='\0'&&k<=510)
+        while(((char**)args)[z][j]!='\0'&&k<=510)
         {
             newPage[k] = ((char**)args)[i][j];
             k++;
@@ -240,7 +240,7 @@ void pushInitialParamstoStack(Task* task)
         }
         newPage[k] = '\0';
         k++;
-        i+=1;
+        z-=1;
     }
     
     
