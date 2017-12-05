@@ -837,6 +837,14 @@ void* exec(void* path,void* args,void* envp)
     int k=0;
     
     
+    while(((char**)args)[i]!=NULL) i++;
+    
+    kprintf("ARGV COUNT %d",i);
+    
+    int count=i;
+    
+    i--;
+    
     while(((char**)args)[i]!=NULL)
     {
         int j=0;
@@ -852,12 +860,14 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
-        i+=1;
+        i-=1;
     }
-    
     
     newPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)count,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     
     VMA* newVma = (VMA*)kmalloc();
@@ -902,11 +912,6 @@ void* exec(void* path,void* args,void* envp)
         temp->next = newVma->next;
         temp->next = newVma;
     }
-    
-    i=(i==0)?0:i;
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
-    task->regs.userRsp-=8;
-
     
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
