@@ -10,11 +10,7 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 }
 
 int main(int argc, char *argv[], char *envp[]){
-<<<<<<< HEAD
-=======
-    
->>>>>>> c3037649dc43c2190cb8ee587a4268edaf2260c9
-    
+
     char* a1 = (char *)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     //a1[0] = 10;
     /*uint64_t pid = (uint64_t)syscall((void*)1,(void*)1,(void*)2,(void*)3,(void*)4,(void*)5,(void*)a1);
