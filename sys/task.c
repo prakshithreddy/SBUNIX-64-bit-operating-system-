@@ -728,7 +728,7 @@ void* waitpid(void* pid,void* status,void* flags)
     
     //adsdasd
     *temp = 0;
-    return (void*)0;
+    return (void*)(-1);
 }
 
 void initUserProcess()
