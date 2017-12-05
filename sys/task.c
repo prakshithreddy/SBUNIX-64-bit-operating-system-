@@ -830,13 +830,8 @@ void* exec(void* path,void* args,void* envp)
     i=0;
     int k=0;
     
-    while(((char**)args)[i]!=NULL) i++;
     
-    int numOfVectors = i;
-    
-    i--;
-    
-    while(i>=0)
+    while(((char**)args)[i]!=NULL)
     {
         int j=0;
         
@@ -851,7 +846,7 @@ void* exec(void* path,void* args,void* envp)
         }
         newPage[k] = '\0';
         k++;
-        i--;
+        i+=1;
     }
     
     
@@ -902,7 +897,7 @@ void* exec(void* path,void* args,void* envp)
         temp->next = newVma;
     }
     
-    i=(numOfVectors==0)?0:numOfVectors;
+    i=(i==0)?0:i;
     pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
     task->regs.userRsp-=8;
 
