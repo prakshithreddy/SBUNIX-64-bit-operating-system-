@@ -667,39 +667,34 @@ void* exec(void* path,void* args,void* envp)
     task->regs.userRsp-=8;
     
     
-    char** newArgvPage = (char**) kmalloc();
-    newArgvPage-=get_kernbase();
-    mapPageForUser(0x1000,(uint64_t)newArgvPage,newCr3+get_kernbase());
-    newArgvPage+=get_kernbase();
+    char* newPage = (char*)kmalloc();
+    
     i=0;
-    uint64_t argStart = 0x22000;
+    int k=0;
+    
+    
     while(((char**)args)[i]!=NULL)
     {
-        char* newPage = (char*)kmalloc();
-        int k=0;
-        
-        //        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)(i+1)*0x1000,task->regs.cr3);
-        //        task->regs.userRsp-=8;
-        
         int j=0;
-        while(((char**)args)[i][j]!='\0'&&k<=511) //only 512 chars
+        
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
+        task->regs.userRsp-=8;
+        
+        while(((char**)args)[i][j]!='\0'&&k<=510)
         {
             newPage[k] = ((char**)args)[i][j];
             k++;
             j++;
         }
         newPage[k] = '\0';
-        newPage-=get_kernbase();
-        mapPageForUser(argStart,(uint64_t)newPage,newCr3+get_kernbase());
-        
-        newArgvPage[i] = (char*)(argStart);
-        
-        argStart+=0x1000;
-        
+        k++;
         i+=1;
     }
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000,task->regs.cr3);
-    task->regs.userRsp-=8;
+    
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
+    
     
     
     i=(i==0)?0:i;
