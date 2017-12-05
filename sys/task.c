@@ -598,7 +598,7 @@ uint64_t malloc(uint64_t size)
     }
     else
     {
-        uint64_t end=0x32000;
+        uint64_t end=0x22000;
         while(temp->next!=NULL)
         {
             if(!temp->next->grows_down && !temp->next->v_file)
@@ -695,6 +695,24 @@ void* exec(void* path,void* args,void* envp)
     newPage-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
     
+    VMA* newVma = (VMA*)kmalloc();
+    
+    if(newVma!=NULL)
+    {
+        newVma->pageNumber = getNextPageNum();
+        newVma->v_mm = &runningThread->memMap;
+        newVma->v_start = 0x0;
+        newVma->v_end = 0x22000;
+        newVma->mmsz = size;
+        newVma->v_flags = 0;
+        newVma->grows_down = 0;
+        newVma->v_file = 0;
+        newVma->next=NULL;
+        newVma->v_offset=0;
+        
+        task->memMap.mmap=newVma;
+        
+    }
     
     
     i=(i==0)?0:i;
