@@ -234,7 +234,7 @@ void pushInitialParamstoStack(Task* task)
         
         while(((char**)args)[z][j]!='\0'&&k<=510)
         {
-            newPage[k] = ((char**)args)[i][j];
+            newPage[k] = ((char**)args)[z][j];
             k++;
             j++;
         }
