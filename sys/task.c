@@ -144,7 +144,7 @@ void _switchThread_(Registers *from, Registers *to);
 
 void _prepareInitialKernelStack(Registers* current);
 
-void _pushVal(uint64_t userRsp,int val);
+void _pushVal(uint64_t userRsp,void* val);
 
 void pushSomeArgsToUser(uint64_t userRsp,void* val,uint64_t cr3)
 {
@@ -859,7 +859,7 @@ void* exec(void* path,void* args,void* envp)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
+        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k,task->regs.cr3);
         task->regs.userRsp-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -876,7 +876,7 @@ void* exec(void* path,void* args,void* envp)
     newPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)count,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
     task->regs.userRsp-=8;
     
     
