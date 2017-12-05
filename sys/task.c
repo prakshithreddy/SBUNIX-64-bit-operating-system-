@@ -174,14 +174,17 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->state=1;
     //This portion code is temporary : must be removed;
     
-    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
-    task->regs.userRsp-=8;
-    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
-    task->regs.userRsp-=8;
-
-    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
-    task->regs.userRsp-=8;
     
+    pushInitialParamstoStack(task);
+//
+//    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
+//    task->regs.userRsp-=8;
+//    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
+//    task->regs.userRsp-=8;
+//
+//    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
+//    task->regs.userRsp-=8;
+//
     //------------------------------------
 
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
@@ -193,6 +196,108 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     _prepareInitialKernelStack(&task->regs);
 }
 
+void pushInitialParamstoStack(Task* task)
+{
+    char** envp = (char**)kmalloc();
+    
+    for(int i=0;i<4;i++) a[i] = (char*)"a=kjhs";
+    a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
+    a[0] = "bin/ls";
+    
+    char** args = (char**)kmalloc();
+    
+    for(int i=0;i<4;i++) a[i] = (char*)"a=kjhs";
+    a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
+    a[0] = "bin/ls";
+    
+    
+    char** newEnvPage = (char**) kmalloc();
+    newEnvPage-=get_kernbase();
+    mapPageForUser(0,(uint64_t)newEnvPage,newCr3+get_kernbase());
+    newEnvPage+=get_kernbase();
+    
+    uint64_t envStart = 0x2000;
+    int i=0;
+    while(((char**)envp)[i]!=NULL)
+    {
+        char* newPage = (char*)kmalloc();
+        int k=0;
+        
+        //        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)(i+1)*0x1000,task->regs.cr3);
+        //        task->regs.userRsp-=8;
+        
+        int j=0;
+        while(((char**)envp)[i][j]!='\0'&&k<=511) //only 512 chars
+        {
+            newPage[k] = ((char**)envp)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        newPage-=get_kernbase();
+        mapPageForUser(envStart,(uint64_t)newPage,newCr3+get_kernbase());
+        newEnvPage[i] = (char*)(envStart);
+        envStart+=0x1000;
+        i+=1;
+    }
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+    task->regs.userRsp-=8;
+    
+    
+    char* newPage = (char*)kmalloc();
+    
+    i=0;
+    int k=0;
+    
+    
+    while(((char**)args)[i]!=NULL)
+    {
+        int j=0;
+        
+        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0x1000+k,task->regs.cr3);
+        task->regs.userRsp-=8;
+        
+        while(((char**)args)[i][j]!='\0'&&k<=510)
+        {
+            newPage[k] = ((char**)args)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        k++;
+        i+=1;
+    }
+    
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0x1000,(uint64_t)newPage,newCr3+get_kernbase());
+    
+    VMA* newVma = (VMA*)kmalloc();
+    
+    if(newVma!=NULL)
+    {
+        newVma->pageNumber = getNextPageNum();
+        newVma->v_mm = &task->memMap;
+        newVma->v_start = 0x0;
+        newVma->v_end = 0x22000;
+        newVma->mmsz = 0x22000;
+        newVma->v_flags = 0;
+        newVma->grows_down = 0;
+        newVma->v_file = 0;
+        newVma->next=NULL;
+        newVma->v_offset=0;
+        
+        task->memMap.mmap=newVma;
+        
+    }
+    
+    
+    i=(i==0)?0:i;
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+    task->regs.userRsp-=8;
+    
+    
+}
 
 void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
