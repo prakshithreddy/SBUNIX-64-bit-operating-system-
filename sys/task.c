@@ -223,7 +223,7 @@ void pushInitialParamstoStack(Task* task)
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=0xa;
+    int k=1;
     
    
     while(((char**)args)[i]!=NULL) i++;
@@ -846,7 +846,7 @@ void* exec(void* path,void* args,void* envp)
     char* newPage = (char*)kmalloc();
     
     i=0;
-   int k=0xa;
+   int k=1;
     
     
     while(((char**)args)[i]!=NULL) i++;
