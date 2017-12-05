@@ -855,7 +855,6 @@ void* exec(void* path,void* args,void* envp)
        
        
        VMA* newVma = (VMA*)kmalloc();
-       VMA* temp = task->memMap.mmap;
        newVma->pageNumber = getNextPageNum();
        newVma->v_mm = &task->memMap;
        newVma->v_start = 0x0;
