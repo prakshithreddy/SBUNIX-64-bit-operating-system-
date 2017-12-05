@@ -198,25 +198,17 @@ void pushInitialParamstoStack(Task* task)
         i+=1;
     }
     
-    
     uint64_t* envC = (uint64_t*)kmalloc();
     *envC = i;
     envC-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)envC,task->regs.cr3+get_kernbase());
     envC+=get_kernbase();
-    
-    i=((i-1)>0?(i-1)*0x1000:0);
-    
-    
-    //asasd
-    
-    
-    kprintf("this is the value %d",*envC);
+    i=envStart-0x1000;
     
     
     int z = 0x21000;
     
-    while(z>=0x1000)
+    while(z>=0x2000)
     {
         if(z==i)
         {
