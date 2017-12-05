@@ -280,15 +280,15 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     //This portion code is temporary : must be removed;
     
     
-   pushInitialParamstoStack(task);
+  // pushInitialParamstoStack(task);
 
-//    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
-//    task->regs.userRsp-=8;
-//    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
-//    task->regs.userRsp-=8;
-//
-//    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
-//    task->regs.userRsp-=8;
+    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
+    task->regs.userRsp-=8;
+    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
+    task->regs.userRsp-=8;
+
+    pushSomeArgsToUser(task->regs.userRsp,0,cr3);
+    task->regs.userRsp-=8;
 
     //------------------------------------
 
