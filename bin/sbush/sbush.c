@@ -27,7 +27,7 @@ int main(int argc, char *argv[], char *envp[]){
         //}
 //        char** a = (char**)syscall((void*)99,(void*)(4*sizeof(char*)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
 //
-        /*for(int i=0;i<10;i++)*/ char* a[i] = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+        /*for(int i=0;i<10;i++)*/ //char* a = (char*)syscall((void*)99,(void*)(uint64_t)(10*sizeof(char)),(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
 //
 //        for(int i=0;i<4;i++) a[i] = (char*)"a=kjhs";
 //        a[3] = (char*)"a=kjhsqqqqqqkajhskjdasd";
