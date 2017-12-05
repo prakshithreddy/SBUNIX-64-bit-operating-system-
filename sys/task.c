@@ -221,10 +221,10 @@ void pushInitialParamstoStack(Task* task)
     
     char* newPage = (char*)kmalloc();
     
-    
+    i=0;
     int k=0;
     z=0;
-    while(((char**)args)[i]!=NULL) z++;
+    while(((char**)args)[i]!=NULL) {z++;i++;}
     while(z>=1)
     {
         int j=0;
