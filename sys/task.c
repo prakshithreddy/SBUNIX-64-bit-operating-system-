@@ -205,7 +205,7 @@ void pushInitialParamstoStack(Task* task)
     {
         if(z==i)
         {
-            pushSomeArgsToUser(task->regs.userRsp,(void*)i,task->regs.cr3);
+            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)i,task->regs.cr3);
             i-=0x1000;
         }
         else
