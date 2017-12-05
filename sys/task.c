@@ -179,7 +179,7 @@ void pushInitialParamstoStack(Task* task)
     mapPageForUser(0,(uint64_t)newEnvPage,task->regs.cr3+get_kernbase());
     newEnvPage+=get_kernbase();
     
-    newEnvPage[0] = "0x2000"
+   // newEnvPage[0] = "0x2000"
     
     uint64_t envStart = 0x2000;
     int i=0;
