@@ -700,7 +700,7 @@ void* exec(void* path,void* args,void* envp)
     if(newVma!=NULL)
     {
         newVma->pageNumber = getNextPageNum();
-        newVma->v_mm = &runningThread->memMap;
+        newVma->v_mm = &task->memMap;
         newVma->v_start = 0x0;
         newVma->v_end = 0x22000;
         newVma->mmsz = size;
