@@ -174,7 +174,7 @@ void pushInitialParamstoStack(Task* task)
     args[3] = NULL;
     
     
-    uint64_t envStart = 0x1000;
+    uint64_t envStart = 0x2000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
     {
@@ -200,7 +200,14 @@ void pushInitialParamstoStack(Task* task)
     
     i=((i-1)>0?(i-1)*0x1000:0);
     
-    int z = 0x20000;
+    uint64_t* envC = (int*)kmalloc();
+    envC = (int*)(i-1);
+    envC-=get_kernbase();
+    mapPageForUser(0x1000,(uint64_t)envC,task->regs.cr3+get_kernbase());
+    
+    
+    
+    int z = 0x21000;
     
     while(z>=0x1000)
     {
@@ -744,7 +751,7 @@ uint64_t malloc(uint64_t size)
     }
     else
     {
-        uint64_t end=0x22000;
+        uint64_t end=0x23000;
         while(temp->next!=NULL)
         {
             if(!temp->next->grows_down && !temp->next->v_file)
