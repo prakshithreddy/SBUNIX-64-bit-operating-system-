@@ -199,7 +199,7 @@ void pushInitialParamstoStack(Task* task)
         newPage[k] = '\0';
         newPage-=get_kernbase();
         mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
-        newEnvPage[i] = (char*)"0x2000";
+        newEnvPage[i] = (char*)(envStart);
         envStart+=0x1000;
         i+=1;
     }
@@ -706,7 +706,7 @@ uint64_t getPageNumFromAddr(uint64_t addr)
 
 void* printMe(void* path,void* args,void* envp)
 {
-    kprintf("%x\n",((char**)path)[0]);//,(char*)args,(char*)envp);//,((char**)envp)[2]);
+    kprintf("%s\n",((char**)path)[0]);//,(char*)args,(char*)envp);//,((char**)envp)[2]);
     return 0;
 }
 uint64_t malloc(uint64_t size)
