@@ -210,14 +210,14 @@ void pushInitialParamstoStack(Task* task)
         }
         else
         {
-            pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
+            //pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
         }
         
         task->regs.userRsp-=8;
         z-=0x1000;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
+    //pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
     task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
@@ -833,13 +833,15 @@ void* exec(void* path,void* args,void* envp)
         }
         else
         {
-            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0,task->regs.cr3);
+            //pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
         }
         
         task->regs.userRsp-=8;
         z-=0x1000;
     }
     
+    //pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
     
