@@ -144,9 +144,9 @@ void _switchThread_(Registers *from, Registers *to);
 
 void _prepareInitialKernelStack(Registers* current);
 
-void _pushVal(uint64_t userRsp,int val);
+void _pushVal(uint64_t userRsp,void* val);
 
-void pushSomeArgsToUser(uint64_t userRsp,uint64_t val,uint64_t cr3)
+void pushSomeArgsToUser(uint64_t userRsp,void* val,uint64_t cr3)
 {
     uint64_t tempCr3;
     __asm__ __volatile__("mov %%cr3,%0":"=b"((uint64_t)tempCr3)::);
@@ -197,39 +197,48 @@ void pushInitialParamstoStack(Task* task)
         envStart+=0x1000;
         i+=1;
     }
-    
-    i=((i-1)>0?(i-1)*0x1000:0);
-    
+    i=envStart-0x1000;
+
     int z = 0x20000;
     
     while(z>=0x1000)
     {
         if(z==i)
         {
-            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)i,task->regs.cr3);
             i-=0x1000;
         }
         else
         {
-            pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
+            //pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
         }
         
         task->regs.userRsp-=8;
         z-=0x1000;
     }
     
+    //pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=0;
+    int k=1;
     
+   
+    while(((char**)args)[i]!=NULL) i++;
     
-    while(((char**)args)[i]!=NULL)
+    kprintf("ARGV COUNT %d",i);
+    
+    int count=i;
+    
+    i--;
+    
+    while(i>=0)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
+        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k,task->regs.cr3);
         task->regs.userRsp-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -240,12 +249,14 @@ void pushInitialParamstoStack(Task* task)
         }
         newPage[k] = '\0';
         k++;
-        i+=1;
+        i-=1;
     }
-    
     
     newPage-=get_kernbase();
     mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
+    task->regs.userRsp-=8;
     
     
     VMA* newVma = (VMA*)kmalloc();
@@ -255,8 +266,8 @@ void pushInitialParamstoStack(Task* task)
         newVma->pageNumber = getNextPageNum();
         newVma->v_mm = &runningThread->memMap;
         newVma->v_start = 0x0;
-        newVma->v_end = 0x22000;
-        newVma->mmsz = 0x22000;
+        newVma->v_end = 0x21000;
+        newVma->mmsz = 0x21000;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
         newVma->v_file = 0;
@@ -279,8 +290,8 @@ void pushInitialParamstoStack(Task* task)
         newVma->pageNumber = getNextPageNum();
         newVma->v_mm = &runningThread->memMap;
         newVma->v_start = 0;
-        newVma->v_end = 0x22000;
-        newVma->mmsz = 0x22000;
+        newVma->v_end = 0x21000;
+        newVma->mmsz = 0x21000;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
         newVma->v_file = 0;
@@ -291,9 +302,7 @@ void pushInitialParamstoStack(Task* task)
         temp->next = newVma;
     }
     
-    i=(i==0)?0:i;
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
-    task->regs.userRsp-=8;
+   
     
     
 }
@@ -716,9 +725,11 @@ uint64_t getPageNumFromAddr(uint64_t addr)
     return -1;
 }
 
-void* printMe(void* path,void* args,void* envp)
+void* printMe(void* a,void* b,void* c)
 {
-    kprintf("%s\n",((char**)path)[0]);//,(char*)args,(char*)envp);//,((char**)envp)[2]);
+    kprintf("%d %s %s\n",(uint64_t)a,((char**)b)[0],((char**)c)[0]);//,(char*)args,(char*)envp);//,((char**)envp)[2]);
+    kprintf("%d %s %s\n",(uint64_t)a,((char**)b)[1],((char**)c)[1]);
+    kprintf("%d %s %s\n",(uint64_t)a,((char**)b)[2],((char**)c)[1]);
     return 0;
 }
 uint64_t malloc(uint64_t size)
@@ -774,6 +785,12 @@ void* exec(void* path,void* args,void* envp)
 {
     
     kprintf("%s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[1],((char**)envp)[1]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[2],((char**)envp)[1]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[3],((char**)envp)[0]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[1]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);
+    
     
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
@@ -803,74 +820,110 @@ void* exec(void* path,void* args,void* envp)
         envStart+=0x1000;
         i+=1;
     }
+    i=envStart-0x1000;
     
-    i=((i-1)>0?(i-1)*0x1000:0);
-       
-       int z = 0x20000;
-       
-       while(z>=0x1000)
-       {
-           if(z==i)
-           {
-               pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
-               i-=0x1000;
-           }
-           else
-           {
-               pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
-           }
-           
-           task->regs.userRsp-=8;
-           z-=0x1000;
-       }
-       
-       
-       char* newPage = (char*)kmalloc();
-       
-       i=0;
-       int k=0;
-       
-       
-       while(((char**)args)[i]!=NULL)
-       {
-           int j=0;
-           
-           pushSomeArgsToUser(task->regs.userRsp,(uint64_t)k,task->regs.cr3);
-           task->regs.userRsp-=8;
-           
-           while(((char**)args)[i][j]!='\0'&&k<=510)
-           {
-               newPage[k] = ((char**)args)[i][j];
-               k++;
-               j++;
-           }
-           newPage[k] = '\0';
-           k++;
-           i+=1;
-       }
-       
-       
-       newPage-=get_kernbase();
-       mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
-       
-       
-       VMA* newVma = (VMA*)kmalloc();
-       newVma->pageNumber = getNextPageNum();
-       newVma->v_mm = &task->memMap;
-       newVma->v_start = 0x0;
-       newVma->v_end = 0x20000;
-       newVma->mmsz = 0x20000;
-       newVma->v_flags = 0;
-       newVma->grows_down = 0;
-       newVma->v_file = 0;
-       newVma->next=NULL;
-       newVma->v_offset=0;
-       task->memMap.mmap=newVma;
-       
-       i=(i==0)?0:i;
-       pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
-       task->regs.userRsp-=8;
-
+    int z = 0x20000;
+    
+    while(z>=0x1000)
+    {
+        if(z==i)
+        {
+            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)i,task->regs.cr3);
+            i-=0x1000;
+        }
+        else
+        {
+            //pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
+        }
+        
+        task->regs.userRsp-=8;
+        z-=0x1000;
+    }
+    
+    //pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
+    task->regs.userRsp-=8;
+    
+    char* newPage = (char*)kmalloc();
+    
+    i=0;
+   int k=1;
+    
+    
+    while(((char**)args)[i]!=NULL) i++;
+    
+    kprintf("ARGV COUNT %d",i);
+    
+    int count=i;
+    
+    i--;
+    
+    while(i>=0)
+    {
+        int j=0;
+        
+        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k,task->regs.cr3);
+        task->regs.userRsp-=8;
+        
+        while(((char**)args)[i][j]!='\0'&&k<=510)
+        {
+            newPage[k] = ((char**)args)[i][j];
+            k++;
+            j++;
+        }
+        newPage[k] = '\0';
+        k++;
+        i-=1;
+    }
+    
+    newPage-=get_kernbase();
+    mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
+    task->regs.userRsp-=8;
+    
+    
+    VMA* newVma = (VMA*)kmalloc();
+    VMA* temp = task->memMap.mmap;
+    if(temp==NULL)
+    {
+        newVma->pageNumber = getNextPageNum();
+        newVma->v_mm = &runningThread->memMap;
+        newVma->v_start = 0x0;
+        newVma->v_end = 0x21000;
+        newVma->mmsz = 0x21000;
+        newVma->v_flags = 0;
+        newVma->grows_down = 0;
+        newVma->v_file = 0;
+        newVma->next=NULL;
+        newVma->v_offset=0;
+        
+        runningThread->memMap.mmap=newVma;
+        
+    }
+    else
+    {
+        //        uint64_t end=0x22000;
+        while(temp->next!=NULL)
+        {
+            //            if(!temp->next->grows_down && !temp->next->v_file)
+            //                end = temp->next->v_end;
+            temp = temp->next;
+        }
+        
+        newVma->pageNumber = getNextPageNum();
+        newVma->v_mm = &runningThread->memMap;
+        newVma->v_start = 0;
+        newVma->v_end = 0x21000;
+        newVma->mmsz = 0x21000;
+        newVma->v_flags = 0;
+        newVma->grows_down = 0;
+        newVma->v_file = 0;
+        newVma->next=NULL;
+        newVma->v_offset=0;
+        
+        temp->next = newVma->next;
+        temp->next = newVma;
+    }
     
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
