@@ -235,6 +235,7 @@ void pushInitialParamstoStack(Task* task)
     int count=i;
     
     i--;
+    i=2;
     
     while(i>=0)
     {
