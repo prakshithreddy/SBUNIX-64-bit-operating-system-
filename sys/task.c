@@ -223,10 +223,8 @@ void pushInitialParamstoStack(Task* task)
     i=0;
     int k=0;
     
-    while(((char**)args)[i]!=NULL) i++;
-    i--;
     
-    while(i>=0)
+    while(((char**)args)[i]!=NULL)
     {
         int j=0;
         
@@ -241,7 +239,7 @@ void pushInitialParamstoStack(Task* task)
         }
         newPage[k] = '\0';
         k++;
-        i--;
+        i+=1;
     }
     
     
