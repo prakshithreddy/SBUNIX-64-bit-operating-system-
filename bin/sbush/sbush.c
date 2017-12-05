@@ -38,6 +38,7 @@ int main(int argc, char *argv[], char *envp[]){
     else
     {
           a1[1] = 11;
+        char* temp = (char*)"bin/ls";
        syscall((void*)88,(void*)2,(void*)&a1[0],(void*)3,(void*)4,(void*)5,(void*)a1);
         syscall((void*)420,(void*)(uint64_t)argc,(void*)argv,(void*)envp,(void*)0,(void*)(uint64_t)4,(void*)5);//,(void*)(int64_t)i);
         syscall((void*)78,(void*)temp,(void*)argv,(void*)envp,(void*)1,(void*)2,(void*)3);
