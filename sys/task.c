@@ -201,7 +201,7 @@ void pushInitialParamstoStack(Task* task)
     i=((i-1)>0?(i-1)*0x1000:0);
     
     uint64_t* envC = (uint64_t*)kmalloc();
-    envC = (uint64_t*)(i-1);
+    envC = (uint64_t*)(uint64_t)(i-1);
     envC-=get_kernbase();
     mapPageForUser(0x1000,(uint64_t)envC,task->regs.cr3+get_kernbase());
     
