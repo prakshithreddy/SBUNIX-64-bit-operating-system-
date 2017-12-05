@@ -806,6 +806,7 @@ void* exec(void* path,void* args,void* envp)
     int i=0;
     while(((char**)envp)[i]!=NULL)
     {
+        kprintf("%s\n",((char**)envp)[i]);
         char* newPage = (char*)kmalloc();
         int k=0;
         //
