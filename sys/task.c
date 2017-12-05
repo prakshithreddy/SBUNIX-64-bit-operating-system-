@@ -470,6 +470,7 @@ void createChildTask(Task *task){
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000;
     task->regs.count=0;
     task->regs.add=0;
+    task->state = 1;
     //task->next=0;
    // task->memMap.mmap=runningThread->memMap.mmap;
     copyVMA(task,runningThread->memMap.mmap);
