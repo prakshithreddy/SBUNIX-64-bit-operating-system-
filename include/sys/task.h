@@ -50,6 +50,7 @@ typedef struct Task{
   int ppid_t;
   Registers regs;
   struct Task *next;
+  uint64_t status;
   struct mm_struct memMap;
   uint64_t fd_pointers[20];//Each page contains 5 FD's.. Each entry of this page is the starting adress of the pages allocated for FD's. Initialize fd[0] with new page.
   int fd_count;//Need to initialize this with 5. If user requests for 6th then, a page will be allocated and fd_pointers[1] will be filled with that adress.

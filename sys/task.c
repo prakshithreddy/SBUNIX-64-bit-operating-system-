@@ -171,7 +171,7 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->regs.rip=(uint64_t)function;
     task->regs.cr3=cr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
-    
+    task->status=1;
     //This portion code is temporary : must be removed;
     
     pushSomeArgsToUser(task->regs.userRsp,0,cr3);
@@ -216,6 +216,7 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
     task->regs.count=0;
     task->regs.add=0;
     task->next=0;
+    task->status=1; // 1 : is running
     task->fd_pointers[0]=(uint64_t)kmalloc();
     for(int i=1;i<20;i++){
       task->fd_pointers[i]=0;
@@ -238,6 +239,7 @@ void runNextTask()
     runningThread->regs.rsi=switchRsi;
     runningThread->regs.rdi=switchRdi;
     runningThread->regs.rbp=switchRbp;
+    
     //update the currentRunning Task 
     Task *prev = runningThread;
     runningThread = runningThread->next;
@@ -708,7 +710,16 @@ void* waitpid(void* pid,void* status,void* flags)
     
     kprintf("%d %d %d\n",(uint64_t)pid,(uint64_t*)status,(uint64_t)flags);
     
+    Task* tempTask = runningThread;
     
+    while(tempTask->next!=runningThread)
+    {
+        if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
+            return 1;
+        else
+            return 0;
+        tempTask=tempTask->next;
+    }
     
     return 0;
 }
