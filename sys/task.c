@@ -223,10 +223,14 @@ void pushInitialParamstoStack(Task* task)
     i=0;
     int k=0;
     
-    int zz=0;
-    while(((char**)args)[zz]!=NULL) zz++;
+   
+    while(((char**)args)[i]!=NULL) i++;
     
-    kprintf("ARGV COUNT %d",zz);
+    kprintf("ARGV COUNT %d",i);
+    
+    int count=i;
+    
+    i--;
     
     while(((char**)args)[i]!=NULL)
     {
@@ -243,7 +247,7 @@ void pushInitialParamstoStack(Task* task)
         }
         newPage[k] = '\0';
         k++;
-        i+=1;
+        i-=1;
     }
     
     
@@ -296,8 +300,7 @@ void pushInitialParamstoStack(Task* task)
         temp->next = newVma;
     }
     
-    i=(i==0)?0:i;
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)i,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)count,task->regs.cr3);
     task->regs.userRsp-=8;
     
     
