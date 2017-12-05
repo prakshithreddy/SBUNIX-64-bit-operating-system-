@@ -855,9 +855,12 @@ void* exec(void* path,void* args,void* envp)
     int k=0;
     
     
-    while(((char**)args)[i]!=NULL) i++;
+    while(((char**)args)[i]!=NULL) {
+        kprintf("%s",((char**)args)[i]);
+        i++;
+    }
     
-    kprintf("ARGV COUNT %d",i);
+    kprintf("ARGV COUaaaaaNT %d",i);
     
     int count=i;
     
