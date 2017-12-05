@@ -255,7 +255,7 @@ void pushInitialParamstoStack(Task* task)
     }
     else
     {
-        uint64_t end=0x22000;
+//        uint64_t end=0x22000;
         while(temp->next!=NULL)
         {
             if(!temp->next->grows_down && !temp->next->v_file)
