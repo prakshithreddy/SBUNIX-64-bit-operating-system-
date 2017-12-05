@@ -856,7 +856,7 @@ void* exec(void* path,void* args,void* envp)
     
     
     while(((char**)args)[i]!=NULL) {
-        kprintf("%s",((char**)args)[i]);
+        kprintf(">>>>>>%s",((char**)args)[i]);
         i++;
     }
     
