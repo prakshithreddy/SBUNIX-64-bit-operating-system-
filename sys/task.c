@@ -787,7 +787,7 @@ uint64_t malloc(uint64_t size)
 void* exec(void* path,void* args,void* envp)
 {
     
-    kprintf("%s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
+    kprintf("EXEC %s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[1],((char**)envp)[1]);
     
     kprintf("%s %s %s\n",((char*)path),((char**)args)[2],((char**)envp)[1]);
