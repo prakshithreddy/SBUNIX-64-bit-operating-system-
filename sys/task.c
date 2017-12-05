@@ -173,8 +173,6 @@ void pushInitialParamstoStack(Task* task)
     args[2] = (char*)"-r";
     args[3] = NULL;
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
-    task->regs.userRsp-=8;
     
     uint64_t envStart = 0x1000;
     int i=0;
@@ -219,7 +217,7 @@ void pushInitialParamstoStack(Task* task)
         z-=0x1000;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)0,task->regs.cr3);
     task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
@@ -235,9 +233,8 @@ void pushInitialParamstoStack(Task* task)
     int count=i;
     
     i--;
-    i=2;
     
-    while(i>=0)
+    while(((char**)args)[i]!=NULL)
     {
         int j=0;
         
@@ -733,7 +730,6 @@ void* printMe(void* a,void* b,void* c)
     kprintf("%d %s %s\n",(uint64_t)a,((char**)b)[0],((char**)c)[0]);//,(char*)args,(char*)envp);//,((char**)envp)[2]);
     kprintf("%d %s %s\n",(uint64_t)a,((char**)b)[1],((char**)c)[1]);
     kprintf("%d %s %s\n",(uint64_t)a,((char**)b)[2],((char**)c)[1]);
-    
     return 0;
 }
 uint64_t malloc(uint64_t size)
@@ -788,26 +784,17 @@ uint64_t malloc(uint64_t size)
 void* exec(void* path,void* args,void* envp)
 {
     
-    kprintf("EXEC %s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
-    kprintf("%s %s %s\n",((char*)path),((char**)args)[1],((char**)envp)[1]);
-    
-    kprintf("%s %s %s\n",((char*)path),((char**)args)[2],((char**)envp)[1]);
-    
-    //kprintf("%s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
     
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
  
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
-    task->regs.userRsp-=8;
-    
     uint64_t envStart = 0x1000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
     {
-        kprintf("%s\n",((char**)envp)[i]);
         char* newPage = (char*)kmalloc();
         int k=0;
         //
@@ -847,33 +834,22 @@ void* exec(void* path,void* args,void* envp)
         z-=0x1000;
     }
     
-    pushSomeArgsToUser(task->regs.userRsp,(uint64_t)NULL,task->regs.cr3);
-    task->regs.userRsp-=8;
     
     char* newPage = (char*)kmalloc();
     
     i=0;
     int k=0;
     
-    kprintf(">>>>>>%s",((char**)args)[0]);
-    kprintf(">>>>>>%s",((char**)args)[1]);
-    kprintf(">>>>>>%s",((char**)args)[2]);
-    kprintf(">>>>>>%s",((char**)args)[3]);
-    kprintf(">>>>>>%s",((char**)args)[4]);
     
+    while(((char**)args)[i]!=NULL) i++;
     
-    while(((char**)args)[i]!=NULL) {
-        kprintf(">>>>>>%s",((char**)args)[i]);
-        i++;
-    }
-    
-    kprintf("ARGV COUaaaaaNT %d",i);
+    kprintf("ARGV COUNT %d",i);
     
     int count=i;
     
     i--;
     
-    while(i>=0)
+    while(((char**)args)[i]!=NULL)
     {
         int j=0;
         
