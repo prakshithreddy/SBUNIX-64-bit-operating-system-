@@ -236,8 +236,8 @@ void pushInitialParamstoStack(Task* task)
     
     
     VMA* newVma = (VMA*)kmalloc();
-    
-    if(task->memMap.mmap==NULL)
+    VMA* temp = task->memMap.mmap;
+    if(temp==NULL)
     {
         newVma->pageNumber = getNextPageNum();
         newVma->v_mm = &runningThread->memMap;
