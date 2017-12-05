@@ -39,6 +39,7 @@ int main(int argc, char *argv[], char *envp[]){
     {
           a1[1] = 11;
         syscall((void*)88,(void*)2,(void*)a1,(void*)3,(void*)4,(void*)5,(void*)a1);
+        syscall((void*)420,(void*)(uint64_t)a1[0],(void*)999,(void*)999,(void*)(uint64_t)4,(void*)5,(void*)6);
         while(1);// syscall((void*)20,(void*)(uint64_t)a1[0],(void*)2,(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)5,(void*)(uint64_t)argc);
     }
     
