@@ -998,7 +998,7 @@ void FreePageEntries(Task* task)
                 if(pageCount==1)
                 {
                     
-                    pageDeAllocator(phyAddr&FRAME);
+                    pageDeAllocator((void*)phyAddr&FRAME);
                     
                 }
                 else
@@ -1021,26 +1021,26 @@ void FreePageTables(Task* task)
     uint64_t* pml4 = (uint64_t*)(task->regs.cr3+get_kernbase());
     for(int i=0;i<511;i++)
     {
-        if(*(pml4[i])&PRESENT)
+        if(pml4[i]&PRESENT)
         {
-            uint64_t *pdpt = (uint64_t*)(*(pml4[i])+get_kernbase());
+            uint64_t *pdpt = (uint64_t*)(pml4[i]+get_kernbase());
             for(int j=0;j<512;j++)
             {
-                if(*(pdpt[j])&PRESENT)
+                if(pdpt[j]&PRESENT)
                 {
-                    uint64_t *pdt = (uint64_t*)(*(pdpt[j])+get_kernbase());
+                    uint64_t *pdt = (uint64_t*)(pdpt[j]+get_kernbase());
                     for(int k=0;k<512;k++)
                     {
-                        if(*(pdt[k])&PRESENT)
+                        if(pdt[k]&PRESENT)
                         {
-                            pageDeAllocator((*(pdt[k]))&FRAME);
+                            pageDeAllocator(pdt[k]&FRAME);
                         }
                     }
-                    pageDeAllocator((*(pdpt[j]))&FRAME);
+                    pageDeAllocator(pdpt[j]&FRAME);
                 }
                 
             }
-            pageDeAllocator((*(pml4[i]))&FRAME);
+            pageDeAllocator(pml4[i]&FRAME);
                 
         }
     
