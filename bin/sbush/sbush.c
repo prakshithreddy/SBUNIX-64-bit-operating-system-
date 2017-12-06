@@ -9,15 +9,21 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
     return returnValue;
 }
 
-void   puts(char *buf){
+void puts(char *buf){
   int count=0;
   while(buf[count]!='\0') count++;
   syscall((void*)(uint64_t)4,(void*)(uint64_t)1,(void*)buf,(void*)(uint64_t)count,0,0,0);
+}
+
+char getChar(){
+    char c;
+    return (char)syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
 }
 
 int main(int argc, char *argv[], char *envp[]){
 
     char *ps1="sbush>";
     puts(ps1);
+    puts(getchar());
     while(1);
 }
