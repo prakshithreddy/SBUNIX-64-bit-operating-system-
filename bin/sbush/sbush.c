@@ -15,15 +15,21 @@ void puts(char *buf){
   syscall((void*)(uint64_t)4,(void*)(uint64_t)1,(void*)buf,(void*)(uint64_t)count,0,0,0);
 }
 
-char* getChar(){
+char getChar(){
     char c;
-    return (char*)syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
+    syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
+    return c;
 }
 
 int main(int argc, char *argv[], char *envp[]){
 
     char *ps1="sbush>";
     puts(ps1);
-    while(1)puts(getChar());
-    while(1);
+    while(1)
+    {
+        char c = getChar();
+        puts(&c);
+        
+    }
+    //while(1);
 }
