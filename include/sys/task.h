@@ -56,6 +56,8 @@ typedef struct Task{
   int fd_count;//Need to initialize this with 5. If user requests for 6th then, a page will be allocated and fd_pointers[1] will be filled with that adress.
 } Task;
 
+
+void exit();
 void runNextTask();
 void initMultiTasking();
 void createThread(Task* task, void(*function)(), uint64_t rflags, uint64_t *pml4);
