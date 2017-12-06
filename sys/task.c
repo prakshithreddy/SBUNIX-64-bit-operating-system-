@@ -1108,10 +1108,28 @@ void FreePageTables(Task* task)
     
 }
 
-void exit()
+void exit(void* pid)
 {
     //delete the task and free all memory
-    Task* task = runningThread;
+    Task* task = NULL;
+    
+    if((uint64_t)pid == 0) task=runningThread;
+    else
+    {
+        if(runningThread->pid_t==(uint64_t)pid) task = runningThread;
+        else
+        {
+            task=runningThread->next;
+            while(task!=runningThread)
+            {
+                if(task->pid_t==(uint64_t)pid && task->state!=0) break;
+                task = task->next;
+            }
+        
+    }
+    
+    
+   // Task* task = runningThread;
     task->state = 0;
     task->endHH = getCurHr();
     task->endMM = getCurMin();
