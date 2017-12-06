@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include<sys/defs.h>
+#include<sys/syscall.h>
 
 #define null (void*)0
 
