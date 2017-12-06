@@ -1016,7 +1016,7 @@ void FreePageEntries(Task* task)
 }
 
 
-void* FreePageTables(Task* task)
+void FreePageTables(Task* task)
 {
     uint64_t* pml4 = (uint64_t*)(task->regs.cr3+get_kernbase());
     for(int i=0;i<511;i++)
@@ -1051,7 +1051,7 @@ void* FreePageTables(Task* task)
 void exit()
 {
     //delete the task and free all memory
-    Task* task = runningTask;
+    Task* task = runningThread;
     task->state = 0;
     FreePageEntries(task);
     FreePageTables(task);
