@@ -978,7 +978,7 @@ void FreePageEntries(Task* task)
         {
             uint64_t phyAddr = getPhysicalPageAddr(start,task->regs.cr3);
             
-            if(phyAdr!=-1)
+            if(phyAddr!=-1)
             {
                 //before deleting the pagees we need to check if the page is shared
                 int pageCount=1;
@@ -989,7 +989,7 @@ void FreePageEntries(Task* task)
                 
                 while(temp!=task)
                 {
-                    uint64_t tempPhy = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
+                    uint64_t tempPhy = getPhysicalPageAddr(phyAddr,temp->regs.cr3);
                     if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
                         pageCount+=1; //how many cr3 contain this phy address,virtual address combo
                     temp=temp->next;
