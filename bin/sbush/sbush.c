@@ -12,12 +12,12 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 int main(int argc, char *argv[], char *envp[]){
 
     int* a1 = (int*)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
-    a1[0] = 10;
+    //a1[0] = 10;
     uint64_t pid = (uint64_t)syscall((void*)1,(void*)1,(void*)2,(void*)3,(void*)4,(void*)5,(void*)a1);
     
     if(pid == 0)
     {
-        a1[3] = 786;
+        //a1[3] = 786;
         
         char* temp = "bin/ls";
         
@@ -46,6 +46,7 @@ int main(int argc, char *argv[], char *envp[]){
     else
     {
         syscall((void*)88,(void*)2,(void*)&a1[0],(void*)3,(void*)4,(void*)5,(void*)a1);
+        syscall((void*)89,(void*)a1,(void*)&a1[0],(void*)3,(void*)4,(void*)5,(void*)a1);
         
     }
 ///<<<<<<< HEAD
