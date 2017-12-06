@@ -769,6 +769,10 @@ uint64_t malloc(uint64_t size)
             temp = temp->next;
         }
         
+        if(!temp->grows_down)
+            end = temp->v_end;
+        
+        
         newVma->pageNumber = getNextPageNum();
         newVma->v_mm = &runningThread->memMap;
         newVma->v_start = end;
