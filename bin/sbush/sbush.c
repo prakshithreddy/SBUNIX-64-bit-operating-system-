@@ -40,6 +40,7 @@ int main(int argc, char *argv[], char *envp[]){
        // syscall((void*)420,(void*)(uint64_t)argc,(void*)argv,(void*)envp,(void*)0,(void*)(uint64_t)4,(void*)5);
         
        // syscall((void*)78,(void*)temp,(void*)argv,(void*)envp,(void*)1,(void*)2,(void*)3);
+        //asd
         while(1)syscall((void*)420,(void*)(uint64_t)argc,(void*)argv,(void*)envp,(void*)0,(void*)(uint64_t)4,(void*)5);// syscall((void*)10,(void*)a,(void*)(uint64_t)a1[0],(void*)(uint64_t)a1[1],(void*)(uint64_t)a1[3],(void*)0,(void*)(uint64_t)argc);
     }
     else
