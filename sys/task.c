@@ -174,16 +174,24 @@ void pushInitialParamstoStack(Task* task)
     args[3] = NULL;
     
     
-    uint64_t envStart = 0x301000;
+    uint64_t basePtr = (uint64_t)0x300000;
+    
+    uint64_t mainArgs = (uint64_t)kmalloc();
+    mainArgs-=get_kernbase();
+    mapPageForUser(0x300000,(uint64_t)mainArgs,task->regs.cr3+get_kernbase());
+    mainArgs+=(get_kernbase()+0x1000);
+    
+    
+    uint64_t envStart = 0x302000;
     int i=0;
+    
+    pushSomeArgsToUser(mainArgs,NULL,task->regs.cr3);
+    basePtr-=8;
+    
     while(((char**)envp)[i]!=NULL)
     {
         char* newPage = (char*)kmalloc();
         int k=0;
-//
-//        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)envStart,task->regs.cr3);
-//        task->regs.userRsp-=8;
-        
         int j=0;
         while(((char**)envp)[i][j]!='\0'&&k<=511) //only 512 chars
         {
@@ -199,13 +207,13 @@ void pushInitialParamstoStack(Task* task)
     }
     i=envStart-0x1000;
 
-    int z = 0x320000;
+    int z = 0x322000;
     
-    while(z>=0x301000)
+    while(z>=0x302000)
     {
         if(z==i)
         {
-            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)i,task->regs.cr3);
+            pushSomeArgsToUser(mainArgs,(void*)(uint64_t)i,task->regs.cr3);
             i-=0x1000;
         }
         else
@@ -213,12 +221,12 @@ void pushInitialParamstoStack(Task* task)
             //pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
         }
         
-        task->regs.userRsp-=8;
+        basePtr-=8;
         z-=0x1000;
     }
     
-    //pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
-    task->regs.userRsp-=8;
+    pushSomeArgsToUser(mainArgs,NULL,task->regs.cr3);
+    basePtr-=8;
     
     char* newPage = (char*)kmalloc();
     
@@ -238,8 +246,8 @@ void pushInitialParamstoStack(Task* task)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k+0x300000,task->regs.cr3);
-        task->regs.userRsp-=8;
+        pushSomeArgsToUser(mainArgs,(void*)(uint64_t)k+0x301000,task->regs.cr3);
+        basePtr-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
         {
@@ -253,9 +261,12 @@ void pushInitialParamstoStack(Task* task)
     }
     
     newPage-=get_kernbase();
-    mapPageForUser(0x300000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    mapPageForUser(0x301000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
-    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
+    pushSomeArgsToUser(mainArgs,(void*)(uint64_t)count,task->regs.cr3);
+    basePtr-=8;
+    
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)basePtr,task->regs.cr3);
     task->regs.userRsp-=8;
     
     
@@ -263,8 +274,8 @@ void pushInitialParamstoStack(Task* task)
     newVma->pageNumber = getNextPageNum();
     newVma->v_mm = &runningThread->memMap;
     newVma->v_start = 0x300000;
-    newVma->v_end = 0x321000;
-    newVma->mmsz = 0x21000;
+    newVma->v_end = 0x322000;
+    newVma->mmsz = 0x22000;
     newVma->v_flags = 0;
     newVma->grows_down = 0;
     newVma->v_file = 0;
@@ -796,16 +807,16 @@ void* exec(void* path,void* args,void* envp)
         return (void*)-1;
     }
  
-    uint64_t envStart = 0x301000;
+    uint64_t envStart = 0x302000;
     int i=0;
+    
+    pushSomeArgsToUser(mainArgs,NULL,task->regs.cr3);
+    basePtr-=8;
+    
     while(((char**)envp)[i]!=NULL)
     {
         char* newPage = (char*)kmalloc();
         int k=0;
-//
-//        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)envStart,task->regs.cr3);
-//        task->regs.userRsp-=8;
-        
         int j=0;
         while(((char**)envp)[i][j]!='\0'&&k<=511) //only 512 chars
         {
@@ -820,14 +831,14 @@ void* exec(void* path,void* args,void* envp)
         i+=1;
     }
     i=envStart-0x1000;
-
-    int z = 0x320000;
     
-    while(z>=0x301000)
+    int z = 0x322000;
+    
+    while(z>=0x302000)
     {
         if(z==i)
         {
-            pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)i,task->regs.cr3);
+            pushSomeArgsToUser(mainArgs,(void*)(uint64_t)i,task->regs.cr3);
             i-=0x1000;
         }
         else
@@ -835,19 +846,19 @@ void* exec(void* path,void* args,void* envp)
             //pushSomeArgsToUser(task->regs.userRsp,(void*)0,task->regs.cr3);
         }
         
-        task->regs.userRsp-=8;
+        basePtr-=8;
         z-=0x1000;
     }
     
-    //pushSomeArgsToUser(task->regs.userRsp,NULL,task->regs.cr3);
-    task->regs.userRsp-=8;
+    pushSomeArgsToUser(mainArgs,NULL,task->regs.cr3);
+    basePtr-=8;
     
     char* newPage = (char*)kmalloc();
     
     i=0;
     int k=0;
     
-   
+    
     while(((char**)args)[i]!=NULL) i++;
     
     kprintf("ARGV COUNT %d",i);
@@ -860,8 +871,8 @@ void* exec(void* path,void* args,void* envp)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k+0x300000,task->regs.cr3);
-        task->regs.userRsp-=8;
+        pushSomeArgsToUser(mainArgs,(void*)(uint64_t)k+0x301000,task->regs.cr3);
+        basePtr-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
         {
@@ -875,11 +886,13 @@ void* exec(void* path,void* args,void* envp)
     }
     
     newPage-=get_kernbase();
-    mapPageForUser(0x300000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    mapPageForUser(0x301000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
-    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
+    pushSomeArgsToUser(mainArgs,(void*)(uint64_t)count,task->regs.cr3);
+    basePtr-=8;
+    
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)basePtr,task->regs.cr3);
     task->regs.userRsp-=8;
-    
     
     VMA* newVma = (VMA*)kmalloc();
     newVma->pageNumber = getNextPageNum();

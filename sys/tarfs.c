@@ -867,7 +867,7 @@ uint64_t getDirEntries(int fd,char *buf,int count){
 }
 
 char *getCWD(char *dest,int count){
-    char *environ_main=(char *)0x301000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
+    char *environ_main=(char *)0x302000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
     char *buf=dest;
     int env_i =0;
     char temp[256];
