@@ -77,7 +77,7 @@ int close(int fd)
 
 int waitpid(int pid, int *status,int options)
 {
-    return (ssize_t)syscall((void*)88,(void*)(uint64_t)pid,0,0,0,0,0);
+    return (ssize_t)syscall((void*)88,(void*)(uint64_t)pid,(void *)status,0,0,0,0);
 }
 
 int chdir(const char *path)

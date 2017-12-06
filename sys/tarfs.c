@@ -138,7 +138,7 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,T
     new_vma->v_file=(uint64_t)elf_file;
     new_vma->next=NULL;
     new_vma->v_start=p_vaddr;
-    new_vma->v_end=p_vaddr+p_memsz;
+    new_vma->v_end=((p_vaddr+p_memsz)&FRAME)+0x1000;
     new_vma->v_flags=elf_p_hdr->p_flags;//TODO: So many other details can be stored in VMA struct
     
     //*************************END of creating VMA structs, Start of mapping memory..
@@ -867,7 +867,7 @@ uint64_t getDirEntries(int fd,char *buf,int count){
 }
 
 char *getCWD(char *dest,int count){
-    char *environ_main=(char *)0x1000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
+    char *environ_main=(char *)0x301000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
     char *buf=dest;
     int env_i =0;
     char temp[256];

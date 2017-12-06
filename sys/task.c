@@ -174,7 +174,7 @@ void pushInitialParamstoStack(Task* task)
     args[3] = NULL;
     
     
-    uint64_t envStart = 0x1000;
+    uint64_t envStart = 0x301000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
     {
@@ -199,9 +199,9 @@ void pushInitialParamstoStack(Task* task)
     }
     i=envStart-0x1000;
 
-    int z = 0x20000;
+    int z = 0x320000;
     
-    while(z>=0x1000)
+    while(z>=0x301000)
     {
         if(z==i)
         {
@@ -223,7 +223,7 @@ void pushInitialParamstoStack(Task* task)
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=1;
+    int k=0;
     
    
     while(((char**)args)[i]!=NULL) i++;
@@ -238,7 +238,7 @@ void pushInitialParamstoStack(Task* task)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k,task->regs.cr3);
+        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k+0x300000,task->regs.cr3);
         task->regs.userRsp-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -253,7 +253,7 @@ void pushInitialParamstoStack(Task* task)
     }
     
     newPage-=get_kernbase();
-    mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    mapPageForUser(0x300000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
     pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
     task->regs.userRsp-=8;
@@ -262,8 +262,8 @@ void pushInitialParamstoStack(Task* task)
     VMA* newVma = (VMA*)kmalloc();
     newVma->pageNumber = getNextPageNum();
     newVma->v_mm = &runningThread->memMap;
-    newVma->v_start = 0;
-    newVma->v_end = 0x21000;
+    newVma->v_start = 0x300000;
+    newVma->v_end = 0x321000;
     newVma->mmsz = 0x21000;
     newVma->v_flags = 0;
     newVma->grows_down = 0;
@@ -746,7 +746,7 @@ uint64_t malloc(uint64_t size)
         while(temp->next!=NULL)
         {
             if(!temp->next->grows_down)
-                end = temp->next->v_end;
+                end = ((temp->next->v_end)>end?(temp->next->v_end):end);
             temp = temp->next;
         }
         
@@ -777,7 +777,12 @@ void* exec(void* path,void* args,void* envp)
     kprintf("%s %s %s\n",((char*)path),((char**)args)[3],((char**)envp)[0]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[1]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);*/
-    
+    int ia=0;
+    if((uint64_t)args==0 || (uint64_t)envp==0){
+        while(ia<100){
+          ia++;
+        }
+    }
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
@@ -791,15 +796,15 @@ void* exec(void* path,void* args,void* envp)
         return (void*)-1;
     }
  
-    uint64_t envStart = 0x1000;
+    uint64_t envStart = 0x301000;
     int i=0;
     while(((char**)envp)[i]!=NULL)
     {
         char* newPage = (char*)kmalloc();
         int k=0;
-        //
-        //        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)envStart,task->regs.cr3);
-        //        task->regs.userRsp-=8;
+//
+//        pushSomeArgsToUser(task->regs.userRsp,(uint64_t)envStart,task->regs.cr3);
+//        task->regs.userRsp-=8;
         
         int j=0;
         while(((char**)envp)[i][j]!='\0'&&k<=511) //only 512 chars
@@ -815,10 +820,10 @@ void* exec(void* path,void* args,void* envp)
         i+=1;
     }
     i=envStart-0x1000;
+
+    int z = 0x320000;
     
-    int z = 0x20000;
-    
-    while(z>=0x1000)
+    while(z>=0x301000)
     {
         if(z==i)
         {
@@ -840,9 +845,9 @@ void* exec(void* path,void* args,void* envp)
     char* newPage = (char*)kmalloc();
     
     i=0;
-   int k=1;
+    int k=0;
     
-    
+   
     while(((char**)args)[i]!=NULL) i++;
     
     kprintf("ARGV COUNT %d",i);
@@ -855,7 +860,7 @@ void* exec(void* path,void* args,void* envp)
     {
         int j=0;
         
-        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k,task->regs.cr3);
+        pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)k+0x300000,task->regs.cr3);
         task->regs.userRsp-=8;
         
         while(((char**)args)[i][j]!='\0'&&k<=510)
@@ -870,18 +875,17 @@ void* exec(void* path,void* args,void* envp)
     }
     
     newPage-=get_kernbase();
-    mapPageForUser(0,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    mapPageForUser(0x300000,(uint64_t)newPage,task->regs.cr3+get_kernbase());
     
     pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)count,task->regs.cr3);
     task->regs.userRsp-=8;
     
     
-    
     VMA* newVma = (VMA*)kmalloc();
     newVma->pageNumber = getNextPageNum();
     newVma->v_mm = &runningThread->memMap;
-    newVma->v_start = 0;
-    newVma->v_end = 0x21000;
+    newVma->v_start = 0x300000;
+    newVma->v_end = 0x321000;
     newVma->mmsz = 0x21000;
     newVma->v_flags = 0;
     newVma->grows_down = 0;
