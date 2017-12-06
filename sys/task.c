@@ -1137,6 +1137,7 @@ void exit(void* pid)
     FreePageEntries(task);
     FreePageTables(task);
     runNextTask();
+        return 0;
 }
 
 void initUserProcess()
