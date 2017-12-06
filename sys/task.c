@@ -1004,7 +1004,7 @@ void* ps()
     
     Task * task = runningThread;
     
-    kprintf("PID\t START_TIME\t END_TIME\t STATE\tBINARY\n");
+    kprintf("PID    START_TIME    END_TIME    STATE      BINARY\n");
     
     while(task->next!=runningThread)
     {
@@ -1013,7 +1013,7 @@ void* ps()
         if(task->state==1) temp = "RUNNING";
         else temp = "NOT-RUNNING";
         
-        kprintf("%d\t%c:%c:%c\t%c:%c:%c\t%s\t%s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
+        kprintf("%d    %c:%c:%c    %c:%c:%c    %s      %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
         
         
         task=task->next;
