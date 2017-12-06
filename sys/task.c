@@ -771,12 +771,12 @@ uint64_t malloc(uint64_t size)
 void* exec(void* path,void* args,void* envp)
 {
     
-    kprintf("%s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
+    /*kprintf("%s %s %s\n",((char*)path),((char**)args)[0],((char**)envp)[0]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[1],((char**)envp)[1]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[2],((char**)envp)[1]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[3],((char**)envp)[0]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[1]);
-    kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);
+    kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);*/
     
     
     Task *task = (Task*)kmalloc();
@@ -957,7 +957,7 @@ void* free(void* ptr)
         if(vmaTemp->next->v_start==(uint64_t)ptr)
         {
             eTemp->next = vmaTemp->next->next;
-            pageDeAllocator((void*)((uint64_t)(vmaTemp->next - get_kernbase())&FRAME));
+            //pageDeAllocator((void*)((uint64_t)(vmaTemp->next - get_kernbase())&FRAME));
             break;
         }
         eTemp=vmaTemp->next;
@@ -990,8 +990,8 @@ void* free(void* ptr)
         
     }
     
-    if(count==1&&pageCount==1)
-        pageDeAllocator((void*)(phyAddr&FRAME));
+    //if(count==1&&pageCount==1)
+        //pageDeAllocator((void*)(phyAddr&FRAME));
     
     
     
@@ -1058,7 +1058,7 @@ void FreePageEntries(Task* task)
                 if(pageCount==1)
                 {
                     
-                    pageDeAllocator((void*)(phyAddr&FRAME));
+                    kdealloc((void*)((phyAddr&FRAME)+get_kernbase()));
                     
                 }
                 else
@@ -1135,8 +1135,9 @@ void* exit(void* pid)
     task->endHH = getCurHr();
     task->endMM = getCurMin();
     task->endSS = getCurSec();
-    FreePageEntries(task);
-    FreePageTables(task);
+    //FreePageEntries(task);
+    //FreePageTables(task);
+    //while(1);
     runNextTask();
         return 0;
 }

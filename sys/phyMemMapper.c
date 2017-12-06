@@ -1,4 +1,5 @@
 #include<sys/phyMemMapper.h>
+#include<sys/virtualMemory.h>
 #include<sys/kprintf.h>
 #define AHCI_MEM 122880
 static uint64_t* availFrames;
@@ -152,6 +153,11 @@ void* pageAllocator(){
 void pageDeAllocator(void* pageAddr){
   uint64_t frameNum=((uint64_t)(pageAddr))/(0x1000ull);
   markasFree(frameNum);
+}
+
+void kdealloc(void* pageAddr){
+  memset((uint64_t)pageAddr);
+  pageDeAllocator((void *)(((uint64_t)pageAddr)-get_kernbase()));
 }
 
 void memset(uint64_t pageaddr){

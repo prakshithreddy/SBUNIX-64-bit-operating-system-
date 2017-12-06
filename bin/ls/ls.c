@@ -1,4 +1,7 @@
 #include <stdlib.h>
+#include <dirent.h>
+#include <sys/defs.h>
+
 
 
 void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* param4,void* param5,void* param6) {
@@ -7,23 +10,95 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
     return returnValue;
 }
 
-int main(int argc, char *argv[], char *envp[]){
-    
-//    int i=0;
-    //syscall((void*)420,(void*)(uint64_t)argc,(void*)argv,(void*)envp,(void*)(uint64_t)4,(void*)5,(void*)6);
-    
-//    while(argv[i][0]!='\0')
-//    {
-//        syscall((void*)54,(void*)(uint64_t)argc,(void*)argv[i],(void*)(uint64_t)envp,(void*)(uint64_t)4,(void*)5,(void*)6);
-//        i+=1;
-//    }
-//    i=0;
-//    while(envp[i][0]!='\0')
-//    {
-//        syscall((void*)54,(void*)(uint64_t)argc,(void*)envp[i],(void*)(uint64_t)envp,(void*)(uint64_t)4,(void*)5,(void*)6);
-//        i+=1;
-//    }
-    syscall((void*)420,(void*)(uint64_t)argc,(void*)argv,(void*)envp,(void*)(uint64_t)4,(void*)5,(void*)(int64_t)2);
-    //while(1);//syscall((void*)54,(void*)(uint64_t)argc,(void*)argv,(void*)(uint64_t)envp,(void*)(uint64_t)4,(void*)5,(void*)6);
-    return 0;
+
+uint64_t malloc(uint64_t size)
+{
+    return (uint64_t)syscall((void*)(uint64_t)99,(void*)size,0,0,0,0,0);
 }
+
+char *getcwd(char *buf, size_t size){
+    
+    return (char*) syscall((void*)79,(void*)buf,(void*)(ssize_t) size,0,0,0,0);
+    
+}
+
+int open(const char *pathname, int flags){
+    return (ssize_t)syscall((void*)9,(void*)pathname,(void*)(ssize_t)flags,0,0,0,0);
+    
+}
+
+int getdents(unsigned int fd, char *dirp,unsigned int count)
+{
+    return (ssize_t)syscall((void*)12,(void*)(ssize_t)fd,(void*)dirp,(void*)(ssize_t)count,0,0,0);
+}
+
+ssize_t write(int fd, const void *buf, size_t count){
+    return (ssize_t)syscall((void*)4,(void*)(ssize_t)fd,(void*)buf,(void*)count,0,0,0);
+}
+
+int main(int argc,char* argv[],char* envp[])
+{
+    
+        char* file_path;
+    
+    if(argc==1){
+    
+        file_path = (char*)malloc(4096);
+        getcwd(file_path,1024);
+        
+    
+    }
+    else file_path = argv[1];
+    
+    struct dirent* temp;
+    
+    char* dirp = (char*)malloc(4096);
+    
+    int fd = open(file_path,O_RDONLY|O_DIRECTORY);
+    
+    int n = getdents(fd,dirp,4096);
+    
+    for( int i=0;i<n;)
+    {
+        temp = (struct dirent*) (dirp+i);
+
+        
+        if(temp->d_name[0]=='.') {
+            i+=temp->d_reclen; continue;
+        }
+        
+        int k=0;
+        
+        while(temp->d_name[k]!='\0')
+        {
+            k++;
+        }
+        
+        write(1,temp->d_name,k);
+        
+        /*int d_type = *(dirp + i + temp->d_reclen - 1);
+        
+        if(d_type == DT_DIR)
+        {
+            write(1,"/",1);
+            
+        }*/
+        
+        write(1,"  ",1);
+        
+        
+        i+=temp->d_reclen;
+    }
+    write(1,"\n",1);
+    
+    //struct stat* temp = (struct stat*) mmap(NULL,sizeof(struct stat),PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE,-1,0);
+    
+    // stat(path,temp);
+    
+    
+    
+    return 0;
+    
+    
+}
+

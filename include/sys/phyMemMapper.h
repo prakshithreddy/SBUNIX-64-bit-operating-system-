@@ -21,6 +21,7 @@ void initBitmap(uint64_t start,uint64_t end);
 void allocateBitmapMem();
 void* pageAllocator();
 void pageDeAllocator(void* pageAddr);
+void kdealloc(void* pageAddr);
 uint64_t get_ker_physbase();
 uint64_t get_ker_physfree();
 uint64_t get_physend();

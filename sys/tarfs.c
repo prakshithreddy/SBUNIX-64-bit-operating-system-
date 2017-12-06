@@ -279,9 +279,15 @@ uint64_t get_file_address(char* file){
         search_pointer=search_pointer+size+512;
         tar_file_pointer = (struct posix_header_ustar *)search_pointer;
     }
-    if(tar_file_pointer->size>0 && file_found==1){
-        kprintf("File Found: %s\n");
+    char *f_size=tar_file_pointer->size;
+    int size = toInteger(f_size);
+    if(size>0 && file_found==1){
+        kprintf("File Found: %s\n",file);
         return (uint64_t)tar_file_pointer+512;
+    }
+    else if(size==0 && file_found==1){
+        kprintf("Dir Found: %s\n",file);
+        return (uint64_t)tar_file_pointer;
     }
     kprintf("Warning: File %s not found\n",file);
     return 0;
@@ -338,6 +344,11 @@ int64_t openFile(char* file){
     remove_dotslash(file,newFileName,0);
     char *fileName=newFileName+1;
     uint64_t start=get_file_address(fileName);
+    if(start==0){
+        remove_dotslash(file,newFileName,1);
+        fileName=newFileName+1;
+        start=get_file_address(fileName);
+    }
     if(start==0){
         kprintf("Invalid File Specified..\n");
         return -1;
@@ -666,7 +677,7 @@ uint64_t getDirEntries(int fd,char *buf,int count){
           }
 		      else{//if not as parent.. buf will be pointing to end of direntries thus writing a null there and returning 0.
 			      *buf='\0';
-			      return y-count;
+			      return y-count;;
 		      }
           char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
           int size = toInteger(f_size);
