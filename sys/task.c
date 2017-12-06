@@ -998,7 +998,7 @@ void FreePageEntries(Task* task)
                 if(pageCount==1)
                 {
                     
-                    pageDeAllocator((void*)phyAddr&FRAME);
+                    pageDeAllocator((void*)(phyAddr&FRAME));
                     
                 }
                 else
@@ -1033,14 +1033,14 @@ void FreePageTables(Task* task)
                     {
                         if(pdt[k]&PRESENT)
                         {
-                            pageDeAllocator(pdt[k]&FRAME);
+                            pageDeAllocator((void*)(pdt[k]&FRAME));
                         }
                     }
-                    pageDeAllocator(pdpt[j]&FRAME);
+                    pageDeAllocator((void*)(pdpt[j]&FRAME));
                 }
                 
             }
-            pageDeAllocator(pml4[i]&FRAME);
+            pageDeAllocator((void*)(pml4[i]&FRAME));
                 
         }
     
