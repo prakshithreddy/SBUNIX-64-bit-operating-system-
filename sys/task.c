@@ -1004,9 +1004,11 @@ void* ps()
     
     Task * task = runningThread;
     
+    kprintf("PID\t START_TIME\t END_TIME\t STATE\tBINARY\n");
+    
     while(task->next!=runningThread)
     {
-        kprintf("PID\t START_TIME\t END_TIME\t STATE\tBINARY\n");
+        
         char * temp;
         if(task->state==1) temp = "RUNNING";
         else temp = "NOT-RUNNING";
