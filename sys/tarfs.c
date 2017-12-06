@@ -41,6 +41,9 @@ void strcpy(char *src,char *dest){//Str Copy will be used only forcopying file n
   if(i==256){//TODO: Change this 256 if character count of a filename is increased.
     kprintf("FileName/DirName Exceeded 256 characters...My OS Doesnt allow you to do that :D\n");
   }
+  if(i<255){
+    *(dest+i)=*(src+i);
+  }
 }
 
 int startswith(char *parent,char * child){//returns 0 if child's name starts with parent's name.
@@ -86,6 +89,9 @@ int memread(void *src,void *dest,size_t n){//only copies data if NULL is not pre
       s++;
       d++;
       n--;
+    }
+    if(n>0){
+      *d='\0';
     }
     return y-n;
 }
@@ -201,6 +207,9 @@ uint64_t validate_elf_file(Elf64_Ehdr *elf_hdr){
 uint64_t loadFile(char *file,uint64_t pml4,Task *uthread){
     uint64_t search_pointer = BINARY_TARFS_START;
     struct posix_header_ustar *tar_file_pointer = tar_file_start; 
+    /*char newfile[256];
+    remove_dotslash(filename,newfile,0);
+    char *file=newfile+1;*/
     kprintf("\nFiles Found in tarfs:\n");
     int file_found=0;
     while(search_pointer<BINARY_TARFS_END){
@@ -340,10 +349,22 @@ struct fileDescriptor* get_fd_address(int fd){
 
 int64_t openFile(char* file){
     Task *currentTask=(Task *)getRunTask();
+    if(*file=='\0'){
+        kprintf("File Name Empty..\n");
+        return -1;
+    }
     char newFileName[256];
-    remove_dotslash(file,newFileName,0);
-    char *fileName=newFileName+1;
-    uint64_t start=get_file_address(fileName);
+    char *fileName;
+    uint64_t start;
+    if(!strcmp(file,"/")){
+        start=BINARY_TARFS_START;
+        fileName=file;
+    }
+    else{
+      remove_dotslash(file,newFileName,0);
+      fileName=newFileName+1;
+      start=get_file_address(fileName);
+    }
     if(start==0){
         remove_dotslash(file,newFileName,1);
         fileName=newFileName+1;
@@ -456,10 +477,22 @@ uint64_t writeFile(int fd,char *buf,int count){
 
 int64_t openDirectory(char* dir){
     Task *currentTask=(Task *)getRunTask();
+    if(*dir=='\0'){
+        kprintf("Dir Name Empty...\n");
+        return -1;
+    }
     char newDirName[256];
-    remove_dotslash(dir,newDirName,1);
-    char *dirName=newDirName+1;
-    uint64_t start=get_dir_address(dirName);
+    char *dirName;
+    uint64_t start;
+    if(!strcmp(dir,"/")){
+        start=BINARY_TARFS_START;
+        dirName=dir;
+    }
+    else{
+      remove_dotslash(dir,newDirName,1);
+      dirName=newDirName+1;
+      start=get_dir_address(dirName);
+    }
     if(start==0){
         kprintf("Invalid Directory Specified..\n");
         return -1;
@@ -530,6 +563,34 @@ int get_sub_directory(char *parent,char *child,char *dbuf,int count){
   return 0;
 }
 
+int get_first_directory(char *child,char *dbuf,int count){
+    char *buf=dbuf;
+    while((*child !='/') && (*child !='\0')){
+        *buf=*child;
+        child++;
+        buf++;
+		    count--;
+		    if(count==0){
+			    break;
+		    }
+    }
+    if(count>0){
+      if(*child!='\0'){
+        if(*child=='/'){
+          *buf='/';
+          count--;
+          buf++;
+        }
+      }
+      if(count>0){
+        *buf='\0';
+      }
+    }
+	if(count!=0)
+    buf='\0';
+  return 0;
+}
+
 int get_sub_direntry(char *parent,char *child,char *dbuf,int count){
     char *buf=dbuf;
     while(*parent!='\0'){
@@ -542,6 +603,40 @@ int get_sub_direntry(char *parent,char *child,char *dbuf,int count){
 			return -1;
       }
     }
+    struct dirent *dir=(struct dirent*)buf;
+    if(count<sizeof(struct dirent)){
+      *buf='\0';
+			return -1;
+    }
+    dir->d_reclen = sizeof(struct dirent);
+    dir->d_ino = 0;//TODO: For Now.
+    dir->d_off = 0;//TODO:No idea where it is being used..
+    int i=0;
+    while((*child !='/') && (*child !='\0')){
+        dir->d_name[i]=*child;
+        child++;
+        i++;
+		    count--;
+		    if(count==0){
+			    break;
+		    }
+    }
+    if(i<255){
+      if(*child!='\0'){
+        if(*child=='/'){
+          dir->d_name[i]='/';
+          i++;
+        }
+      }
+      if(i<255){
+        dir->d_name[i]='\0';
+      }
+    }
+  return 0;
+}
+
+int get_first_direntry(char *child,char *dbuf,int count){
+    char *buf=dbuf;
     struct dirent *dir=(struct dirent*)buf;
     if(count<sizeof(struct dirent)){
       *buf='\0';
@@ -591,15 +686,58 @@ struct dirent * readDir(int fd,char *buf,int count){
       kprintf("Buffer size not sufficient for returning Dirent..");
       return 0;
     }
-    if(fd_struct->name[0] != '\0'){
+    if(!strcmp(fd_struct->name,"/")){
+            start = fd_struct->offset;
+            while(start<BINARY_TARFS_END){
+                tar_file_pointer = (struct posix_header_ustar *)start;
+                get_first_directory(tar_file_pointer->name,dir->d_name,count);
+                if((strcmp(dir->d_name,fd_struct->d_prev_dir))){
+                  strcpy(dir->d_name,fd_struct->d_prev_dir);
+                  char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
+                  int size = toInteger(f_size);
+                  int residue = size%512;
+                  if(residue>0){
+                    size=size+(512-residue);
+                  }
+                  fd_struct->offset=start+size+512;
+                  dir->d_reclen = sizeof(struct dirent);
+                  dir->d_ino = 0;//TODO: For Now.
+                  dir->d_off = 0;
+                  return dir;
+                }
+                char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
+                int size = toInteger(f_size);
+                int residue = size%512;
+                if(residue>0){
+                  size=size+(512-residue);
+                }
+                start=start+size+512;
+            }
+            *buf='\0';
+            return 0;
+    }
+    else if(fd_struct->name[0] != '\0'){
         start = fd_struct->offset;
-        start = start+512;
+        tar_file_pointer = (struct posix_header_ustar *)start;
+        char *char_size=tar_file_pointer->size;
+        int int_size= toInteger(char_size);
+        int int_residue=int_size%512;
+        if(int_residue>0){
+          int_size=int_size+(512-int_residue);
+        }
+        start=start+int_size+512;
         while(start<BINARY_TARFS_END){
           tar_file_pointer = (struct posix_header_ustar *)start;
           if(startswith(fd_struct->name,tar_file_pointer->name)==0){
               get_sub_directory(fd_struct->name,tar_file_pointer->name,dir->d_name,count);
               if((strcmp(dir->d_name,fd_struct->d_prev_dir))){
                   strcpy(dir->d_name,fd_struct->d_prev_dir);
+                  /*char *f_size=tar_file_pointer->size;
+                  int size = toInteger(f_size);
+                  int residue = size%512;
+                  if(residue>0){
+                    size=size+(512-residue);
+                  }*/
                   fd_struct->offset=start;
                   dir->d_reclen = sizeof(struct dirent);
                   dir->d_ino = 0;//TODO: For Now.
@@ -656,12 +794,43 @@ uint64_t getDirEntries(int fd,char *buf,int count){
     //Task *currentTask=(Task *)getRunTask();
     uint64_t start;
     struct posix_header_ustar *tar_file_pointer;
+    struct dirent *dir;
     if(fd_struct->name[0] != '\0'){
         start = fd_struct->start;
         start = start+512;
         char prev_dir[NAME_MAX+1];
+        if(!strcmp(fd_struct->name,"/")){
+            start=start-512;
+            prev_dir[0]='\0';
+            while(start<BINARY_TARFS_END){
+                tar_file_pointer = (struct posix_header_ustar *)start;
+                get_first_direntry(tar_file_pointer->name,buf,count);
+                dir = (struct dirent *)buf;
+                if((strcmp(dir->d_name,prev_dir))){
+                  if(dir->d_name[0]=='\0'){
+                    prev_dir[0]='\0';
+                  }
+                  strcpy(dir->d_name,prev_dir);
+                  buf+=sizeof(Dirent);
+                  count-=sizeof(Dirent);
+                }
+                char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
+                int size = toInteger(f_size);
+                int residue = size%512;
+                if(residue>0){
+                  size=size+(512-residue);
+                }
+                start=start+size+512;
+            }
+            if(count>0){
+              *buf='\0';
+            }
+            if(count<0){
+              count=0;
+            }
+            return y-count;
+        }
         prev_dir[0]='\0';
-        struct dirent *dir;
         while(start<BINARY_TARFS_END){
           tar_file_pointer = (struct posix_header_ustar *)start;
           if(startswith(fd_struct->name,tar_file_pointer->name)==0){//if it starts with parent directory name then enter otherwise skip.
@@ -676,8 +845,13 @@ uint64_t getDirEntries(int fd,char *buf,int count){
               }
           }
 		      else{//if not as parent.. buf will be pointing to end of direntries thus writing a null there and returning 0.
-			      *buf='\0';
-			      return y-count;;
+			      if(count>0){
+              *buf='\0';
+            }
+            if(count<0){
+              count=0;
+            }
+            return y-count;
 		      }
           char *f_size=tar_file_pointer->size;//if you got a child dir, then check if there are any other entries.
           int size = toInteger(f_size);
