@@ -18,7 +18,7 @@ void _start(void) {
     
     main(*(rsp+1),(char**)(rsp+2),(char**)(rsp+*(rsp+1)+3));
 
-    syscall1(100,0,0,0,0,0,0);
+    syscall1((void*)(uint64_t)100,0,0,0,0,0,0);
     
 }
 
