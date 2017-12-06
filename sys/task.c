@@ -1008,7 +1008,7 @@ void* ps()
     {
         kprintf("PID\t START_TIME\t END_TIME\t STATE\tBINARY\n");
         char * temp;
-        if(task->start==1) temp = "RUNNING";
+        if(task->state==1) temp = "RUNNING";
         else temp = "NOT-RUNNING";
         
         kprintf("%d\t%c:%c:%c\t%c:%c:%c\t%s\t%s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
