@@ -761,10 +761,10 @@ uint64_t malloc(uint64_t size)
     }
     else
     {
-        uint64_t end=0x22000;
+        uint64_t end=0;
         while(temp->next!=NULL)
         {
-            if(!temp->next->grows_down && !temp->next->v_file)
+            if(!temp->next->grows_down)
                 end = temp->next->v_end;
             temp = temp->next;
         }
