@@ -1108,7 +1108,7 @@ void FreePageTables(Task* task)
     
 }
 
-void exit(void* pid)
+void* exit(void* pid)
 {
     //delete the task and free all memory
     Task* task = NULL;
