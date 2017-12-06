@@ -965,6 +965,81 @@ void* waitpid(void* pid,void* status,void* flags)
     return (void*)(-1);
 }
 
+void* free(void* ptr)
+{
+    
+    kprintf("PTR To Free\n",(uint64_t)pid);
+    
+    uint64_t pageToDel = (uint64_t)pid&FRAME;
+    
+    Task* task = runningThread;
+    
+    VMA* vmaTemp = task->memMap.mmap;
+    
+    int count=0;
+    
+    while(vmaTemp!=NULL)
+    {
+        if(vmaTemp->v_start>=pageToDel && vmaTemp->v_end<=(pageToDel+0x1000))
+            count+=1;
+        
+        vmaTemp=vmaTemp->next;
+        
+    }
+    
+    vmaTemp = task->memMap.mmap;
+    
+    if(vmaTemp->v_start==(uint64_t)pid)
+        task->memMap.mmap = vmaTemp->next;
+    
+    VMA* eTemp = vmaTemp;
+    
+    while(vmaTemp->next!=NULL)
+    {
+        if(vma->next->v_start==(uint64_t)pid)
+        {
+            eTemp->next = vmaTemp->next->next;
+            break;
+        }
+        eTemp=vmaTemp->next;
+        vmaTemp = vmaTemp->next;
+        
+    }
+    
+    
+    int pageCount=1;
+    
+    //find the physical Address and check if the page is shared.
+    uint64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
+    
+    if(phyAddr!=-1)
+    {
+        //before deleting the pagees we need to check if the page is shared
+        
+        
+        phyAddr&=FRAME;
+        
+        Task* tempTask = task->next;
+        
+        while(tempTask!=task)
+        {
+            uint64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
+            if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
+                pageCount+=1; //how many cr3 contain this phy address,virtual address combo
+            tempTask=tempTask->next;
+        }
+        
+    }
+    
+    if(count==1&&pageCount==1)
+        pageDeAllocator((void*)(phyAddr&FRAME));
+    
+    
+    
+    
+    return 0;
+}
+
 
 void FreePageEntries(Task* task)
 {
