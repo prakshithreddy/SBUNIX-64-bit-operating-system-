@@ -968,9 +968,9 @@ void* waitpid(void* pid,void* status,void* flags)
 void* free(void* ptr)
 {
     
-    kprintf("PTR To Free\n",(uint64_t)pid);
+    kprintf("PTR To Free\n",(uint64_t)ptr);
     
-    uint64_t pageToDel = (uint64_t)pid&FRAME;
+    uint64_t pageToDel = (uint64_t)ptr&FRAME;
     
     Task* task = runningThread;
     
@@ -989,14 +989,14 @@ void* free(void* ptr)
     
     vmaTemp = task->memMap.mmap;
     
-    if(vmaTemp->v_start==(uint64_t)pid)
+    if(vmaTemp->v_start==(uint64_t)ptr)
         task->memMap.mmap = vmaTemp->next;
     
     VMA* eTemp = vmaTemp;
     
     while(vmaTemp->next!=NULL)
     {
-        if(vma->next->v_start==(uint64_t)pid)
+        if(vma->next->v_start==(uint64_t)ptr)
         {
             eTemp->next = vmaTemp->next->next;
             break;
