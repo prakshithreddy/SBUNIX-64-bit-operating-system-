@@ -34,10 +34,10 @@ int main(int argc, char *argv[], char *envp[]){
     while(1)
     {
         char c = getChar();
-        if(c =='\0') break;
+        if(c =='\0' && i>0) break;
         else if(c==' ' && i==0) continue;
         else if(i>2000) break;
-        else if(c != NULL)
+        else if(c != '\0')
         {
             inputStr[i]=c;
             i++;
