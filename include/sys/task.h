@@ -48,6 +48,16 @@ typedef struct Task{
   int  state;*/  //TODO: these two variables might be used later	
   int pid_t;
   int ppid_t;
+    int startHH;
+    int startMM;
+    int startSS;
+    
+    int endHH;
+    int endMM;
+    int endSS;
+    
+    char* exeName;
+    
   Registers regs;
   struct Task *next;
   uint64_t state;
@@ -58,6 +68,7 @@ typedef struct Task{
 
 
 void* free(void* ptr);
+void* ps();
 void exit();
 void runNextTask();
 void initMultiTasking();

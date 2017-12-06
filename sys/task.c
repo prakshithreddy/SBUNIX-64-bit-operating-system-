@@ -601,6 +601,7 @@ void createChildTask(Task *task){
     task->regs.count=0;
     task->regs.add=0;
     task->state = 1;
+    task->exeName = runningThread->exeName;
     //task->next=0;
    // task->memMap.mmap=runningThread->memMap.mmap;
     copyVMA(task,runningThread->memMap.mmap);
@@ -876,6 +877,7 @@ void* exec(void* path,void* args,void* envp)
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
+    task->exeName = "bin/sbush";
     addToQueue(task);
     
     return 0;
@@ -983,6 +985,22 @@ void* free(void* ptr)
     return 0;
 }
 
+void* ps()
+{
+    
+    Task * task = runningThread;
+    
+    while(task->next!=runningThread)
+    {
+        kprintf("\n");
+        
+    }
+    
+    
+    
+    return 0;
+}
+
 
 void FreePageEntries(Task* task)
 {
@@ -1083,6 +1101,7 @@ void initUserProcess()
     Task *userThread2 = (Task*)kmalloc();
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
+    userThread->exeName = "bin/sbush";
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     mainThread.next = userThread2;

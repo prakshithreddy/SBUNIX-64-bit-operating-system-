@@ -57,6 +57,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 78: kprintf("Exec System Call\n"); return (void*)exec((char*)paramA,(char*)paramB,(char*)paramC);
         case 88: kprintf("WaitPID System Call\n"); return (void*)waitpid((void*)paramA,(uint64_t*)paramB,(void*)paramC);
         case 89: kprintf("Free System Call\n"); return (void*)free((void*)paramA);
+        case 44: kprintf("Free System Call\n"); return (void*)ps();
         case 420: kprintf("print System Call\n"); return (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC);
     }
     
