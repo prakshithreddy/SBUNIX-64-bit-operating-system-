@@ -97,6 +97,8 @@ int main(int argc, char *argv[], char *envp[]){
 //    char *ps1="sbush>";
 //    puts(ps1);
     
+    (uint64_t)syscall((void*)(uint64_t)99,(void*)size,0,0,0,0,0);
+    
     while(1)
     {
         //read a input line

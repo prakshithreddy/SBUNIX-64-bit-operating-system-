@@ -1166,3 +1166,11 @@ void initUserProcess()
     switchToUserMode();
     
 }
+
+void* clearScreen()
+{
+    
+    for(int i=0;i<30;i++) kprintf("\n");
+    return 0;
+    
+}
