@@ -779,10 +779,21 @@ void* exec(void* path,void* args,void* envp)
     kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);*/
     
     
+   
+    
+    
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
+    
+    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
+    
+    if(entryPoint==0)
+    {
+        pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
+        return (void*)-1;
+    }
  
     uint64_t envStart = 0x1000;
     int i=0;
@@ -885,7 +896,6 @@ void* exec(void* path,void* args,void* envp)
     newVma->next = task->memMap.mmap;
     task->memMap.mmap = newVma;
     
-    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     task->exeName = "bin/ps";
@@ -1148,6 +1158,9 @@ void initUserProcess()
     uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
     Task *userThread2 = (Task*)kmalloc();
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
+    
+    if(hello_entrypoint == 0) return;
+    
     kprintf("Entry Point: %p\n",hello_entrypoint);
     userThread2->exeName = "bin/sbush";
     
@@ -1165,5 +1178,13 @@ void initUserProcess()
     
     
     switchToUserMode();
+    
+}
+
+void* clearScreen()
+{
+    
+    for(int i=0;i<30;i++) kprintf("\n");
+    return 0;
     
 }

@@ -39,8 +39,9 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
     
     switch(syscallNum)
     {
-        case 100:  return (void*)exit((void*)paramA);
-        case 199:  return (void*)exit((void*)paramA);
+        case 123: return (void*)clearScreen();
+        case 100: return (void*)exit((void*)paramA);
+        case 199: return (void*)exit((void*)paramA);
         case 1:  return (void*)fork();
         case 99: return (void*)malloc(paramA);
         case 0: //kprintf("Read File System Call\n"); 
