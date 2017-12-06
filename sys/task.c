@@ -293,7 +293,9 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
     task->state=1;
     //This portion code is temporary : must be removed;
-    
+    task->endHH = 0;
+    task->endMM = 0;
+    task->endSS = 0;
     
    pushInitialParamstoStack(task);
 
@@ -341,6 +343,9 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
     task->regs.add=0;
     task->next=0;
     task->state=1; // 1 : is running
+    task->endHH = 0;
+    task->endMM = 0;
+    task->endSS = 0;
     task->fd_pointers[0]=(uint64_t)kmalloc();
     for(int i=1;i<20;i++){
       task->fd_pointers[i]=0;
@@ -602,6 +607,12 @@ void createChildTask(Task *task){
     task->regs.add=0;
     task->state = 1;
     task->exeName = runningThread->exeName;
+    task->startHH = getCurHr();
+    task->startMM = getCurMin();
+    task->startSS = getCurSec();
+    task->endHH = 0;
+    task->endMM = 0;
+    task->endSS = 0;
     //task->next=0;
    // task->memMap.mmap=runningThread->memMap.mmap;
     copyVMA(task,runningThread->memMap.mmap);
@@ -878,6 +889,9 @@ void* exec(void* path,void* args,void* envp)
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     task->exeName = "bin/sbush";
+    task->startHH = getCurHr();
+    task->startMM = getCurMin();
+    task->startSS = getCurSec();
     addToQueue(task);
     
     return 0;
@@ -992,12 +1006,13 @@ void* ps()
     
     while(task->next!=runningThread)
     {
-        kprintf("\n");
+        kprintf("PID\t START_TIME\t END_TIME\t STATE\tBINARY\n");
+        char * temp;
+        if(task->start==1) temp = "RUNNING";
+        else temp = "NOT-RUNNING";
         
+        kprintf("%d\t%c:%c:%c\t%c:%c:%c\t%s\t%s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
     }
-    
-    
-    
     return 0;
 }
 
@@ -1089,6 +1104,9 @@ void exit()
     //delete the task and free all memory
     Task* task = runningThread;
     task->state = 0;
+    task->endHH = getCurHr();
+    task->endMM = getCurMin();
+    task->endSS = getCurSec();
     FreePageEntries(task);
     FreePageTables(task);
     runNextTask();
@@ -1102,6 +1120,11 @@ void initUserProcess()
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
     userThread2->exeName = "bin/sbush";
+    
+    userThread2->startHH = getCurHr();
+    userThread2->startMM = getCurMin();
+    userThread2->startSS = getCurSec();
+    
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     mainThread.next = userThread2;

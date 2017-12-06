@@ -27,6 +27,19 @@ int readline;
 
 static char rtc_second,rtc_hour,rtc_minute;
 
+char getCurSec()
+{
+    return rtc_second;
+}
+char getCurHr()
+{
+    return rtc_hour;
+}
+char getCurMin()
+{
+    return rtc_minute;
+}
+
 char * get_input_buf(){
     return stdStart;
 }

@@ -21,7 +21,7 @@ int main(int argc, char *argv[], char *envp[]){
     {
         //a1[3] = 786;
         
-        char* temp = "bin/ls";
+        char* temp = "bin/ps";
         
         syscall((void*)78,(void*)temp,(void*)argv,(void*)envp,(void*)1,(void*)2,(void*)3);
         //syscall(10,(uint64_t)a,a1[0],a1[1],a1[3],0,0);
