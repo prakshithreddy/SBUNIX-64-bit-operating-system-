@@ -466,6 +466,7 @@ void _hndlr_isr14(){
 //            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
             
         }
+        else while(1);
     }
     else if(us&rw&p)
     {
@@ -486,7 +487,7 @@ void _hndlr_isr14(){
         while(temp!=runningThread)
         {
             uint64_t tempPhy = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
-            if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
+            if(tempPhy!=0 && (tempPhy&FRAME)==phyAddr)
                 pageCount+=1; //how many cr3 contain this phy address,virtual address combo
             temp=temp->next;
         }
