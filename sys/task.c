@@ -513,8 +513,8 @@ void copyParentCr3Entries(Task* task)
         while(start<vma->v_end)
         {   
             if(vma->v_end != temp){
-                uint64_t phyAdr = getPhysicalPageAddr(start,runningThread->regs.cr3);
-                if(phyAdr!=0)
+                int64_t phyAdr = getPhysicalPageAddr(start,runningThread->regs.cr3);
+                if(phyAdr!=-1)
                 {
                     mapPageForUser(start&FRAME,phyAdr,task->regs.cr3+get_kernbase());
                     markPageAsRW(start&FRAME,task->regs.cr3+get_kernbase(),1);
@@ -979,9 +979,9 @@ void* free(void* ptr)
     int pageCount=1;
     
     //find the physical Address and check if the page is shared.
-    uint64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
+    int64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
     
-    if(phyAddr!=0)
+    if(phyAddr!=-1)
     {
         //before deleting the pagees we need to check if the page is shared
         
@@ -992,8 +992,8 @@ void* free(void* ptr)
         
         while(tempTask!=task)
         {
-            uint64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
-            if(tempPhy!=0 && (tempPhy&FRAME)==phyAddr)
+            int64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
+            if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
                 pageCount+=1; //how many cr3 contain this phy address,virtual address combo
             tempTask=tempTask->next;
         }
@@ -1046,9 +1046,9 @@ void FreePageEntries(Task* task)
     
         while(start<tempVMA->v_end)
         {
-            uint64_t phyAddr = getPhysicalPageAddr(start,task->regs.cr3);
+            int64_t phyAddr = getPhysicalPageAddr(start,task->regs.cr3);
             
-            if(phyAddr!=0)
+            if(phyAddr!=-1)
             {
                 //before deleting the pagees we need to check if the page is shared
                 int pageCount=1;
@@ -1059,7 +1059,7 @@ void FreePageEntries(Task* task)
                 
                 while(temp!=task)
                 {
-                    uint64_t tempPhy = getPhysicalPageAddr(phyAddr,temp->regs.cr3);
+                    int64_t tempPhy = getPhysicalPageAddr(phyAddr,temp->regs.cr3);
                     if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
                         pageCount+=1; //how many cr3 contain this phy address,virtual address combo
                     temp=temp->next;
