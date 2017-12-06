@@ -26,4 +26,9 @@ char readChar();
 void writeChar(char c,int specialCharacter);
 void set_input_buf(uint64_t page);
 char * get_input_buf();
+
+char getCurSec();
+char getCurHr();
+char getCurMin();
+
 #endif
