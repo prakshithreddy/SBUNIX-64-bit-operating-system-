@@ -806,6 +806,13 @@ void* exec(void* path,void* args,void* envp)
         pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
         return (void*)-1;
     }
+    
+    uint64_t basePtr = (uint64_t)0x300000;
+    
+    uint64_t mainArgs = (uint64_t)kmalloc();
+    mainArgs-=get_kernbase();
+    mapPageForUser(0x300000,(uint64_t)mainArgs,task->regs.cr3+get_kernbase());
+    mainArgs+=(get_kernbase()+0x1000);
  
     uint64_t envStart = 0x302000;
     int i=0;
