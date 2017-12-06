@@ -888,7 +888,7 @@ void* exec(void* path,void* args,void* envp)
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
-    task->exeName = (char*)path;
+    task->exeName = (char*)*path;
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
