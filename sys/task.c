@@ -397,7 +397,13 @@ void runNextTask()
     
     //update the currentRunning Task 
     Task *prev = runningThread;
-    runningThread = runningThread->next;
+    
+    Task* nextTask = runningThread->next;
+    
+    while(nextTask->state==0) nextTask=nextTask->next;
+    
+    runningThread = nextTask;
+    
     uint64_t tssAddr=0;
     if (runningThread->regs.count==0)
     {    runningThread->regs.add=40;
@@ -959,7 +965,98 @@ void* waitpid(void* pid,void* status,void* flags)
     return (void*)(-1);
 }
 
-void 
+
+void FreePageEntries(Task* task)
+{
+    VMA* tempVMA = task->memMap.mmap;
+    
+    while(tempVMA!=NULL)
+    {
+        uint64_t start = tempVMA->v_start;
+    
+        while(start<tempVMA->v_end)
+        {
+            uint64_t phyAddr = getPhysicalPageAddr(start,task->regs.cr3);
+            
+            if(phyAdr!=-1)
+            {
+                //before deleting the pagees we need to check if the page is shared
+                int pageCount=1;
+               
+                phyAddr&=FRAME;
+                
+                Task* temp = task->next;
+                
+                while(temp!=task)
+                {
+                    uint64_t tempPhy = getPhysicalPageAddr(pagefaultAt&FRAME,temp->regs.cr3);
+                    if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
+                        pageCount+=1; //how many cr3 contain this phy address,virtual address combo
+                    temp=temp->next;
+                }
+                
+                if(pageCount==1)
+                {
+                    
+                    pageDeAllocator(phyAdr&FRAME);
+                    
+                }
+                else
+                {
+                    //skip free
+                    
+                }
+                
+            }
+            
+            start+=0x1000;
+        }
+        tempVMA=tempVMA->next;
+    }
+}
+
+
+void* FreePageTables(Task* task)
+{
+    uint64_t* pml4 = (uint64_t*)(task->regs.cr3+get_kernbase());
+    for(int i=0;i<511;i++)
+    {
+        if(*(pml4[i])&PRESENT)
+        {
+            uint64_t *pdpt = (uint64_t*)(*(pml4[i])+get_kernbase());
+            for(int j=0;j<512;j++)
+            {
+                if(*(pdpt[j])&PRESENT)
+                {
+                    uint64_t *pdt = (uint64_t*)(*(pdpt[j])+get_kernbase());
+                    for(int k=0;k<512;k++)
+                    {
+                        if(*(pdt[k])&PRESENT)
+                        {
+                            pageDeAllocator((*(pdt[k]))&FRAME);
+                        }
+                    }
+                    pageDeAllocator((*(pdpt[j]))&FRAME);
+                }
+                
+            }
+            pageDeAllocator((*(pml4[i]))&FRAME);
+                
+        }
+    
+    }
+    
+}
+
+void exit()
+{
+    //delete the task and free all memory
+    Task* task = runningTask;
+    task->state = 0;
+    FreePageEntries(task);
+    FreePageTables(task);
+    runNextTask();
+}
 
 void initUserProcess()
 {
