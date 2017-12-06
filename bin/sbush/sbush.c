@@ -24,6 +24,6 @@ int main(int argc, char *argv[], char *envp[]){
 
     char *ps1="sbush>";
     puts(ps1);
-    puts(getchar());
+    puts(getChar());
     while(1);
 }
