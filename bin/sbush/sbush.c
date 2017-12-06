@@ -10,7 +10,7 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 
 int main(int argc, char *argv[], char *envp[]){
     
-    (uint64_t)syscall((void*)(uint64_t)123,(void*)size,0,0,0,0,0);
+    (uint64_t)syscall((void*)(uint64_t)123,0,0,0,0,0,0);
     
     
     
