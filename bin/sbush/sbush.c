@@ -15,9 +15,9 @@ void puts(char *buf){
   syscall((void*)(uint64_t)4,(void*)(uint64_t)1,(void*)buf,(void*)(uint64_t)count,0,0,0);
 }
 
-char getChar(){
+char* getChar(){
     char c;
-    return (char)syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
+    return (char*)syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
 }
 
 int main(int argc, char *argv[], char *envp[]){
