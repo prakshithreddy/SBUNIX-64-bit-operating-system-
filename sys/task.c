@@ -1101,7 +1101,7 @@ void initUserProcess()
     Task *userThread2 = (Task*)kmalloc();
     uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    userThread->exeName = "bin/sbush";
+    userThread2->exeName = "bin/sbush";
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
     mainThread.next = userThread2;
