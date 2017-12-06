@@ -1008,8 +1008,8 @@ void* ps()
     if(task->state==1) temp = "RUNNING";
     else temp = "NOT-RUNNING";
     
-    kprintf("PID    START_TIME    END_TIME    STATE      BINARY\n");
-    kprintf("%d      %d:%d:%d      %d:%d:%d    %s         %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
+    kprintf("PID START_TIME END_TIME STATE      BINARY\n");
+    kprintf("%d  %d:%d:%d   %d:%d:%d %s         %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
     
     while(task->next!=runningThread)
     {
@@ -1130,9 +1130,6 @@ void initUserProcess()
     kprintf("Entry Point: %p\n",hello_entrypoint);
     userThread2->exeName = "bin/sbush";
     
-    userThread2->startHH = getCurHr();
-    userThread2->startMM = getCurMin();
-    userThread2->startSS = getCurSec();
     
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
@@ -1140,6 +1137,12 @@ void initUserProcess()
     userThread2->next = userThread2;
     
     enableIntr();
+    
+    userThread2->startHH = getCurHr();
+    userThread2->startMM = getCurMin();
+    userThread2->startSS = getCurSec();
+    
+    
     switchToUserMode();
     
 }
