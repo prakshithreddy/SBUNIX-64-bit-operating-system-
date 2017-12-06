@@ -888,7 +888,7 @@ void* exec(void* path,void* args,void* envp)
     uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
     kprintf("Entry Point: %p\n",entryPoint);
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
-    task->exeName = "bin/sbush";
+    task->exeName = (char*)path;
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
@@ -1009,7 +1009,7 @@ void* ps()
     else temp = "NOT-RUNNING";
     
     kprintf("PID    START_TIME    END_TIME    STATE      BINARY\n");
-    kprintf("%d     %d:%d:%d      %d:%d:%d    %s         %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
+    kprintf("%d      %d:%d:%d      %d:%d:%d    %s         %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
     
     while(task->next!=runningThread)
     {
