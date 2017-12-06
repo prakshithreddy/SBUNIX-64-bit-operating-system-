@@ -998,7 +998,7 @@ void FreePageEntries(Task* task)
                 if(pageCount==1)
                 {
                     
-                    pageDeAllocator(phyAdr&FRAME);
+                    pageDeAllocator(phyAddr&FRAME);
                     
                 }
                 else
