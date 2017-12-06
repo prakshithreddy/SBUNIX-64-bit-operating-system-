@@ -996,7 +996,7 @@ void* free(void* ptr)
     
     while(vmaTemp->next!=NULL)
     {
-        if(vma->next->v_start==(uint64_t)ptr)
+        if(vmaTemp->next->v_start==(uint64_t)ptr)
         {
             eTemp->next = vmaTemp->next->next;
             break;
