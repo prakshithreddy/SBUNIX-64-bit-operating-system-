@@ -1014,6 +1014,9 @@ void* ps()
         else temp = "NOT-RUNNING";
         
         kprintf("%d\t%c:%c:%c\t%c:%c:%c\t%s\t%s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
+        
+        
+        task=task->next;
     }
     return 0;
 }
