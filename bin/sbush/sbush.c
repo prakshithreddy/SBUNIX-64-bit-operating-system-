@@ -1,7 +1,4 @@
 #include <stdlib.h>
-#include <unistd.h>
-#include<fcntl.h>
-
 
 void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* param4,void* param5,void* param6) {
     void* returnValue;
