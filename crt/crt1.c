@@ -16,7 +16,7 @@ void _start(void) {
     
     __asm__ __volatile__("movq %%rsp,%0;":"=r"(rsp)::);
     
-    rsp = (uint64_t)((char*)*(rsp+1))
+    rsp = (uint64_t)((char*)(*(rsp+1)));
     
     main(*(rsp+1),(char**)(rsp+2),(char**)(rsp+*(rsp+1)+3));
 
