@@ -779,18 +779,21 @@ void* exec(void* path,void* args,void* envp)
     kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);
     
     
-    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
-    
-    if(entryPoint==0)
-    {
-        return (void*)-1;
-    }
+   
     
     
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
+    
+    uint64_t entryPoint = (loadFile(((char*)path),(newCr3+get_kernbase()),task));
+    
+    if(entryPoint==0)
+    {
+        pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
+        return (void*)-1;
+    }
  
     uint64_t envStart = 0x1000;
     int i=0;
