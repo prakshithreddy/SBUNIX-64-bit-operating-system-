@@ -1126,6 +1126,7 @@ void* exit(void* pid)
                 task = task->next;
             }
         
+        }
     }
     
     
