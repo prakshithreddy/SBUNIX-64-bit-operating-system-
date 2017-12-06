@@ -10,6 +10,8 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 }
 
 int main(int argc, char *argv[], char *envp[]){
+    
+    if(argc>=4) while(1)syscall((void*)420,(void*)(uint64_t)argc,(void*)argv,(void*)envp,(void*)0,(void*)(uint64_t)4,(void*)5);
 
     int* a1 = (int*)syscall((void*)99,(void*)2000,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     //a1[0] = 10;
