@@ -292,16 +292,16 @@ void _rtc_intr_hndlr(){
         
         rtc_read_timeout=0;
     
-    rtc_second;
+    //rtc_second;
     outb(0x00,0x70);
     rtc_second = inb(0x71);
     rtc_second = ((rtc_second / 16) * 10) + (rtc_second & 0xf);
     
-    rtc_minute;
+    //rtc_minute;
     outb(0x02,0x70);
     rtc_minute = inb(0x71);
     
-    rtc_hour;
+    //rtc_hour;
     outb(0x04,0x70);
     rtc_hour = inb(0x71);
     
