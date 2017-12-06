@@ -174,7 +174,7 @@ void pushInitialParamstoStack(Task* task)
     args[3] = NULL;
     
     
-    uint64_t basePtr = (uint64_t)0x300000;
+    uint64_t basePtr = (uint64_t)0x301000;
     
     uint64_t mainArgs = (uint64_t)kmalloc();
     mainArgs-=get_kernbase();
@@ -807,7 +807,7 @@ void* exec(void* path,void* args,void* envp)
         return (void*)-1;
     }
     
-    uint64_t basePtr = (uint64_t)0x300000;
+    uint64_t basePtr = (uint64_t)0x301000;
     
     uint64_t mainArgs = (uint64_t)kmalloc();
     mainArgs-=get_kernbase();
