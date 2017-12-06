@@ -778,10 +778,6 @@ void* exec(void* path,void* args,void* envp)
     kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[1]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);*/
     
-    
-   
-    
-    
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
