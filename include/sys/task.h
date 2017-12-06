@@ -57,6 +57,7 @@ typedef struct Task{
 } Task;
 
 
+void* free(void* ptr);
 void exit();
 void runNextTask();
 void initMultiTasking();
