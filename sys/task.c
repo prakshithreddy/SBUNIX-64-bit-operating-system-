@@ -468,7 +468,7 @@ void switchToUserMode()
 }
 
 
-uint64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
+int64_t getPhysicalPageAddr(uint64_t v_addr,uint64_t cr3){
     
     struct PDPT *pdpt;//TODO: This function is used only after enabling paging.
     struct PDT *pdt;
@@ -513,8 +513,8 @@ void copyParentCr3Entries(Task* task)
         while(start<vma->v_end)
         {   
             if(vma->v_end != temp){
-                uint64_t phyAdr = getPhysicalPageAddr(start,runningThread->regs.cr3);
-                if(phyAdr!=-1)
+                int64_t phyAdr = getPhysicalPageAddr(start,runningThread->regs.cr3);
+                if(phyAdr!=-1 && phyAdr!=0)
                 {
                     mapPageForUser(start&FRAME,phyAdr,task->regs.cr3+get_kernbase());
                     markPageAsRW(start&FRAME,task->regs.cr3+get_kernbase(),1);
@@ -778,10 +778,6 @@ void* exec(void* path,void* args,void* envp)
     kprintf("%s %s %s\n",((char*)path),((char**)args)[4],((char**)envp)[1]);
     kprintf("%s %s %s\n",((char*)path),((char**)args)[5],((char**)envp)[1]);*/
     
-    
-   
-    
-    
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
@@ -979,9 +975,9 @@ void* free(void* ptr)
     int pageCount=1;
     
     //find the physical Address and check if the page is shared.
-    uint64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
+    int64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
     
-    if(phyAddr!=-1)
+    if(phyAddr!=-1 && phyAddr!=0)
     {
         //before deleting the pagees we need to check if the page is shared
         
@@ -992,8 +988,8 @@ void* free(void* ptr)
         
         while(tempTask!=task)
         {
-            uint64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
-            if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
+            int64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
+            if(tempPhy!=-1 && tempPhy!=0 && (tempPhy&FRAME)==phyAddr)
                 pageCount+=1; //how many cr3 contain this phy address,virtual address combo
             tempTask=tempTask->next;
         }
@@ -1046,9 +1042,9 @@ void FreePageEntries(Task* task)
     
         while(start<tempVMA->v_end)
         {
-            uint64_t phyAddr = getPhysicalPageAddr(start,task->regs.cr3);
+            int64_t phyAddr = getPhysicalPageAddr(start,task->regs.cr3);
             
-            if(phyAddr!=-1)
+            if(phyAddr!=-1 && phyAddr!=0)
             {
                 //before deleting the pagees we need to check if the page is shared
                 int pageCount=1;
@@ -1059,8 +1055,8 @@ void FreePageEntries(Task* task)
                 
                 while(temp!=task)
                 {
-                    uint64_t tempPhy = getPhysicalPageAddr(phyAddr,temp->regs.cr3);
-                    if(tempPhy!=-1 && (tempPhy&FRAME)==phyAddr)
+                    int64_t tempPhy = getPhysicalPageAddr(phyAddr,temp->regs.cr3);
+                    if(tempPhy!=-1 && tempPhy!=0 && (tempPhy&FRAME)==phyAddr)
                         pageCount+=1; //how many cr3 contain this phy address,virtual address combo
                     temp=temp->next;
                 }
