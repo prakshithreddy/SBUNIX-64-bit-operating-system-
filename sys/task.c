@@ -783,7 +783,7 @@ void* exec(void* path,void* args,void* envp)
     
     if(entryPoint==0)
     {
-        return -1;
+        return (void*)-1;
     }
     
     
