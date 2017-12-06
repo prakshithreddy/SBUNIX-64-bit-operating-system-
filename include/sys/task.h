@@ -69,7 +69,7 @@ typedef struct Task{
 
 void* free(void* ptr);
 void* ps();
-void exit(void* num);
+void* exit(void* num);
 void runNextTask();
 void initMultiTasking();
 void createThread(Task* task, void(*function)(), uint64_t rflags, uint64_t *pml4);
