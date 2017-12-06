@@ -21,15 +21,38 @@ char getChar(){
     return c;
 }
 
+uint64_t malloc(uint64_t size)
+{
+    return (uint64_t)syscall((void*)(uint64_t)99,(void*)size,0,0,0,0,0);
+}
+
 int main(int argc, char *argv[], char *envp[]){
 
     char *ps1="sbush>";
     puts(ps1);
+    
+    char *inputStr = (char*)malloc(2000);
+    int i=0;
+    
     while(1)
     {
         char c = getChar();
-        puts(&c);
+        if(c =='\0') break;
+        else if(c==' ' && i==0) continue;
+        else if(i>2000) break;
+        else if(c != NULL)
+        {
+            inputStr[i]=c;
+            i++;
+        }
+        
         
     }
+    inputStr[i]='\0';
+    
+    puts(inputStr);
+    
+    
+    
     //while(1);
 }
