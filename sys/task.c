@@ -930,13 +930,13 @@ void* exec(void* path,void* args,void* envp)
     addToQueue(task);
     
     
-    Task* tempTask = runningThread;
-    
-    while(tempTask->next!=runningThread)
-        tempTask=tempTask->next;
-    
-    tempTask->next = runningThread->next;
-    
+//    Task* tempTask = runningThread;
+//    
+//    while(tempTask->next!=runningThread)
+//        tempTask=tempTask->next;
+//    
+//    tempTask->next = runningThread->next;
+//    
     //runningThread=runningThread->next;
     //runNextTask();
     
