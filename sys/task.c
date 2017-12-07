@@ -816,7 +816,7 @@ void deleteRunningThreadAndJump(Task* task)
 void* exec(void* path,void* args,void* envp)
 {
     
-    kprintf("Here1\n");
+    //kprintf("Here1\n");
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
@@ -830,7 +830,7 @@ void* exec(void* path,void* args,void* envp)
         return (void*)-1;
     }
     
-   kprintf("Here2\n");
+ //  kprintf("Here2\n");
     uint64_t mainArgs = (uint64_t)kmalloc();
     
     mainArgs-=get_kernbase();
@@ -946,7 +946,7 @@ void* exec(void* path,void* args,void* envp)
     kprintf("Entry Point: %p\n",entryPoint);
     kprintf("Here4");
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
-    task->exeName = "bin/ps";
+    task->exeName = (char*)path;
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
