@@ -405,7 +405,7 @@ int main(int argc, char *argv[], char *envp[]){
         //read a input line
         char *command = read_command();
         if(*command == '\0'){
-          free(command);
+          //free(command);
           continue;
         }
         char **com_args = parse_command(command);
