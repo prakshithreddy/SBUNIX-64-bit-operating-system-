@@ -11,7 +11,7 @@
 #define MSR_LSTAR 0xC0000082
 #define MSR_SFMASK 0xC0000084
 
-mutex = 0;
+static mutex = 0;
 
 int getMutex()
 {
