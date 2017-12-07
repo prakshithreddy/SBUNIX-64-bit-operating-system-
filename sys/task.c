@@ -266,6 +266,8 @@ void pushInitialParamstoStack(Task* task)
     pushSomeArgsToUser(mainArgs,(void*)(uint64_t)count,task->regs.cr3);
     mainArgs-=8;
     
+    kprintf("%p %p\n\n",tempMainArgs,mainArgs);
+    
     pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x300000-(tempMainArgs-mainArgs),task->regs.cr3);
     task->regs.userRsp-=8;
     
