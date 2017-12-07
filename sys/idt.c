@@ -19,18 +19,18 @@ uint64_t switchRdi=0;
 uint64_t switchRbp=0;
 
 int timeCounter = 0;
-int enableCounter =0;
+int counterEnable =0;
 
 
 void enableCounter()
 {
-    enableCounter =1;
+    counterEnable =1;
 }
 
 void disableCounter()
 {
     timeCounter=0;
-    enableCounter =0;
+    counterEnable =0;
 }
 
 int getTimeCounter()
@@ -267,7 +267,7 @@ void _timer_intr_hdlr(){
         i = 0;
         seconds++;
         
-        if(enableCounter)
+        if(counterEnable)
         {
             timeCounter++;
         }
