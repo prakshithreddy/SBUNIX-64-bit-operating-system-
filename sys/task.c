@@ -614,7 +614,7 @@ void createChildTask(Task *task){
     task->regs.count=0;
     task->regs.add=0;
     task->state = 1;
-    task->exeName = runningThread->exeName;
+    //task->exeName = runningThread->exeName;
     
     int i=0;
     
