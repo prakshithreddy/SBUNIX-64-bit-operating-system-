@@ -1172,7 +1172,7 @@ void* exit(void* pid)
     task->endSS = getCurSec();
 //    FreePageEntries(task);
 //    FreePageTables(task);
-    while(1);
+    //while(1);
     //runNextTask();
     return 0;
 }
