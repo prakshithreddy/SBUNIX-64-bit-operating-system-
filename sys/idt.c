@@ -266,7 +266,7 @@ void _timer_intr_hdlr(){
         //runNextTask();
         
     }
-    else if (j%4==0)
+    else if (j%10==0)
     {
         j=0;
         outb(0x20,0x20);
