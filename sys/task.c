@@ -1265,58 +1265,21 @@ void FreePageTables(Task* task)
 
 void* kill(void* pid)
 {
-    if(runningThread->pid_t==(uint64_t)pid&&runningThread->next!=runningThread)
-    {
-        Task* temp = runningThread;
-        runningThread->state=0;
-        while(temp->next!=runningThread) temp = temp->next;
-        temp->next = runningThread->next;
+    
+    Task* task = runningThread->next;
+    while(task->next->pid_t!=(uint64_t)pid&&task!=runningThread) task=task->next;
+    
+    Task* toBeDel = task->next;
+    
+    task->next = task->next->next;
+    
+    
+    FreePageEntries(toBeDel);
+    FreePageTables(toBeDel);
+    
+    addToDeleteQueue(toBeDel);
         
-        runningThread = runningThread->next;
-        runningThread->regs.count=0;
-        
-        _prepareInitialKernelStack(&runningThread->regs);
-        
-        uint64_t tssAddr=0;
-        if (runningThread->regs.count==0)
-        {    runningThread->regs.add=40;
-            runningThread->regs.count+=1;
-            tssAddr = runningThread->regs.kernelRsp;
-        }
-        else
-        {
-            runningThread->regs.add=0;
-            tssAddr = runningThread->regs.kernelRsp +40;
-        }
-        
-        set_tss_rsp((void*)(tssAddr));
-        
-        
-        _moveToNextProcess(&runningThread->regs, &runningThread->regs);
-        
-    }
-    else if(runningThread->next==runningThread)
-    {
-        kprintf("Cannot kill the only process.\n");
-    }
-    else{
-        Task* task = runningThread->next;
-        while(task->next->pid_t!=(uint64_t)pid&&task!=runningThread) task=task->next;
-        
-        Task* toBeDel = task->next;
-        
-        task->next = task->next->next;
-        
-        
-        FreePageEntries(toBeDel);
-        FreePageTables(toBeDel);
-        
-        addToDeleteQueue(toBeDel);
-        
-        
-        
-        
-    }
+    
     return 0;
     
 
