@@ -787,7 +787,7 @@ void deleteRunningThreadAndJump(Task* task)
     
     temp->next = task;
     
-    
+    runningThread = task;
     
     
     uint64_t tssAddr=0;
@@ -1195,7 +1195,7 @@ void* exit(void* pid)
     }
     //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
     set_tss_rsp((void*)(tssAddr));
-    
+    runningThread = (temp->next);
     _moveToNextProcess(&runningThread->regs, &(temp->next)->regs);
     
     return 0;
