@@ -1126,12 +1126,12 @@ void* ps()
     
     task = deleteQueue;
     
-//    while(task!=NULL)
-//    {
-//        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->next->pid_t,task->next->startHH,task->next->startMM,task->next->startSS,task->next->endHH,task->next->endMM,task->next->endSS,temp,task->next->exeName);
-//        
-//        task=task->next;
-//    }
+    while(task!=NULL)
+    {
+        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->next->pid_t,task->next->startHH,task->next->startMM,task->next->startSS,task->next->endHH,task->next->endMM,task->next->endSS,temp,task->next->exeName);
+        
+        task=task->next;
+    }
     
     return 0;
 }
