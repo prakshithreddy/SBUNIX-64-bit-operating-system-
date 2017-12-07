@@ -805,8 +805,6 @@ void deleteRunningThreadAndJump(Task* task)
     
     _moveToNextProcess(&runningThread->regs, &task->regs);
     
-    
-    
 }
 
 void* exec(void* path,void* args,void* envp)
