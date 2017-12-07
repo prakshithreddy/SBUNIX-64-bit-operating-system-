@@ -864,6 +864,9 @@ void* exec(void* path,void* args,void* envp)
     if(entryPoint==0)
     {
         pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
+        Task* temp = runningThread;
+        while(temp->next!=runningThread) temp = temp->next;
+        temp->next = runningThread->next;
         return (void*)-1;
     }
     
