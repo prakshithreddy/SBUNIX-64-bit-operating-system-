@@ -787,6 +787,26 @@ void deleteRunningThreadAndJump(Task* task)
     
     temp->next = task;
     
+    
+    
+    
+    uint64_t tssAddr=0;
+    if (task->regs.count==0)
+    {    task->regs.add=40;
+        task->regs.count+=1;
+        tssAddr = task->regs.kernelRsp;
+    }
+    else
+    {
+        task->regs.add=0;
+        tssAddr = task->regs.kernelRsp +40;
+    }
+    //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
+    set_tss_rsp((void*)(tssAddr));
+    
+    
+    
+    
     _moveToNextProcess(&runningThread->regs, &task->regs);
     
     
@@ -1161,6 +1181,20 @@ void* exit(void* pid)
     while(temp->next!=runningThread) temp = temp->next;
     
     temp->next = temp->next->next;
+    
+    uint64_t tssAddr=0;
+    if (temp->next->regs.count==0)
+    {    temp->next->regs.add=40;
+        temp->next->regs.count+=1;
+        tssAddr = temp->next->regs.kernelRsp;
+    }
+    else
+    {
+        temp->next->regs.add=0;
+        tssAddr = temp->next->regs.kernelRsp +40;
+    }
+    //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
+    set_tss_rsp((void*)(tssAddr));
     
     _moveToNextProcess(&runningThread->regs, &(temp->next)->regs);
     
