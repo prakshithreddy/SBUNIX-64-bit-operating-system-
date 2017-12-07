@@ -258,7 +258,7 @@ char *get_executable_path(char *filename,char *path){
     memset_file(path,0,512);
     while(testfile[i]!='\0'){
         int j=0;
-        while(testfile[i]!=':'){
+        while((testfile[i]!=':') && (testfile[i]!='\0')){
           path[j]=testfile[i];
           j++;
           i++;
@@ -295,7 +295,7 @@ uint64_t loadFile(char *filename,uint64_t pml4,Task *uthread){
     char path[512];
     char *file=get_executable_path(filename,path);
     if(file==NULL){
-        kprintf("Warning: File %s not found..\n",file);
+        kprintf("Warning: File %s not found..\n",filename);
         return 0;
     }
     kprintf("\nFiles Found in tarfs:\n");
@@ -1006,11 +1006,41 @@ void get_between_2slashes(char *src,char *dest){
     *output='\0';
 }
 
+void remove_2slashes(char *src, char *dest){
+    char *input=src;
+    char *output=dest;
+    while(*input!='\0'){
+        if(*input!='/'){
+          *output=*input;
+          output++;
+          input++;
+        }
+        else if(*input=='/'){
+            if(*(input+1)!='/'){
+                *output=*input;
+                input++;
+                output++;
+            }
+            else if(*(input+1)=='/'){
+                *output=*input;
+                output++;
+                if(*(input+1)!='\0'){
+                  input+=2;
+                }
+            }
+        }
+    
+    }
+
+}
+
 void remove_dotslash(char *src,char *dest,int d){
     char temp_output[256];
     temp_output[0]='\0';
     char *input=src;
     char *output=dest;
+    //remove_2slashes(input1,input);
+
     if(*input=='/'){
         *output='/';
         input++;
@@ -1074,6 +1104,10 @@ void remove_dotslash(char *src,char *dest,int d){
         if(*input=='/'){
           *output='/';
           output++;
+          input++;
+        }
+        while(*input=='/'){
+          input++;
         }
       }
     }
