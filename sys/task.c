@@ -776,6 +776,23 @@ uint64_t malloc(uint64_t size)
     
 }
 
+
+void deleteRunningThreadAndJump(Task* task)
+{
+    task->next = runningThread->next;
+    
+    Tast* temp = runningThread;
+    
+    while(temp->next!=runningThread) temp = temp->next;
+    
+    temp->next = task;
+    
+    _moveToNextProcess(&runningThread, &task);
+    
+    
+    
+}
+
 void* exec(void* path,void* args,void* envp)
 {
     
@@ -911,7 +928,8 @@ void* exec(void* path,void* args,void* envp)
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
-    addToQueue(task);
+    //addToQueue(task);
+    deleteRunningThreadAndJump(task);
     
     return 0;
 }
@@ -1129,14 +1147,23 @@ void FreePageTables(Task* task)
 
 void* exit(void* pid)
 {
-    Task* task = runningThread;
-    task->state = 0;
-    task->endHH = getCurHr();
-    task->endMM = getCurMin();
-    task->endSS = getCurSec();
-    FreePageEntries(task);
-    FreePageTables(task);
-    runNextTask();
+//    Task* task = runningThread;
+//    task->state = 0;
+//    task->endHH = getCurHr();
+//    task->endMM = getCurMin();
+//    task->endSS = getCurSec();
+////    FreePageEntries(task);
+////    FreePageTables(task);
+//    //deleteRunningThreadAndJump(Task* task);
+    
+    Tast* temp = runningThread;
+    
+    while(temp->next!=runningThread) temp = temp->next;
+    
+    temp->next = temp->next->next;
+    
+    _moveToNextProcess(&runningThread, &(temp->next));
+    
     return 0;
 }
 
