@@ -14,7 +14,7 @@ static Task otherThread;
 
 static int pidCount = 0;
 static int pageNum = 0;
-char* exeName;
+
 Task *userThread1;
 
 //Task *userThread3;
@@ -943,12 +943,10 @@ void* exec(void* path,void* args,void* envp)
     newVma->next = task->memMap.mmap;
     task->memMap.mmap = newVma;
     
-    exeName = (char*)path;
-    
     kprintf("Entry Point: %p\n",entryPoint);
     kprintf("Here4");
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
-    task->exeName = exeName;
+    task->exeName = "bin/ps";
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
