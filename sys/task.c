@@ -937,8 +937,8 @@ void* exec(void* path,void* args,void* envp)
     
     tempTask->next = runningThread->next;
     
-    runningThread=runningThread->next;
-    runNextTask();
+    //runningThread=runningThread->next;
+    //runNextTask();
     
     
     return 0;
