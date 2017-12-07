@@ -31,4 +31,9 @@ char getCurSec();
 char getCurHr();
 char getCurMin();
 
+
+void enableCounter();
+void disableCounter();
+int getTimeCounter();
+
 #endif

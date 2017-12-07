@@ -1164,6 +1164,22 @@ void* ps()
     return 0;
 }
 
+void* enableSleep()
+{
+    enableCounter();
+    return 0;
+}
+
+void* getCounter()
+{
+    return (void*)(uint64_t)getTimeCounter();
+}
+void* disableSleep()
+{
+    disableCounter();
+    return 0;
+}
+
 
 void FreePageEntries(Task* task)
 {

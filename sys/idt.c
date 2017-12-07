@@ -18,6 +18,26 @@ uint64_t switchRsi=0;
 uint64_t switchRdi=0;
 uint64_t switchRbp=0;
 
+int timeCounter = 0;
+int counterEnable =0;
+
+
+void enableCounter()
+{
+    counterEnable =1;
+}
+
+void disableCounter()
+{
+    timeCounter=0;
+    counterEnable =0;
+}
+
+int getTimeCounter()
+{
+    return timeCounter;
+}
+
 uint64_t errorCode;
 char *stdStart;
 char *writePosition;
@@ -246,6 +266,11 @@ void _timer_intr_hdlr(){
     if(i%19==0) {
         i = 0;
         seconds++;
+        
+        if(counterEnable)
+        {
+            timeCounter++;
+        }
         
         if(seconds%60==0) {
             seconds%=60;
