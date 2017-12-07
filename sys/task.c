@@ -1175,7 +1175,7 @@ void* exit(void* pid)
     task->endHH = getCurHr();
     task->endMM = getCurMin();
     task->endSS = getCurSec();
-    //FreePageEntries(task);
+    FreePageEntries(task);
     //FreePageTables(task);
     
     Task* temp = runningThread;
