@@ -795,7 +795,7 @@ void* exec(void* path,void* args,void* envp)
           ia++;
         }
     }
-    Task *task = runningThread;
+    Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
     task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;
@@ -927,7 +927,7 @@ void* exec(void* path,void* args,void* envp)
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
-    //addToQueue(task);
+    addToQueue(task);
     
     return 0;
 }
@@ -1167,9 +1167,9 @@ void* exit(void* pid)
     while(task->next!=runningThread)
         task=task->next;
     
-    task->next = runningThread->next;
+    task->next = runningTask->next;
     
-    runningThread=runningThread->next;
+    runningTask=runningTask->next;
     
     
    // Task* task = runningThread;
