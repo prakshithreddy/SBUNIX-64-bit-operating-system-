@@ -1263,6 +1263,28 @@ void FreePageTables(Task* task)
     
 }
 
+void* kill(void* pid)
+{
+    
+    Task* task = runningThread->next;
+    while(task->next->pid_t!=(uint64_t)pid&&task!=runningThread) task=task->next;
+    
+    Task* toBeDel = task->next;
+    
+    task->next = task->next->next;
+    
+    
+    FreePageEntries(toBeDel);
+    FreePageTables(toBeDel);
+    
+    addToDeleteQueue(toBeDel);
+        
+    
+    return 0;
+    
+
+}
+
 void* exit(void* pid)
 {
     Task* task = runningThread;

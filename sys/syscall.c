@@ -51,7 +51,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
     {
         case 123:  returnVal =  (void*)clearScreen(); break;
         case 100:  returnVal =  (void*)exit((void*)paramA); break;
-        case 199:  returnVal =  (void*)exit((void*)paramA); break;
+        case 199:  returnVal =  (void*)kill((void*)paramA); break;
         case 1:    returnVal =  (void*)fork(); break;
         case 99:   returnVal =  (void*)malloc(paramA); break;
         case 0:    returnVal =  (void *)readFile(paramA,(char *)paramB,paramC); break;

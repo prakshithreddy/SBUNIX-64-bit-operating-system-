@@ -97,6 +97,7 @@ void* enableSleep();
 
 void* getCounter();
 void* disableSleep();
+void* kill(void* pid);
 
 void* clearScreen();
 

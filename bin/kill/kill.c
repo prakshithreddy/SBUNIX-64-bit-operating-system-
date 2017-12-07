@@ -8,8 +8,23 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
     return returnValue;
 }
 
+uint64_t toInteger(char *s){
+    uint64_t i=0;
+    uint64_t num=0;
+    while(*(s+i)!= '\0'){
+        num=num*10+(*(s+i)-'0');
+        i+=1;
+    }
+    return num;
+}
+
 int main(int argc, char *argv[], char *envp[]){
     
-    syscall((void*)199,(void*)2,(void*)0,(void*)3,(void*)4,(void*)5,(void*)0);
+    if(argc>=3){
+        syscall((void*)199,(void*)(uint64_t)toInteger(argv[2]),(void*)0,(void*)3,(void*)4,(void*)5,(void*)0);
+    }
+    if(argc==2){
+        syscall((void*)199,(void*)(uint64_t)toInteger(argv[1]),(void*)0,(void*)3,(void*)4,(void*)5,(void*)0);
+    }
     return 0;
 }
