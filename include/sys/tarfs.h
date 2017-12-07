@@ -46,5 +46,6 @@ int64_t openFile(char* fileName);
 int64_t changeDirectory(char *buf);
 char *getCWD(char *dest,int count);
 void remove_dotslash(char *src,char *dest,int d);
+uint64_t get_file_address(char* file);
 
 #endif

@@ -29,12 +29,21 @@ ssize_t read(int fd, void *buf, size_t count)
     
 }
 
+int close(int fd)
+{
+    return (ssize_t) syscall((void*)3,(void*)(uint64_t)fd,0,0,0,0,0);
+}
+
 int main(int argc, char*argv[],char* envp[])
 {
     
     //struct stat* temp = (struct stat*) malloc(sizeof(struct stat));
     
     //stat(argv[1],temp);
+    
+    if(argc<2){
+        return 0;
+    }
     
     int fd = open(argv[1], O_RDONLY);
     if(fd==-1){
@@ -54,6 +63,6 @@ int main(int argc, char*argv[],char* envp[])
     
     }
     write(1,"\n",1);
-    
+    close(fd);
     return 0;
 }

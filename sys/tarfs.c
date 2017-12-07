@@ -205,13 +205,99 @@ uint64_t validate_elf_file(Elf64_Ehdr *elf_hdr){
 	return 1;//TODO: Architecture specific checks are not done as of now.. May be important later on.
 }
 
+char *getPATH(char *dest,int count){
+    char *environ_main=(char *)0x302000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
+    char *buf=dest;
+    int env_i =0;
+    char temp[256];
+    int arg_i=0;
+    char *env_entry;
+    env_entry=0;
+    while(*(environ_main+env_i) != '\0'){
+      arg_i=0;
+      env_entry=environ_main+env_i;
+      while(env_entry[arg_i] != '='){
+        temp[arg_i]=env_entry[arg_i];
+        arg_i++;
+      }
+      temp[arg_i]='\0';
+      arg_i++;
+      if(strcmp(temp,"PATH") == 0){
+        int start = arg_i;
+        while(env_entry[start] != '\0'){
+          *buf=env_entry[start];
+          start++;
+          buf++;
+          count--;
+          if(count==0){
+            break;
+          }
+        }
+        if(count>1){
+          *buf='\0';
+        }
+        break;
+      }
+      env_i+=0x1000;
+  }
+  return ((char *)env_entry+arg_i);
+}
 
-uint64_t loadFile(char *file,uint64_t pml4,Task *uthread){
+char *get_executable_path(char *filename,char *path){
+    if(*filename=='/'){
+        return filename+1;
+    }
+    remove_dotslash(filename,path,512);
+    uint64_t address = get_file_address(path+1);
+    if(address>0){
+        return path+1;
+    }
+    char testfile[512];
+    getPATH(testfile,512);
+    int i=0;
+    memset_file(path,0,512);
+    while(testfile[i]!='\0'){
+        int j=0;
+        while(testfile[i]!=':'){
+          path[j]=testfile[i];
+          j++;
+          i++;
+        }
+        if(path[j-1]!='/'){
+          path[j]='/';
+          j++;
+        }
+        int k=0;
+        while(filename[k]!='\0'){
+          path[j]=filename[k];
+          k++;
+          j++;
+        }
+        path[j]='\0';
+        address = get_file_address(path+1);
+        if(address==0){
+          ;
+        }
+        else{
+          return path+1;
+        }
+        i++;
+    }
+    return NULL;
+}
+
+uint64_t loadFile(char *filename,uint64_t pml4,Task *uthread){
     uint64_t search_pointer = BINARY_TARFS_START;
     struct posix_header_ustar *tar_file_pointer = tar_file_start; 
     /*char newfile[256];
     remove_dotslash(filename,newfile,0);
     char *file=newfile+1;*/
+    char path[512];
+    char *file=get_executable_path(filename,path);
+    if(file==NULL){
+        kprintf("Warning: File %s not found..\n",file);
+        return 0;
+    }
     kprintf("\nFiles Found in tarfs:\n");
     int file_found=0;
     while(search_pointer<BINARY_TARFS_END){
@@ -232,7 +318,7 @@ uint64_t loadFile(char *file,uint64_t pml4,Task *uthread){
         tar_file_pointer = (struct posix_header_ustar *)search_pointer;
     }
     if (file_found==0){
-        kprintf("Warning: File %s not found\n",file);
+        kprintf("Warning: File %s not found...\n",file);
         return 0;
     }
     
@@ -877,6 +963,7 @@ char *getCWD(char *dest,int count){
     char *env_entry;
     env_entry=0;
     while(*(environ_main+env_i) != '\0'){
+      arg_i=0;
       env_entry=environ_main+env_i;
       while(env_entry[arg_i] != '='){
         temp[arg_i]=env_entry[arg_i];
