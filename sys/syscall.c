@@ -12,7 +12,7 @@
 #define MSR_SFMASK 0xC0000084
 
 
-static int mutex = 0;
+int mutex = 0;
 int getMutex()
 {
     return mutex;
