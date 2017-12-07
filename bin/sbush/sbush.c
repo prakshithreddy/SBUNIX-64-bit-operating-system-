@@ -261,7 +261,6 @@ int fork_execution(char **com_args,short int background,char **envp){
     if(execve(com_args[0],com_args,envp) == -1){
       //dedeprintf("Error while executing the command\n");
       //exit(1);//need to find out whether to use _exit or exit
-        goto deadChild;
     }
   }
   else if(pid < 0){
@@ -426,5 +425,4 @@ int main(int argc, char *argv[], char *envp[]){
     }
     
     while(1);
-deadChild:
 }
