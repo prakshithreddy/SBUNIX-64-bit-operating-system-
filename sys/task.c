@@ -361,7 +361,7 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
       task->fd_pointers[i]=0;
     }
     task->fd_count=5;
-    //task->memMap.mmap=((void *)0);
+    //task->memMap.mmap=((void *)0);;lll
     _prepareInitialKernelStack(&task->regs);
 }
 
