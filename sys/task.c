@@ -1064,11 +1064,11 @@ void* ps()
     
     while(task->next!=runningThread)
     {
-        if(task->state==1) temp = "RUNNING";
+        if(task->next->state==1) temp = "RUNNING";
         else temp = "NOT-RUNNING";
         
         
-        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
+        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->next->pid_t,task->next->startHH,task->next->startMM,task->next->startSS,task->next->endHH,task->next->endMM,task->next->endSS,temp,task->next->exeName);
         
         
         task=task->next;
