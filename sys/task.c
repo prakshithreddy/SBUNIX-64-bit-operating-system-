@@ -789,7 +789,6 @@ void deleteRunningThreadAndJump(Task* task)
     
     runningThread = task;
     
-    
     uint64_t tssAddr=0;
     if (task->regs.count==0)
     {    task->regs.add=40;

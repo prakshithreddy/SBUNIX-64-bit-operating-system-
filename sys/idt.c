@@ -272,8 +272,8 @@ void _timer_intr_hdlr(){
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-//        if(getMutex()!=1)
-//            runNextTask(); // preemptive multitasking code starts here..
+        if(getMutex()!=1)
+            runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();
