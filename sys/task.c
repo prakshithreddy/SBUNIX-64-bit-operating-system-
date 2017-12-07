@@ -384,12 +384,12 @@ void runNextTask()
     //update the currentRunning Task 
     Task *prev = runningThread;
     
-    Task* nextTask = runningThread->next;
+   runningThread = runningThread->next;
     
 //    while(nextTask->state==0) nextTask=nextTask->next;
-//    
+//
 //    runningThread = nextTask;
-//    
+//
     uint64_t tssAddr=0;
     if (runningThread->regs.count==0)
     {    runningThread->regs.add=40;
