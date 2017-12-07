@@ -7,6 +7,7 @@
 #include<sys/phyMemMapper.h>
 #include<sys/virtualMemory.h>
 #include<sys/task.h>
+#include<sys/syscall.h>
 #include<sys/tarfs.h>
 
 uint64_t switchRsp=0;
@@ -271,7 +272,8 @@ void _timer_intr_hdlr(){
         outb(0x20,0x20);
         outb(0x20,0xA0);
         
-        runNextTask(); // preemptive multitasking code starts here..
+        if(getMutex()!=1)
+            runNextTask(); // preemptive multitasking code starts here..
         
     }
     //runNextTask();
