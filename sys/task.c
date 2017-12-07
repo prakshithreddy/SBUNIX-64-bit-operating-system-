@@ -345,10 +345,6 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
     task->regs.rdi=0;
     task->regs.rflags=rflags;
     task->regs.rip=(uint64_t)function;
-//    task->regs.cr3=cr3;
-//    task->regs.userRsp=(uint64_t)stackForUser(task)+0x1000;   // creating a stack for the user process
-//    pushSomeArgsToUser(task->regs.userRsp);
-//    task->regs.userRsp-=8;
     task->regs.kernelRsp=(uint64_t)kmalloc()+0x1000; // creating a stack for the kernel code of the user process
     task->regs.rbp=task->regs.userRsp; //doing this because rbp is base pointer of stack.
     task->regs.count=0;
@@ -1147,30 +1143,6 @@ void* exit(void* pid)
 {
     //delete the task and free all memory
     Task* task = runningThread;
-    
-//    if((uint64_t)pid == 0) task=runningThread;
-//    else
-//    {
-//        if(runningThread->pid_t==(uint64_t)pid) task = runningThread;
-//        else
-//        {
-//            task=runningThread->next;
-//            while(task!=runningThread)
-//            {
-//                if(task->pid_t==(uint64_t)pid && task->state!=0) break;
-//                task = task->next;
-//            }
-//
-//        }
-//    }
-    
-    while(task->next!=runningThread)
-        task=task->next;
-    
-    task->next = runningThread->next;
-    
-    runningThread=runningThread->next;
-    
     
    // Task* task = runningThread;
     task->state = 0;
