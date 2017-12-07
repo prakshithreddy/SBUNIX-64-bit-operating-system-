@@ -8,6 +8,17 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
     return returnValue;
 }
 
+
+uint64_t toInteger(char *s){
+    uint64_t i=0;
+    uint64_t num=0;
+    while(*(s+i)!= '\0'){
+        num=num*10+(*(s+i)-'0');
+        i+=1;
+    }
+    return num;
+}
+
 int main(int argc, char *argv[], char *envp[]){
     
     uint64_t sleep_seconds=0;
@@ -15,7 +26,7 @@ int main(int argc, char *argv[], char *envp[]){
         return 0;
     }
     else if (argc>1){
-        sleep_seconds=(uint64_t)argv[1];
+        sleep_seconds=toInteger(argv[1]);
     }
     syscall((void*)50,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     
