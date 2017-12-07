@@ -781,7 +781,7 @@ void deleteRunningThreadAndJump(Task* task)
 {
     task->next = runningThread->next;
     
-    Tast* temp = runningThread;
+    Task* temp = runningThread;
     
     while(temp->next!=runningThread) temp = temp->next;
     
