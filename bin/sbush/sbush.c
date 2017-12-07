@@ -384,10 +384,10 @@ int execute_command(char **com_args,short int background,char **envp){
   return rc;
 }
 
-void clrScreen()
-{
-    syscall((void*)(uint64_t)123,0,0,0,0,0,0);
-}
+//void clrScreen()
+//{
+//    syscall((void*)(uint64_t)123,0,0,0,0,0,0);
+//}
 
 int main(int argc, char *argv[], char *envp[]){
 
