@@ -1167,9 +1167,9 @@ void* exit(void* pid)
     while(task->next!=runningThread)
         task=task->next;
     
-    task->next = runningTask->next;
+    task->next = runningThread->next;
     
-    runningTask=runningTask->next;
+    runningThread=runningThread->next;
     
     
    // Task* task = runningThread;
