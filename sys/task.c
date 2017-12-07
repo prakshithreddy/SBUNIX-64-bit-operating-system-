@@ -876,7 +876,7 @@ void* exec(void* path,void* args,void* envp)
         _prepareInitialKernelStack(&runningThread->regs);
         
         uint64_t tssAddr=0;
-        if (terunningThreadmp->regs.count==0)
+        if (runningThread->regs.count==0)
         {    runningThread->regs.add=40;
             runningThread->regs.count+=1;
             tssAddr = runningThread->regs.kernelRsp;
