@@ -10,12 +10,12 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 
 int main(int argc, char *argv[], char *envp[]){
     
-    int sleep_seconds=0;
+    uint64_t sleep_seconds=0;
     if(argc==1){
         return 0;
     }
     else if (argc>1){
-        sleep_seconds=argv[1];
+        sleep_seconds=(uint64_t)argv[1];
     }
     syscall((void*)50,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     
