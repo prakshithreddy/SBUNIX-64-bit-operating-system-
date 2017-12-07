@@ -362,6 +362,7 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
     }
     task->fd_count=5;
     //task->memMap.mmap=((void *)0);
+    //tempeteptmep
     _prepareInitialKernelStack(&task->regs);
 }
 
