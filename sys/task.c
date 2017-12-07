@@ -12,6 +12,8 @@ static Task *runningThread;
 static Task mainThread;
 static Task otherThread;
 
+Task* deleteQueue = NULL;
+
 static int pidCount = 0;
 static int pageNum = 0;
 
@@ -824,6 +826,23 @@ void deleteRunningThreadAndJump(Task* task)
     
 }
 
+void addToDeleteQueue(Task* task)
+{
+    Task* temp = deleteQueue;
+    if(deleteQueue==NULL)
+    {
+        deleteQueue = task;
+        task->next = NULL;
+    }
+    else{
+        while(temp->next!=NULL) temp=temp->next;
+        temp->next=task;
+        task->next=NULL;
+            
+    }
+    
+}
+
 void* exec(void* path,void* args,void* envp)
 {
     
@@ -1193,6 +1212,8 @@ void FreePageTables(Task* task)
 void* exit(void* pid)
 {
     Task* task = runningThread;
+    
+    
     task->state = 0;
     task->endHH = getCurHr();
     task->endMM = getCurMin();
@@ -1206,21 +1227,26 @@ void* exit(void* pid)
     
     temp->next = temp->next->next;
     
+    temp = temp->next;
+    
+    addToDeleteQueue(task);
+    
     uint64_t tssAddr=0;
-    if (temp->next->regs.count==0)
-    {    temp->next->regs.add=40;
-        temp->next->regs.count+=1;
-        tssAddr = temp->next->regs.kernelRsp;
+    if (temp->regs.count==0)
+    {    temp->regs.add=40;
+        temp->regs.count+=1;
+        tssAddr = temp->regs.kernelRsp;
     }
     else
     {
-        temp->next->regs.add=0;
-        tssAddr = temp->next->regs.kernelRsp +40;
+        temp->regs.add=0;
+        tssAddr = temp->regs.kernelRsp +40;
     }
     //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
     set_tss_rsp((void*)(tssAddr));
-    runningThread = (temp->next);
-    _moveToNextProcess(&runningThread->regs, &(temp->next)->regs);
+    runningThread = (temp);
+    
+    _moveToNextProcess(&runningThread->regs, &temp->regs);
     
     return 0;
 }
