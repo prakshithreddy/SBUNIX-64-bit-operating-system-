@@ -1164,6 +1164,14 @@ void* ps()
     return 0;
 }
 
+void* sleep(void* count)
+{
+    enableCounter();
+    while(count<=getTimeCounter());
+    disableCounter();
+    return 0;
+}
+
 
 void FreePageEntries(Task* task)
 {

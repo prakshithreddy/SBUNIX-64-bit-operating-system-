@@ -68,6 +68,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 88:   returnVal =  (void*)waitpid((void*)paramA,(uint64_t*)paramB,(void*)paramC); break;
         case 89:   returnVal =  (void*)free((void*)paramA); break;
         case 44:   returnVal =  (void*)ps(); break;
+        case 50:   returnVal =  (void*)sleep((void*)paramA); break;
         case 420:  returnVal =  (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC); break;
     }
     
