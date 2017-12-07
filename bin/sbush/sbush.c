@@ -287,7 +287,8 @@ int fork_execution(char **com_args,short int background,char **envp){
           //dedeprintf("Error in waitpid\n");
           exit(-1);
         }
-      }while(!WIFEXITED(com_status) && !WIFSIGNALED(com_status));
+      }while(!WIFEXITED(com_status));
+      //}while(!WIFEXITED(com_status) && !WIFSIGNALED(com_status));
     }
   }
   return com_status;
@@ -403,6 +404,8 @@ int main(int argc, char *argv[], char *envp[]){
     while(1)
     {
         //read a input line
+        char *ps1="sbush>";
+        puts(ps1);
         char *command = read_command();
         if(*command == '\0'){
           //free(command);

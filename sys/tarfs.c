@@ -147,6 +147,7 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,T
     uint64_t temp3=p_offset;
     uint64_t phy_temp2=(uint64_t)pageAllocator();
     uint64_t vir_ker_temp2=phy_temp2+get_kernbase();
+    memset(vir_ker_temp2);
     mapPageForUser(temp2,phy_temp2,pml4);
     
     //mapPage(temp2,phy_temp2);
@@ -158,6 +159,7 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,T
           temp3+=0x1000;
           phy_temp2=(uint64_t)pageAllocator();
           vir_ker_temp2=phy_temp2+get_kernbase();
+          memset(vir_ker_temp2);
           mapPageForUser(temp2,phy_temp2,pml4);
           //mapPage(temp2,phy_temp2);
         }

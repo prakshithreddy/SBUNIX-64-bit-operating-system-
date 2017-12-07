@@ -363,6 +363,7 @@ uint64_t getCr3()
 void* getNewPML4ForUser()
 {
     struct PML4 *newPML4=(struct PML4*)pageAllocator();
+    memset((uint64_t)newPML4+get_kernbase());
     struct PML4 *currPML4=(struct PML4*)getCr3();
     //get the current pml4 virtual address to copy the kernel page table
     currPML4=(struct PML4*)((uint64_t)currPML4+kernbase);

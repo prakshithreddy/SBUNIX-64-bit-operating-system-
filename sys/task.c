@@ -335,7 +335,7 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
 void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
     task->pid_t = runningThread->pid_t;
-    pidCount=0; //next process takes the next id
+    pidCount+=1; //next process takes the next id
     task->ppid_t = 0; //setting the Pid of the parent for COW
     task->regs.rax=0;
     task->regs.rbx=0;
@@ -524,7 +524,7 @@ void copyParentCr3Entries(Task* task)
                 int64_t phyAdr = getPhysicalPageAddr(start,runningThread->regs.cr3);
                 if(phyAdr!=-1 && phyAdr!=0)
                 {
-                    mapPageForUser(start&FRAME,phyAdr,task->regs.cr3+get_kernbase());
+                    mapPageForUser(start&FRAME,phyAdr&FRAME,task->regs.cr3+get_kernbase());
                     markPageAsRW(start&FRAME,task->regs.cr3+get_kernbase(),1);
                 }
                 start = start + 0x1000;
@@ -633,7 +633,11 @@ int isPartofCurrentVma(uint64_t addr)
     VMA* vma = runningThread->memMap.mmap;
     while(vma!=NULL)
     {
-        if((vma->v_start&FRAME)==addr) return 1;
+        if((vma->v_start&FRAME)==addr)
+        {
+          //kprintf("\nvma number: %d\n",vma->pageNumber);
+          return 1;
+        }
         vma=vma->next;
     }
     
@@ -759,6 +763,7 @@ uint64_t malloc(uint64_t size)
         }
         
         newVma->pageNumber = getNextPageNum();
+        //kprintf("malloc %d",newVma->pageNumber);
         newVma->v_mm = &runningThread->memMap;
         newVma->v_start = end;
         newVma->v_end = newVma->v_start+size;
@@ -772,6 +777,7 @@ uint64_t malloc(uint64_t size)
         temp->next = newVma->next;
         temp->next = newVma;
     }
+    //kprintf("malloc done\n");
     return newVma->v_start;
     
 }
@@ -810,6 +816,7 @@ void deleteRunningThreadAndJump(Task* task)
 void* exec(void* path,void* args,void* envp)
 {
     
+    kprintf("Here1\n");
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
@@ -823,7 +830,7 @@ void* exec(void* path,void* args,void* envp)
         return (void*)-1;
     }
     
- 
+   kprintf("Here2\n");
     uint64_t mainArgs = (uint64_t)kmalloc();
     
     mainArgs-=get_kernbase();
@@ -920,7 +927,7 @@ void* exec(void* path,void* args,void* envp)
     
     pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x301000-(tempMainArgs-mainArgs)-0x8,task->regs.cr3);
     task->regs.userRsp-=8;
-    
+    kprintf("Here3");
     VMA* newVma = (VMA*)kmalloc();
     newVma->pageNumber = getNextPageNum();
     newVma->v_mm = &runningThread->memMap;
@@ -937,12 +944,14 @@ void* exec(void* path,void* args,void* envp)
     task->memMap.mmap = newVma;
     
     kprintf("Entry Point: %p\n",entryPoint);
+    kprintf("Here4");
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     task->exeName = "bin/ps";
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
     //addToQueue(task);
+    kprintf("Here5");
     deleteRunningThreadAndJump(task);
     
     return 0;
@@ -952,7 +961,7 @@ void* exec(void* path,void* args,void* envp)
 void* waitpid(void* pid,void* status,void* flags)
 {
     
-    kprintf("%d %d %d\n",(uint64_t)pid,(uint64_t*)status,(uint64_t)flags);
+    //kprintf("%d %p %d\n",(uint64_t)pid,(uint64_t*)status,(uint64_t)flags);
     
     int* temp = (int*)status;
     
