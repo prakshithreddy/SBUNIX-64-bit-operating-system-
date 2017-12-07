@@ -4,6 +4,7 @@
 
 .global currentRSP
 .global currentRAX
+.global mutex
 
 _switchThread_:
 	movq %rax,(%rdi)
@@ -174,6 +175,8 @@ _moveToNextProcess:
     movq 40(%rsi),%rdi
     movq 56(%rsi),%rbp
     movq (%rsi),%rax
+
+    movq $0,mutex
 
     iretq
 

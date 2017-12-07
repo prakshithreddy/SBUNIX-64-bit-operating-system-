@@ -17,13 +17,13 @@ extern uint64_t userRbp;
 extern uint64_t userRflags;
 
 
-extern int mutex;
 void initSyscalls();
 
 uint64_t readMSR(uint32_t msrAddr);
 void writeMSR(uint64_t value,uint32_t msrAddr);
 
 int getMutex();
+int setMutex();
 
 void* syscall(uint64_t syscallNum,uint64_t param1,uint64_t param2,uint64_t param3,uint64_t param4,uint64_t param5,uint64_t param6);
 
