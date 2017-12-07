@@ -270,14 +270,14 @@ int fork_execution(char **com_args,short int background,char **envp){
     if (background){
       wait_pid = waitpid(pid,&com_status,WNOHANG);
       //dedeprintf("Process pid: %d \n", pid);
-      if(bg_count >= bg_buffer){
-        bg_buffer = bg_buffer + BG_PIDS_BUFFER;
+      //if(bg_count >= bg_buffer){
+        //bg_buffer = bg_buffer + BG_PIDS_BUFFER;
         //rerebg_pids = realloc(bg_pids,bg_buffer);
-      }//need to check if the child process finished or not and print it to the console.
-      bg_pids[bg_count++] = pid;
+      //}//need to check if the child process finished or not and print it to the console.
+      //bg_pids[bg_count++] = pid;
       if(wait_pid == -1){
-        //dedeprintf("Error in waitpid\n");
-        exit(-1);
+        //puts("Error in waitpid\n");
+        //exit(-1);
       }
     }
     else{

@@ -104,7 +104,7 @@ int main(int argc,char* argv[],char* envp[])
     // stat(path,temp);
     
     
-    
+    while(1);
     return 0;
     
     
