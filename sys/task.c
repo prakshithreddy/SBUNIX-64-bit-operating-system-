@@ -864,7 +864,7 @@ void* exec(void* path,void* args,void* envp)
     if(entryPoint==0)
     {
         pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
-        kprintf("%s : command not found :(",(char*)path);
+        kprintf("%s : command not found :(\n",(char*)path);
         Task* temp = runningThread;
         runningThread->state=0;
         while(temp->next!=runningThread) temp = temp->next;
