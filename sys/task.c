@@ -175,6 +175,7 @@ void pushInitialParamstoStack(Task* task)
     
     
     uint64_t mainArgs = (uint64_t)kmalloc();
+    uint64_t tempMainArgs = mainArgs;
     mainArgs-=get_kernbase();
     mapPageForUser(0x300000,(uint64_t)mainArgs,task->regs.cr3+get_kernbase());
     mainArgs+=(get_kernbase());
