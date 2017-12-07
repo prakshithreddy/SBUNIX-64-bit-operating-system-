@@ -634,6 +634,13 @@ void createChildTask(Task *task){
     task->endHH = 0;
     task->endMM = 0;
     task->endSS = 0;
+    
+    for(int i=0;i<20;i++){
+        task->fd_pointers[i]=runningThread->fd_pointers[i];
+    }
+    
+    task->fd_count=runningThread->fd_count;
+    
     //task->next=0;
    // task->memMap.mmap=runningThread->memMap.mmap;
     copyVMA(task,runningThread->memMap.mmap);
