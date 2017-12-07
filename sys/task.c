@@ -946,7 +946,18 @@ void* exec(void* path,void* args,void* envp)
     kprintf("Entry Point: %p\n",entryPoint);
     kprintf("Here4");
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
-    task->exeName = "bin/ps";
+    
+    //copy filename to task structure
+    int i=0;
+    
+    while(((char*)path)[i]!='\0')
+    {
+        task->exeName[i] = ((char*)path)[i];
+        i++;
+    }
+    
+    task->exeName[i]='\0';
+    
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();

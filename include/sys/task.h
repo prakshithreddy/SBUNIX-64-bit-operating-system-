@@ -56,7 +56,7 @@ typedef struct Task{
     int endMM;
     int endSS;
     
-    char* exeName;
+    char exeName[15];
     
   Registers regs;
   struct Task *next;
