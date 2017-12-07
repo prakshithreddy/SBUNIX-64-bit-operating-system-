@@ -283,10 +283,7 @@ int fork_execution(char **com_args,short int background,char **envp){
     else{
       do{ 
         wait_pid = waitpid(pid,&com_status,WUNTRACED);
-        if(wait_pid == -1){
-          //dedeprintf("Error in waitpid\n");
-          exit(-1);
-        }
+         // if(wait_pid == -1);
       }while(!WIFEXITED(com_status));
       //}while(!WIFEXITED(com_status) && !WIFSIGNALED(com_status));
     }
