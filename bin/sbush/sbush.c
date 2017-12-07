@@ -418,8 +418,8 @@ int main(int argc, char *argv[], char *envp[]){
             //environ_main=envp;
             execute_command(com_args,background,envp);
         }
-        free(command);
-        free(com_args);
+        //free(command);
+        //free(com_args);
         background = 0;//resetting this background flag for next command
         pipe_flag = 0;
     }
