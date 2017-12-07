@@ -29,6 +29,11 @@ ssize_t read(int fd, void *buf, size_t count)
     
 }
 
+int close(int fd)
+{
+    return (ssize_t) syscall((void*)3,(void*)(uint64_t)fd,0,0,0,0,0);
+}
+
 int main(int argc, char*argv[],char* envp[])
 {
     
@@ -58,6 +63,6 @@ int main(int argc, char*argv[],char* envp[])
     
     }
     write(1,"\n",1);
-    
+    close(fd);
     return 0;
 }

@@ -10,6 +10,10 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
     return returnValue;
 }
 
+int close(int fd)
+{
+    return (ssize_t) syscall((void*)3,(void*)(uint64_t)fd,0,0,0,0,0);
+}
 
 uint64_t malloc(uint64_t size)
 {
@@ -56,6 +60,10 @@ int main(int argc,char* argv[],char* envp[])
     
     int fd = open(file_path,O_RDONLY|O_DIRECTORY);
     
+    if(fd==-1){
+        return 0;
+    }
+    
     int n = getdents(fd,dirp,4096);
     
     for( int i=0;i<n;)
@@ -90,7 +98,7 @@ int main(int argc,char* argv[],char* envp[])
         i+=temp->d_reclen;
     }
     write(1,"\n",1);
-    
+    close(fd);
     //struct stat* temp = (struct stat*) mmap(NULL,sizeof(struct stat),PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE,-1,0);
     
     // stat(path,temp);
