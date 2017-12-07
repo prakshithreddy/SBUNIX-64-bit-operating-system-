@@ -1333,7 +1333,7 @@ void initUserProcess()
     userThread2->startMM = getCurMin();
     userThread2->startSS = getCurSec();
    
-    clearScreen();
+    //clearScreen();
     switchToUserMode();
     
 }
