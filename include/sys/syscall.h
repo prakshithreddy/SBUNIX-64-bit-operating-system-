@@ -17,6 +17,7 @@ extern uint64_t userRbp;
 extern uint64_t userRflags;
 
 
+static int mutex = 0;
 void initSyscalls();
 
 uint64_t readMSR(uint32_t msrAddr);

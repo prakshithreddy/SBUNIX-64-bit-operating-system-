@@ -11,16 +11,14 @@
 #define MSR_LSTAR 0xC0000082
 #define MSR_SFMASK 0xC0000084
 
-static int mutex = 0;
-
 int getMutex()
 {
     return mutex;
 }
 
-int setMutex()
+int setMutex(int val)
 {
-    return mutex;
+    mutex=val;
 }
 
 uint64_t* userRSP = 0;
@@ -48,7 +46,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
 //    char* p =  (char*)paramB;
 //    kprintf("%s",p);
 //
-    mutex=1;
+    setMutex(1);
     
     void* returnVal = 0;
     
