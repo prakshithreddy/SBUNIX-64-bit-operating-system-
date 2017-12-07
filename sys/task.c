@@ -1167,7 +1167,7 @@ void* ps()
 void* sleep(void* count)
 {
     enableCounter();
-    while(count<=getTimeCounter());
+    while((uint64_t)count<=getTimeCounter());
     disableCounter();
     return 0;
 }
