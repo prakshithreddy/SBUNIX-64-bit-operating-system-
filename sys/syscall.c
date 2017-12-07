@@ -16,7 +16,7 @@ int getMutex()
     return mutex;
 }
 
-int setMutex(int val)
+void setMutex(int val)
 {
     mutex=val;
 }
