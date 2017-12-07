@@ -787,7 +787,7 @@ void deleteRunningThreadAndJump(Task* task)
     
     temp->next = task;
     
-    _moveToNextProcess(&runningThread, &task);
+    _moveToNextProcess(&runningThread->regs, &task->regs);
     
     
     
@@ -1162,7 +1162,7 @@ void* exit(void* pid)
     
     temp->next = temp->next->next;
     
-    _moveToNextProcess(&runningThread, &(temp->next));
+    _moveToNextProcess(&runningThread->regs, &(temp->next)->regs);
     
     return 0;
 }
