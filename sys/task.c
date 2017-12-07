@@ -929,6 +929,18 @@ void* exec(void* path,void* args,void* envp)
     task->startSS = getCurSec();
     addToQueue(task);
     
+    
+    Task tempTask = runningThread;
+    
+    while(tempTask->next!=runningThread)
+        tempTask=tempTask->next;
+    
+    tempTask->next = runningThread->next;
+    
+    runningThread=runningThread->next;
+    runNextTask();
+    
+    
     return 0;
 }
 
