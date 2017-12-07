@@ -871,7 +871,7 @@ void* exec(void* path,void* args,void* envp)
         temp->next = runningThread->next;
         
         runningThread = runningThread->next;
-        runningThread->regs.count==0;
+        runningThread->regs.count=0;
         
         _prepareInitialKernelStack(&runningThread->regs);
         
