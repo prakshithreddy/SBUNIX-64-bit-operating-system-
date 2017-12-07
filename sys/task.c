@@ -1289,6 +1289,15 @@ void* exit(void* pid)
     return 0;
 }
 
+void* clearScreen()
+{
+    
+    for(int i=0;i<30;i++) kprintf("\n");
+    return 0;
+    
+}
+
+
 void initUserProcess()
 {
     
@@ -1324,14 +1333,9 @@ void initUserProcess()
     userThread2->startMM = getCurMin();
     userThread2->startSS = getCurSec();
    
+    clearScreen();
     switchToUserMode();
     
 }
 
-void* clearScreen()
-{
-    
-    for(int i=0;i<30;i++) kprintf("\n");
-    return 0;
-    
-}
+
