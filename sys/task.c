@@ -615,6 +615,17 @@ void createChildTask(Task *task){
     task->regs.add=0;
     task->state = 1;
     task->exeName = runningThread->exeName;
+    
+    int i=0;
+    
+    while(runningThread->exeName[i]!='\0')
+    {
+        task->exeName[i] = runningThread->exeName[i];
+        i++;
+    }
+    
+    task->exeName[i]='\0';
+    
     task->startHH = getCurHr();
     task->startMM = getCurMin();
     task->startSS = getCurSec();
@@ -948,7 +959,7 @@ void* exec(void* path,void* args,void* envp)
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     
     //copy filename to task structure
-    int i=0;
+    i=0;
     
     while(((char*)path)[i]!='\0')
     {
@@ -1224,7 +1235,19 @@ void initUserProcess()
     if(hello_entrypoint == 0) return;
     
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    userThread2->exeName = "bin/sbush";
+    char* temp = "bin/sbush";
+    
+    
+    int i=0;
+    
+    while(temp[i] != '\0')
+    {
+        userThread2->exeName[i] = temp[i];
+        i++;
+    }
+    
+    userThread2->exeName[i] = '\0';
+    
     
     createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
