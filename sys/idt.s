@@ -476,6 +476,7 @@ _isr15:
 
 _isr13:
 
+    popq errorCode
     pushq %rax
     pushq %rbx
     pushq %rcx

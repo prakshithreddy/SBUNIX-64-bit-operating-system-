@@ -417,8 +417,9 @@ void _hndlr_isr12(registers_t regs){
     while(1);
 }
 
-void _hndlr_isr13(registers_t regs){
-    kprintf("0x0D    General protection fault");
+void _hndlr_isr13(){
+    kprintf("0x0D    General protection fault %d",errorCode);
+    
     while(1);
 }
 
