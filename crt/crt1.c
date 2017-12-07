@@ -10,6 +10,12 @@ void* syscall1(void* syscallNum,void* param1,void* param2,void* param3,void* par
     return returnValue;
 }
 
+
+void clrScreen()
+{
+    syscall1((void*)(uint64_t)123,0,0,0,0,0,0);
+}
+
 void _start(void) {
   // call main() and exit() here
     uint64_t* rsp;
@@ -17,7 +23,7 @@ void _start(void) {
     __asm__ __volatile__("movq %%rsp,%0;":"=r"(rsp)::);
     
     rsp = (uint64_t*)((char*)(*(rsp+1)));
-    
+    clrScreen();
     main(*(rsp+1),(char**)(rsp+2),(char**)(rsp+*(rsp+1)+3));
 
     syscall1((void*)(uint64_t)100,0,0,0,0,0,0);

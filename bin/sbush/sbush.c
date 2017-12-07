@@ -391,7 +391,7 @@ void clrScreen()
 
 int main(int argc, char *argv[], char *envp[]){
 
-    clrScreen();
+   // clrScreen();
 //    char *ps1="sbush>";
 //    puts(ps1);
     //char *p = "bin/ls";
