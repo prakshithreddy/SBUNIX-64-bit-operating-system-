@@ -57,8 +57,8 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 0:    returnVal =  (void *)readFile(paramA,(char *)paramB,paramC); break;
         case 4:    returnVal =  (void *)writeFile(paramA,(char *)paramB,paramC); break;
         case 3:    returnVal =  (void*)closeFile(paramA); break;
-        case 2:    returnVal =  (void*)openFile((char *)paramA); break
-        case 9:    returnVal =  (void*)openDirectory((char *)paramA); break
+        case 2:    returnVal =  (void*)openFile((char *)paramA); break;
+        case 9:    returnVal =  (void*)openDirectory((char *)paramA); break;
         case 10:   returnVal =  (void*)closeDir(paramA); break;
         case 11:   returnVal =  (void*)readDir(paramA,(char *)paramB,paramC); break;
         case 12:   returnVal =  (void*)getDirEntries(paramA,(char *)paramB,paramC); break;
