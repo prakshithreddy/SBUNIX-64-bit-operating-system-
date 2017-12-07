@@ -93,6 +93,7 @@ Task* getRunningThread();
 void init_terminal();
 void* printMe(void* path,void* args,void* envp);
 void* waitpid(void* pid,void* status,void* flags);
+void* sleep(void* paramA);
 
 void* clearScreen();
 
