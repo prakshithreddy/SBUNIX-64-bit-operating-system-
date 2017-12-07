@@ -1303,12 +1303,12 @@ void initUserProcess()
     
     uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
     Task *userThread2 = (Task*)kmalloc();
-    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
+    uint64_t hello_entrypoint = (loadFile("/bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     
     if(hello_entrypoint == 0) return;
     
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    char* temp = "bin/sbush";
+    char* temp = "/bin/sbush";
     
     
     int i=0;
