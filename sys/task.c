@@ -1156,7 +1156,7 @@ void* exit(void* pid)
 ////    FreePageTables(task);
 //    //deleteRunningThreadAndJump(Task* task);
     
-    Tast* temp = runningThread;
+    Task* temp = runningThread;
     
     while(temp->next!=runningThread) temp = temp->next;
     
