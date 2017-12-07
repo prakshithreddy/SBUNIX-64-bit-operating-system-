@@ -469,6 +469,7 @@ void _hndlr_isr14(){
             
         }
         else while(1);
+        kprintf("Handling page fault DONE ");
     }
     else if(us&rw&p)
     {
