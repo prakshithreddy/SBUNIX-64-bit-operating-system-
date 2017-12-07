@@ -1164,10 +1164,18 @@ void* ps()
     return 0;
 }
 
-void* sleep(void* count)
+void* enableSleep()
 {
     enableCounter();
-    while((uint64_t)count>=getTimeCounter());
+    return 0;
+}
+
+void* getCounter()
+{
+    return (void*)getTimeCounter();
+}
+void* disableSleep()
+{
     disableCounter();
     return 0;
 }

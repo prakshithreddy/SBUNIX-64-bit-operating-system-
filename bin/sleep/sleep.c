@@ -10,6 +10,11 @@ void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* para
 
 int main(int argc, char *argv[], char *envp[]){
     
-    syscall((void*)50,(void*)20,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+    syscall((void*)50,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+    
+    while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)<=20);
+    
+    syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+    
     return 0;
 }
