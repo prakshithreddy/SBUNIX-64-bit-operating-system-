@@ -779,10 +779,6 @@ uint64_t malloc(uint64_t size)
 void* exec(void* path,void* args,void* envp)
 {
     
-    runningThread->pid_t = -1;
-    runningThread->ppid_t = -1;
-    
-    
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
     task->regs.cr3=newCr3;
@@ -792,7 +788,7 @@ void* exec(void* path,void* args,void* envp)
     
     if(entryPoint==0)
     {
-        //pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
+        pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
         return (void*)-1;
     }
     
@@ -1138,9 +1134,9 @@ void* exit(void* pid)
     task->endHH = getCurHr();
     task->endMM = getCurMin();
     task->endSS = getCurSec();
-//    FreePageEntries(task);
-//    FreePageTables(task);
-//    //runNextTask();
+    FreePageEntries(task);
+    FreePageTables(task);
+    runNextTask();
     return 0;
 }
 
