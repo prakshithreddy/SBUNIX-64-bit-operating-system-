@@ -1235,7 +1235,7 @@ void initUserProcess()
     if(hello_entrypoint == 0) return;
     
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    char* temp = "bin/sbush";
+    char* temp = "bun/sbush";
     
     
     int i=0;
