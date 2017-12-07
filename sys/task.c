@@ -1105,20 +1105,14 @@ void* ps()
     
     Task * task = runningThread;
     
-    char * temp;
-    if(task->state==1) temp = "RUNNING";
-    else temp = "NOT-RUNNING";
     
     kprintf("PID START_TIME END_TIME STATE      BINARY\n");
-    kprintf("%d  %d:%d:%d   %d:%d:%d %s         %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,temp,task->exeName);
+    kprintf("%d  %d:%d:%d   %d:%d:%d %s         %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,"RUNNING",task->exeName);
     
     while(task->next!=runningThread)
     {
-        if(task->next->state==1) temp = "RUNNING";
-        else temp = "NOT-RUNNING";
         
-        
-        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->next->pid_t,task->next->startHH,task->next->startMM,task->next->startSS,task->next->endHH,task->next->endMM,task->next->endSS,temp,task->next->exeName);
+        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->next->pid_t,task->next->startHH,task->next->startMM,task->next->startSS,task->next->endHH,task->next->endMM,task->next->endSS,"RUNNING",task->next->exeName);
         
         
         task=task->next;
@@ -1128,7 +1122,7 @@ void* ps()
     
     while(task!=NULL)
     {
-        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->next->pid_t,task->next->startHH,task->next->startMM,task->next->startSS,task->next->endHH,task->next->endMM,task->next->endSS,temp,task->next->exeName);
+        kprintf("%d    %d:%d:%d    %d:%d:%d    %s      %s\n",task->pid_t,task->startHH,task->startMM,task->startSS,task->endHH,task->endMM,task->endSS,"EXITED",task->exeName);
         
         task=task->next;
     }
