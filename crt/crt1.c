@@ -22,7 +22,5 @@ void _start(void) {
 
     syscall1((void*)(uint64_t)100,0,0,0,0,0,0);
     
-    while(1);
-    
 }
 

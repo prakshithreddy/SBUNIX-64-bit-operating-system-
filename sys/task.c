@@ -645,10 +645,6 @@ void addToQueue(Task* task)
 {
     task->next = runningThread->next;
     runningThread->next = task;
-    
-    //remove child from the queue
-    
-    
 
 }
 
@@ -782,8 +778,6 @@ uint64_t malloc(uint64_t size)
 
 void* exec(void* path,void* args,void* envp)
 {
-    runningThread->pid_t = -1;
-    runningThread->ppid_t = -1;
     
     Task *task = (Task*)kmalloc();
     uint64_t newCr3 = (uint64_t)getNewPML4ForUser();
@@ -1140,9 +1134,9 @@ void* exit(void* pid)
     task->endHH = getCurHr();
     task->endMM = getCurMin();
     task->endSS = getCurSec();
-//    FreePageEntries(task);
-//    FreePageTables(task);
-    //runNextTask();
+    FreePageEntries(task);
+    FreePageTables(task);
+    runNextTask();
     return 0;
 }
 
@@ -1150,24 +1144,24 @@ void initUserProcess()
 {
     
     uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-    Task *task = (Task*)kmalloc();
-    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),task));
+    Task *userThread2 = (Task*)kmalloc();
+    uint64_t hello_entrypoint = (loadFile("bin/sbush",(U2_cr3+get_kernbase()),userThread2));
     
     if(hello_entrypoint == 0) return;
     
     kprintf("Entry Point: %p\n",hello_entrypoint);
-    task->exeName = "bin/sbush";
+    userThread2->exeName = "bin/sbush";
     
-    createNewTask(task,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+    createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
     
-    //mainThread.next = task;
-    task->next = task;
+    mainThread.next = userThread2;
+    userThread2->next = userThread2;
     
     enableIntr();
     
-    task->startHH = getCurHr();
-    task->startMM = getCurMin();
-    task->startSS = getCurSec();
+    userThread2->startHH = getCurHr();
+    userThread2->startMM = getCurMin();
+    userThread2->startSS = getCurSec();
    
     switchToUserMode();
     
