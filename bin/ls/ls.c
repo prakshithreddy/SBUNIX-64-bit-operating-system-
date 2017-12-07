@@ -52,15 +52,15 @@ int main(int argc,char* argv[],char* envp[])
     
     struct dirent* temp;
     
-    //char* dirp = (char*)malloc(4096);
+    char* dirp = (char*)malloc(4096);
     
     int fd = open(file_path,O_RDONLY|O_DIRECTORY);
     
-    int n = getdents(fd,file_path,4096);
+    int n = getdents(fd,dirp,4096);
     
     for( int i=0;i<n;)
     {
-        temp = (struct dirent*) (file_path+i);
+        temp = (struct dirent*) (dirp+i);
 
         
         if(temp->d_name[0]=='.') {
