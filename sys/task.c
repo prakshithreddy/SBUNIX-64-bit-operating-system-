@@ -1263,6 +1263,47 @@ void FreePageTables(Task* task)
     
 }
 
+void* kill(void* pid)
+{
+    Task* task = runningThread;
+    while(task->next->pid_t!=(uint64_t)pid_t) tast=task->next;
+    
+    Task* toBeDel = task->next;
+    
+    task->next = task->next->next;
+    
+    addToDeleteQueue(toBeDel);
+    
+    if(toBeDel==runningThread&&runningThread->next!=runningThread)
+    {
+        uint64_t tssAddr=0;
+        if (runningThread->regs.count==0)
+        {    runningThread->regs.add=40;
+            runningThread->regs.count+=1;
+            tssAddr = runningThread->regs.kernelRsp;
+        }
+        else
+        {
+            runningThread->regs.add=0;
+            tssAddr = runningThread->regs.kernelRsp +40;
+        }
+        //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
+        set_tss_rsp((void*)(tssAddr));
+        runningThread = (runningThread);
+        
+        _moveToNextProcess(&runningThread->regs, &runningThread->regs);
+        
+    }
+    else if(runningThread->next==runningThread)
+    {
+        kprintf("Cannot kill the only process.\n");
+    }
+    
+    return 0;
+    
+
+}
+
 void* exit(void* pid)
 {
     Task* task = runningThread;
