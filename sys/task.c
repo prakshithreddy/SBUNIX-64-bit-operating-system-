@@ -1146,7 +1146,7 @@ void FreePageTables(Task* task)
 void* exit(void* pid)
 {
     //delete the task and free all memory
-    Task* task = runningTask;
+    Task* task = runningThread;
     
 //    if((uint64_t)pid == 0) task=runningThread;
 //    else
@@ -1164,12 +1164,12 @@ void* exit(void* pid)
 //        }
 //    }
     
-    while(task->next!=runningTask)
+    while(task->next!=runningThread)
         task=task->next;
     
-    task->next = runningTask->next;
+    task->next = runningThread->next;
     
-    runningTask=runningTask->next;
+    runningThread=runningThread->next;
     
     
    // Task* task = runningThread;
