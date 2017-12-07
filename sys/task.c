@@ -265,7 +265,7 @@ void pushInitialParamstoStack(Task* task)
     pushSomeArgsToUser(mainArgs,(void*)(uint64_t)count,task->regs.cr3);
     mainArgs-=8;
     
-    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x300000,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x300000-(tempMainArgs-mainArgs),task->regs.cr3);
     task->regs.userRsp-=8;
     
     
@@ -808,6 +808,7 @@ void* exec(void* path,void* args,void* envp)
     
  
     uint64_t mainArgs = (uint64_t)kmalloc();
+    uint64_t tempMainArgs = mainArgs;
     mainArgs-=get_kernbase();
     mapPageForUser(0x300000,(uint64_t)mainArgs,task->regs.cr3+get_kernbase());
     mainArgs+=(get_kernbase());
@@ -898,7 +899,7 @@ void* exec(void* path,void* args,void* envp)
     pushSomeArgsToUser(mainArgs,(void*)(uint64_t)count,task->regs.cr3);
     mainArgs-=8;
     
-    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x300000,task->regs.cr3);
+    pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x300000-(tempMainArgs-mainArgs),task->regs.cr3);
     task->regs.userRsp-=8;
     
     VMA* newVma = (VMA*)kmalloc();
