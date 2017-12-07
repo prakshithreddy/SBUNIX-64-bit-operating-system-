@@ -1170,14 +1170,13 @@ void FreePageTables(Task* task)
 
 void* exit(void* pid)
 {
-//    Task* task = runningThread;
-//    task->state = 0;
-//    task->endHH = getCurHr();
-//    task->endMM = getCurMin();
-//    task->endSS = getCurSec();
-////    FreePageEntries(task);
-////    FreePageTables(task);
-//    //deleteRunningThreadAndJump(Task* task);
+    Task* task = runningThread;
+    task->state = 0;
+    task->endHH = getCurHr();
+    task->endMM = getCurMin();
+    task->endSS = getCurSec();
+    //FreePageEntries(task);
+    //FreePageTables(task);
     
     Task* temp = runningThread;
     
