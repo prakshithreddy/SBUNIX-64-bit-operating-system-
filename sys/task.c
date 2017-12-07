@@ -1170,11 +1170,11 @@ void* exit(void* pid)
     task->endHH = getCurHr();
     task->endMM = getCurMin();
     task->endSS = getCurSec();
-    //FreePageEntries(task);
-    //FreePageTables(task);
+    FreePageEntries(task);
+    FreePageTables(task);
     //while(1);
     runNextTask();
-        return 0;
+    //return 0;
 }
 
 void initUserProcess()
