@@ -1039,7 +1039,7 @@ void* free(void* ptr)
         if(vmaTemp->next->v_start==(uint64_t)ptr)
         {
             eTemp->next = vmaTemp->next->next;
-            //pageDeAllocator((void*)((uint64_t)(vmaTemp->next - get_kernbase())&FRAME));
+            pageDeAllocator((void*)((uint64_t)(vmaTemp->next - get_kernbase())&FRAME));
             break;
         }
         eTemp=vmaTemp->next;
@@ -1072,8 +1072,8 @@ void* free(void* ptr)
         
     }
     
-    //if(count==1&&pageCount==1)
-        //pageDeAllocator((void*)(phyAddr&FRAME));
+    if(count==1&&pageCount==1)
+        pageDeAllocator((void*)(phyAddr&FRAME));
     
     
     
