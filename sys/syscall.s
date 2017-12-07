@@ -17,6 +17,9 @@
 
 .global syscallHandler
 
+.global mutex
+
+
 _syscallEntry:
 
     movq %rsp, userRSP
@@ -85,5 +88,7 @@ _syscallEntry:
     popq %r11
     popq %rcx
     popq %rsp
+
+    movq $0,mutex
 
     sysretq

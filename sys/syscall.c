@@ -11,6 +11,13 @@
 #define MSR_LSTAR 0xC0000082
 #define MSR_SFMASK 0xC0000084
 
+static int mutex = 0;
+
+int getMutex()
+{
+    return mutex;
+}
+
 uint64_t* userRSP = 0;
 uint64_t* userRIP = 0;
 uint64_t* kernelRSP = 0;
@@ -36,35 +43,35 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
 //    char* p =  (char*)paramB;
 //    kprintf("%s",p);
 //
+    mutex=1;
+    
+    void* returnVal = 0;
     
     switch(syscallNum)
     {
-        case 123: return (void*)clearScreen();
-        case 100: return (void*)exit((void*)paramA);
-        case 199: return (void*)exit((void*)paramA);
-        case 1:  return (void*)fork();
-        case 99: return (void*)malloc(paramA);
-        case 0: //kprintf("Read File System Call\n"); 
-                return (void *)readFile(paramA,(char *)paramB,paramC);
-        case 4: //kprintf("Write File System Call\n");
-                return (void *)writeFile(paramA,(char *)paramB,paramC);  
-        case 3: kprintf("Close File System Call\n");return (void*)closeFile(paramA);
-        case 2: kprintf("Open File System Call");return (void*)openFile((char *)paramA);
-        case 9: kprintf("Open Dir System Call");return (void*)openDirectory((char *)paramA);
-        case 10: kprintf("Close Dir System Call");return (void*)closeDir(paramA);
-        case 11: kprintf("Read Dir System Call");return (void*)readDir(paramA,(char *)paramB,paramC);
-        case 12: kprintf("Get Dents System Call");return (void*)getDirEntries(paramA,(char *)paramB,paramC);  
-        case 80: kprintf("Change Directory System Call");return (void*)changeDirectory((char *)paramA);
-        case 79: kprintf("Get Current Working Directory System Call");return (void*)getCWD((char *)paramA,paramB);
-        case 78: kprintf("Exec System Call\n"); return (void*)exec((char*)paramA,(char*)paramB,(char*)paramC);
-        case 88: kprintf("WaitPID System Call\n"); return (void*)waitpid((void*)paramA,(uint64_t*)paramB,(void*)paramC);
-        case 89: //kprintf("Free System Call\n");
-                  return (void*)free((void*)paramA);
-        case 44: kprintf("ps System Call\n"); return (void*)ps();
-        case 420: kprintf("print System Call\n"); return (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC);
+        case 123:  returnVal =  (void*)clearScreen(); break;
+        case 100:  returnVal =  (void*)exit((void*)paramA); break;
+        case 199:  returnVal =  (void*)exit((void*)paramA); break;
+        case 1:    returnVal =  (void*)fork(); break;
+        case 99:   returnVal =  (void*)malloc(paramA); break;
+        case 0:    returnVal =  (void *)readFile(paramA,(char *)paramB,paramC); break;
+        case 4:    returnVal =  (void *)writeFile(paramA,(char *)paramB,paramC); break;
+        case 3:    returnVal =  (void*)closeFile(paramA); break;
+        case 2:    returnVal =  (void*)openFile((char *)paramA); break
+        case 9:    returnVal =  (void*)openDirectory((char *)paramA); break
+        case 10:   returnVal =  (void*)closeDir(paramA); break;
+        case 11:   returnVal =  (void*)readDir(paramA,(char *)paramB,paramC); break;
+        case 12:   returnVal =  (void*)getDirEntries(paramA,(char *)paramB,paramC); break;
+        case 80:   returnVal =  (void*)changeDirectory((char *)paramA); break;
+        case 79:   returnVal =  (void*)getCWD((char *)paramA,paramB); break;
+        case 78:   returnVal =  (void*)exec((char*)paramA,(char*)paramB,(char*)paramC); break;
+        case 88:   returnVal =  (void*)waitpid((void*)paramA,(uint64_t*)paramB,(void*)paramC); break;
+        case 89:   returnVal =  (void*)free((void*)paramA); break;
+        case 44:   returnVal =  (void*)ps(); break;
+        case 420:  returnVal =  (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC); break;
     }
     
-    return (void*)100;
+    return returnVal;
     
 }
 
