@@ -386,10 +386,10 @@ void runNextTask()
     
     Task* nextTask = runningThread->next;
     
-    while(nextTask->state==0) nextTask=nextTask->next;
-    
-    runningThread = nextTask;
-    
+//    while(nextTask->state==0) nextTask=nextTask->next;
+//    
+//    runningThread = nextTask;
+//    
     uint64_t tssAddr=0;
     if (runningThread->regs.count==0)
     {    runningThread->regs.add=40;
