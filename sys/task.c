@@ -1172,7 +1172,7 @@ void* enableSleep()
 
 void* getCounter()
 {
-    return (void*)getTimeCounter();
+    return (void*)(uint64_t)getTimeCounter();
 }
 void* disableSleep()
 {
