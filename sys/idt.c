@@ -469,6 +469,7 @@ void _hndlr_isr14(){
     if(errorCode!=0)
     {
 //        kprintf("Kill this bad guy..");
+        kprintf("%d",errorCode);
         exit(0);
     }
     if((us&rw&!p) || ((!us)&rw&(!p)))
@@ -495,6 +496,7 @@ void _hndlr_isr14(){
             
         }
         else if(us&rw&!p){
+            kprintf("%d\n",errorCode);
             kprintf("Segmentation Fault..Unauthorised access to meomry..Killing the process..\n");
             //need to write code here to kill it..
             exit(0);
@@ -546,11 +548,13 @@ void _hndlr_isr14(){
         
     }
     else if(us&!rw&!p){
+        kprintf("%d",errorCode);
         kprintf("Segmentation Fault..Unauthorised access to meomry..Killing the process..\n");
         exit(0);
     }
     else
-    {
+    {  
+        kprintf("%d",errorCode);
         kprintf("Segmentation Fault..\n");
         exit(0);
     }

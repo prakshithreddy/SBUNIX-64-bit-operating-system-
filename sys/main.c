@@ -44,8 +44,8 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
     
     
   //kprintf("                            Paging Enabled                             \n");
-  kprintf("                             Starting Up..                             \n");
-  kprintf("                          Welcome to SBUNIX..                                 \n");
+  kprintf("******************************...Starting UP...*****************************\n");
+  kprintf("******************************Welcome to SBUNIX*****************************\n");
 
   //probeAHCI();
   //initUserMode();

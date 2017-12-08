@@ -879,7 +879,7 @@ void* exec(void* path,void* args,void* envp)
     if(entryPoint==0)
     {
         pageDeAllocator((void*)((uint64_t)(task - get_kernbase())));
-        kprintf("%s : command not found :(\n",(char*)path);
+        kprintf("%s : command not found\n",(char*)path);
         Task* temp = runningThread;
         runningThread->state=0;
         while(temp->next!=runningThread) temp = temp->next;
@@ -983,7 +983,7 @@ void* exec(void* path,void* args,void* envp)
     
     while(((char**)args)[i]!=NULL) i++;
     
-    kprintf("ARGV COUNT %d",i);
+    //kprintf("ARGV COUNT %d",i);
     
     int count=i;
     
@@ -1015,7 +1015,7 @@ void* exec(void* path,void* args,void* envp)
     
     pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x301000-(tempMainArgs-mainArgs)-0x8,task->regs.cr3);
     task->regs.userRsp-=8;
-    kprintf("Here3");
+    //kprintf("Here3");
     VMA* newVma = (VMA*)kmalloc();
     newVma->pageNumber = getNextPageNum();
     newVma->v_mm = &runningThread->memMap;
@@ -1031,8 +1031,8 @@ void* exec(void* path,void* args,void* envp)
     newVma->next = task->memMap.mmap;
     task->memMap.mmap = newVma;
     
-    kprintf("Entry Point: %p\n",entryPoint);
-    kprintf("Here4");
+    //kprintf("Entry Point: %p\n",entryPoint);
+    //kprintf("Here4");
     createNewExecTask(task,entryPoint,runningThread->regs.rflags,newCr3);
     
     //copy filename to task structure
@@ -1050,7 +1050,7 @@ void* exec(void* path,void* args,void* envp)
     task->startMM = getCurMin();
     task->startSS = getCurSec();
     //addToQueue(task);
-    kprintf("Here5");
+    //kprintf("Here5");
     deleteRunningThreadAndJump(task);
     
     return 0;
@@ -1094,7 +1094,7 @@ void* waitpid(void* pid,void* status,void* flags)
 void* free(void* ptr)
 {
     
-    kprintf("PTR To Free\n",(uint64_t)ptr);
+    //kprintf("PTR To Free\n",(uint64_t)ptr);
     
     uint64_t pageToDel = (uint64_t)ptr&FRAME;
     
@@ -1309,7 +1309,7 @@ void* kill(void* pid)
     while(task->next!=runningThread && task->next->pid_t != (uint64_t)pid ) task=task->next;
     
     if(task->next==runningThread || task->next->pid_t == 1) {
-        kprintf("Did not find any process with pid %d\n"+ (uint64_t)pid);
+        kprintf("Did not find any process with given pid\n");
         return 0;
     }
     
@@ -1335,7 +1335,7 @@ void* exit(void* pid)
 {
     Task* task = runningThread;
     if(runningThread->pid_t==1){
-        kprintf("killing sbush>> restarting");
+        kprintf("killing sbush.... restarting....\n");
         return 0;
     }
     

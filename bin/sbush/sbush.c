@@ -365,7 +365,8 @@ int main(int argc, char *argv[], char *envp[]){
     {
         //read a input line
         
-        char *ps1=getenv("PS1");
+        //char *ps1=getenv("PS1");
+        char *ps1=NULL;
         if(ps1==NULL){
           puts("sbush>");
         }

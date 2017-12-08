@@ -479,7 +479,7 @@ int64_t openFile(char* file){
                    fd_array->d_prev_dir[0]='\0';
                    fd_array->d_dirp=0;
                    int file_fd = (5*page+fd);
-                   kprintf("FD for above file: %d\n",file_fd);
+                   //kprintf("FD for above file: %d\n",file_fd);
                    return file_fd;
                    break; 
                 }
