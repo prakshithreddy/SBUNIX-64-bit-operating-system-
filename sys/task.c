@@ -1299,11 +1299,13 @@ void* kill(void* pid)
     
     Task* toBeDel = task->next;
     
+    FreePageEntries(toBeDel);
+    FreePageTables(toBeDel);
+    
     task->next = task->next->next;
     
    
-    FreePageEntries(toBeDel);
-    FreePageTables(toBeDel);
+    
     
     addToDeleteQueue(toBeDel);
         
