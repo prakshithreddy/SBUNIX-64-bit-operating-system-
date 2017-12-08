@@ -1284,13 +1284,19 @@ void* kill(void* pid)
 {
     
     Task* task = runningThread->next;
-    while(task->next->pid_t!=(uint64_t)pid&&task!=runningThread) task=task->next;
+    
+    while(task!=runningThread && task->next->pid_t != (uint64_t)pid ) task=task->next;
+    
+    if(task==runningThread) {
+        kprintf("Did not find any process with pid %d\n"+ (uint64_t)pid);
+        return 0;
+    }
     
     Task* toBeDel = task->next;
     
     task->next = task->next->next;
     
-    
+   
     FreePageEntries(toBeDel);
     FreePageTables(toBeDel);
     
