@@ -65,5 +65,3 @@ unsigned int sleep(unsigned int seconds){
   syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
 }
 pid_t wait(int *status);
-pid_t getpid(void);
-pid_t getppid(void);
