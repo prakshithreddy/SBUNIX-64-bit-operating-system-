@@ -1335,9 +1335,9 @@ void* exit(void* pid)
 {
     Task* task = runningThread;
     if(runningThread->pid_t==1){
-        //kprintf("killing sbush>> restartinmg");
-        initMultiTasking();
-        initUserProcess();
+        kprintf("killing sbush>> restartinmg");
+//        initMultiTasking();
+//        initUserProcess();
         return 0;
     }
     
