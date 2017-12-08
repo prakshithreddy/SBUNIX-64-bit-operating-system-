@@ -56,7 +56,14 @@ char *getcwd(char *buf, size_t size){
   return (char *)syscall((void*)79,(void *)buf,(void *)(uint64_t)size,0,0,0,0);
 }
 
-unsigned int sleep(unsigned int seconds);
+unsigned int sleep(unsigned int seconds){
+  
+  syscall((void*)50,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+    
+  while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)<=seconds);
+    
+  syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+}
 pid_t wait(int *status);
 pid_t getpid(void);
 pid_t getppid(void);
