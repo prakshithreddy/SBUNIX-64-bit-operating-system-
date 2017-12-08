@@ -170,9 +170,9 @@ void pushInitialParamstoStack(Task* task)
     
     char** args = (char**)kmalloc();
     
-    args[0] = (char*)"ls";
-    args[1] = (char*)"-l";
-    args[2] = (char*)"-r";
+    args[0] = (char*)"sbush";
+    args[1] = NULL;
+    args[2] = NULL;
     args[3] = NULL;
     
     

@@ -1,4 +1,8 @@
 #include <stdlib.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<signal.h>
+#include<dirent.h>
 
 #define COMMAND_BUFFER 2000
 #define ARGUMENT_BUFFER 32
@@ -8,7 +12,7 @@
 #define LINE_BUFFER 64
 #define ENV_VAR_LENGTH 256
 int environ_length;
-char **environ_main;
+//char **environ_main;
 int *bg_pids;
 int bg_count = 0, bg_buffer = BG_PIDS_BUFFER;
 short int background = 0;
@@ -16,11 +20,11 @@ short int pipe_flag = 0;
 char *PS1_SBUSH;
 
 
-void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* param4,void* param5,void* param6) {
+/*void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* param4,void* param5,void* param6) {
     void* returnValue;
     __asm__ volatile ("movq %1, %%rax; movq %2, %%rdi; movq %3, %%rsi; movq %4, %%rdx; movq %5, %%r10; movq %6, %%r8;movq %7, %%r9;syscall;movq %%rax, %0;":"=g"(returnValue):"g"(syscallNum),"g"(param1),"g"(param2),"g"(param3),"g"(param4),"g"(param5),"g"(param6):"%rax","%rdi","%rsi","%rdx","%r10","%r8","%r9","memory");//clobber list
     return returnValue;
-}
+}*/
 
 int strcmp(char *str1,char *str2){
   int i=0;
@@ -47,7 +51,7 @@ void strcat(char *dest, char *src)
   (*dest)? strcat(++dest, src): (*dest++ = *src++)? strcat(dest, src): 0 ;
 }
 
-void exit(int rc){
+/*void exit(int rc){
     syscall((void*)(uint64_t)100,(void*)(int64_t)rc,0,0,0,0,0);
 }
 
@@ -86,6 +90,55 @@ int chdir(const char *path)
   return (ssize_t)syscall((void*)80,(void*)path,0,0,0,0,0);
     
 }
+
+void puts(char *buf){
+  int count=0;
+  while(buf[count]!='\0') count++;
+  syscall((void*)(uint64_t)4,(void*)(uint64_t)1,(void*)buf,(void*)(uint64_t)count,0,0,0);
+}
+
+char getChar(){
+    char c;
+    syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
+    return c;
+}*/
+
+char *read_line(int fd){
+  char *d = (char *)malloc(sizeof(char) * LINE_BUFFER);
+  char *c = (char *)malloc(sizeof(char) * 1);
+  int char_count = 0,char_buffer = LINE_BUFFER,rc;
+
+  while(1){
+    if(char_count >= char_buffer){
+      char_buffer = char_buffer + LINE_BUFFER;
+      //d=realloc(c,char_buffer);
+    }
+    if((rc =read(fd,c,1)) == -1){
+      //printf("Error while reading file");
+      exit(-1);
+    }
+    else if(rc>0){
+      if(!(c[0] == '\n')){
+        d[char_count] = c[0];
+        char_count++;
+      }
+      else{
+        d[char_count] = '\0';
+        return d;
+      }
+    }
+    else if(rc == 0){
+      if(char_count > 0){
+        d[char_count] = '\0';
+        return d;
+      }
+      else
+        return NULL;
+    }
+  }
+  return d;
+}
+
 
 char *token(char *command, int x,int y){
   //printf("In Tokeninzing %d %d \n",x,y);
@@ -186,18 +239,6 @@ char **parse_command(char *command){
     return com_args;
 }
 
-void puts(char *buf){
-  int count=0;
-  while(buf[count]!='\0') count++;
-  syscall((void*)(uint64_t)4,(void*)(uint64_t)1,(void*)buf,(void*)(uint64_t)count,0,0,0);
-}
-
-char getChar(){
-    char c;
-    syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
-    return c;
-}
-
 
 char *read_command(){
     char *inputStr = (char*)malloc(2000);
@@ -205,7 +246,7 @@ char *read_command(){
         
     while(1)
     {
-        char c = getChar();
+        char c = getchar();
         if(c =='\0' && i>0) break;
         else if(c==' ' && i==0) continue;
         else if(i>2000) break;
@@ -228,36 +269,8 @@ int fork_execution(char **com_args,short int background,char **envp){
   
   if(pid == 0){
     if(background){
-      close(0);
-      //open("/dev/null","r");
+      //close(0);
     }
-    
-    /*~~~~~~~~~~~~~~~~~~~~~int env_i =1;
-    while(*(environ_main+env_i) != '\0'){
-      int arg_i=0,end=0;
-      char *s = malloc(sizeof(char) * COMMAND_BUFFER);
-      while(environ_main[env_i][arg_i] != '='){
-        end=arg_i;
-        arg_i++;
-      }
-      arg_i++;
-      //printf("VAR: %s\n",token(environ[env_i],0,end));
-      //puts(environ_main[env_i]);
-      if(strcmp(token(environ_main[env_i],0,end),"PATH") == 0){
-        int start = arg_i;
-        while(environ_main[env_i][arg_i] != '\0'){
-          end=arg_i;
-          arg_i++;
-        }
-        if(start<=end)
-          s=token(environ_main[env_i],start,end);
-          //puts(s);
-          parse_path(s,com_args);
-      //printf("VAL: %s\n",token(envp[env_i],start,end));
-      }
-      env_i++;
-    }~~~~~~~~~~~~~~~~~~~~*/
-    
     if(execve(com_args[0],com_args,envp) == -1){
       //dedeprintf("Error while executing the command\n");
       //exit(1);//need to find out whether to use _exit or exit
@@ -269,12 +282,6 @@ int fork_execution(char **com_args,short int background,char **envp){
   else{
     if (background){
       wait_pid = waitpid(pid,&com_status,WNOHANG);
-      //dedeprintf("Process pid: %d \n", pid);
-      //if(bg_count >= bg_buffer){
-        //bg_buffer = bg_buffer + BG_PIDS_BUFFER;
-        //rerebg_pids = realloc(bg_pids,bg_buffer);
-      //}//need to check if the child process finished or not and print it to the console.
-      //bg_pids[bg_count++] = pid;
       if(wait_pid == -1){
         //puts("Error in waitpid\n");
         //exit(-1);
@@ -290,7 +297,6 @@ int fork_execution(char **com_args,short int background,char **envp){
   }
   return com_status;
 }
-
 
 
 int execute_command(char **com_args,short int background,char **envp){
@@ -325,78 +331,40 @@ int execute_command(char **com_args,short int background,char **envp){
       exit(y);
     }  
   }
-  /*else if(strcmp(*com_args,"export") == 0){
+  else if(strcmp(*com_args,"export") == 0){
     if(*(com_args+1) == '\0'){
       //dedeprintf("Error: expected argument to set Environmental variable\n");
       return -1;
     }
-    else{
-      int start=0,end=0,i=0;
-      char **exp_args = (char **)malloc(sizeof(char *) * 4);//mmap(NULL,sizeof(char *) * 4,PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE,-1,0);
-      exp_args[0] = "setenv";
-      while(com_args[1][i] != '='){
-        if(com_args[1][i] == '\0'){
-          //dedeprintf("Error while setting environment varibale, expecting a var and a value\n");
-          return -1;
-        }
-        end=i;
-        i++; 
-      }
-      exp_args[1] = token(com_args[1],start,end);
-      start = i+1;
-      i++;
-      short int quotes_used = 0;
-      if(com_args[1][i] == '"'){
-        start++;
-        quotes_used = 1;
-      }
-      while(com_args[1][i] != '\0'){
-        end=i;
-        i++;
-      }
-      if(com_args[1][i-1] == '"')
-        if(quotes_used == 1)
-          end--;
-      if(start<=end)
-        exp_args[2] = token(com_args[1],start,end);
-      else{
-        //dedeprintf("Error while setting environment varibale, expecting a value\n");
-        return -1;
-      }
-      *(exp_args+3) = '\0';
-      if(strcmp(exp_args[1],"PS1") == 0){
-        strcpy(PS1_SBUSH,exp_args[2]);
-        exp_args[1] = "PS1_SBUSH";
-      }
-      if(setenv(exp_args[1],exp_args[2],1) == 0){
-        //char *s=getenv(exp_args[1]);
-        //printf("**%s**",s);
-        return 0;
-      }  
-      else{
-        return -1;
-      }  
+   else{
+       env(com_args);
     }
-  }*/
+  }
   else{
     rc =fork_execution(com_args,background,envp);
   }
   return rc;
 }
 
-//void clrScreen()
-//{
-//    syscall((void*)(uint64_t)123,0,0,0,0,0,0);
-//}
 
 int main(int argc, char *argv[], char *envp[]){
 
-   // clrScreen();
-//    char *ps1="sbush>";
-//    puts(ps1);
-    //char *p = "bin/ls";
-    //xecve("bin/ls",&p,envp);
-    //while(1);
+    if(argc >= 2){
+    int fp = open(argv[1],O_RDONLY);
+    char *line = read_line(fp);
+    while((line = read_line(fp)) != NULL){ 
+      char **com_args = parse_command(line);
+      if(pipe_flag == 1){
+        //pipe_execution(com_args,background);
+      }
+      else
+        execute_command(com_args,background,envp);
+      free(com_args);
+      background = 0;
+      pipe_flag = 0;
+    }
+    return 0;
+    }
     
     while(1)
     {

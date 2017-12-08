@@ -59,8 +59,8 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 3:    returnVal =  (void*)closeFile(paramA); break;
         case 2:    returnVal =  (void*)openFile((char *)paramA); break;
         case 9:    returnVal =  (void*)openDirectory((char *)paramA); break;
-        case 10:   returnVal =  (void*)closeDir(paramA); break;
-        case 11:   returnVal =  (void*)readDir(paramA,(char *)paramB,paramC); break;
+        case 10:   returnVal =  (void*)closeDir((DIR *)paramA); break;
+        case 11:   returnVal =  (void*)readDir((DIR *)paramA); break;
         case 12:   returnVal =  (void*)getDirEntries(paramA,(char *)paramB,paramC); break;
         case 80:   returnVal =  (void*)changeDirectory((char *)paramA); break;
         case 79:   returnVal =  (void*)getCWD((char *)paramA,paramB); break;
@@ -71,6 +71,9 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 50:   returnVal =  (void*)enableSleep(); break;
         case 51:   returnVal =  (void*)getCounter(); break;
         case 52:   returnVal =  (void*)disableSleep(); break;
+        case 53:   returnVal =  (void*)setenv((char *)paramA,(char *)paramB,(int64_t)paramC);break;
+        case 54:   returnVal =  (void*)getenv((char *)paramA);break;
+        case 55:   returnVal =  (void*)env((char **)paramA);break;
         case 420:  returnVal =  (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC); break;
     }
     

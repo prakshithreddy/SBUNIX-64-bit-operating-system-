@@ -494,7 +494,11 @@ void _hndlr_isr14(){
 //            markPageAsRW(pagefaultAt&FRAME,(runningThread->regs.cr3+get_kernbase()),0); //0enable write
             
         }
-        else while(1);
+        else if(us&rw&!p){
+            kprintf("Segmentation fault..Attempt to write to un-allocated memory..Killing the process..");
+            //need to write code here to kill it..
+            while(1);
+        } 
         
         //Task *task=getRunningThread();
         //kprintf("\n*** %d ***\n",task->pid_t);
@@ -540,6 +544,11 @@ void _hndlr_isr14(){
             
         }
         
+    }
+    else if(us&!rw&!p){
+        kprintf("Segmentation Fault..Trying to read un-allocated memory..Killing the process..\n");
+        //need to write code here to kill it..
+        while(1);
     }
     else
     {
