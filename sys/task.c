@@ -783,7 +783,7 @@ uint64_t malloc(uint64_t size)
     }
     else
     {
-        setNextFreed = 0;
+        int setNextFreed = 0;
         uint64_t end=0;
         while(temp->next!=NULL)
         {
@@ -793,9 +793,9 @@ uint64_t malloc(uint64_t size)
             }
             if(temp->isNextFreed==1)
             {
-                if(temp->next->start-temp->end>=size)
+                if(temp->next->v_start-temp->v_end>=size)
                 {
-                    if(temp->next->start-temp->end!=size)
+                    if(temp->next->v_start-temp->v_end!=size)
                     {
                         setNextFreed = 1;
                     }
