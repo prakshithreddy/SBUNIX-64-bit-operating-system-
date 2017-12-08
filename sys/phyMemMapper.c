@@ -134,7 +134,7 @@ uint64_t getFirstFrame(){
             }
         }
     }
-    kprintf("Frame: -1 Allocated\n");
+    //kprintf("Frame: -1 Allocated\n");
     return -1;
 }
 

@@ -450,11 +450,11 @@ void _hndlr_isr13(){
 
 void _hndlr_isr14(){
     
-    kprintf("\n0x0E    Page fault");
+    //kprintf("\n0x0E    Page fault");
      uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
    
-    kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
+//    kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
     
     int p = errorCode&0x1;
     errorCode>>=1;
@@ -468,12 +468,12 @@ void _hndlr_isr14(){
     //At this stage if the page fault is not zero.. the error is valid error and not be handled
     if(errorCode!=0)
     {
-        kprintf("Kill this bad guy..");
+//        kprintf("Kill this bad guy..");
         exit(0);
     }
     if((us&rw&!p) || ((!us)&rw&(!p)))
     {
-        kprintf("Handling page fault ");
+//        kprintf("Handling page fault ");
         
         if(isPartofCurrentVma(pagefaultAt&FRAME))
         {
@@ -502,7 +502,7 @@ void _hndlr_isr14(){
         
         //Task *task=getRunningThread();
         //kprintf("\n*** %d ***\n",task->pid_t);
-        kprintf("Handling page fault DONE ");
+//        kprintf("Handling page fault DONE ");
     }
     else if(us&rw&p)
     {
@@ -673,11 +673,11 @@ void writeChar(char c,int specialCharacter){//writePosition is place where chara
         indicator=1;
       }
       else{
-        kprintf("Warning: Input Buffer Full.. Cant Take more input.. Please Type Enter");
+        kprintf("Warning: Input Buffer Full.. Cant Take more input.. Please Type Enter\n");
       }
   }
   if((writePosition==readPosition-1) && (indicator=1)){//TODO: In this situation if its a correct command execute it, otherwise discard saying wrong command.
-    kprintf("Warning: Input Buffer Full..Cant Take more input..Please Type Enter");
+    kprintf("Warning: Input Buffer Full..Cant Take more input..Please Type Enter\n");
   }
   if(c=='\n'){
       readline+=1;
