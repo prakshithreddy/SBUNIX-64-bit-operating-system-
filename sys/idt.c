@@ -495,9 +495,9 @@ void _hndlr_isr14(){
             
         }
         else if(us&rw&!p){
-            kprintf("Segmentation fault..Attempt to write to un-allocated memory..Killing the process..");
+            kprintf("Segmentation Fault..Unauthorised access to meomry..Killing the process..\n");
             //need to write code here to kill it..
-            while(1);
+            exit(0);
         } 
         
         //Task *task=getRunningThread();
@@ -546,14 +546,13 @@ void _hndlr_isr14(){
         
     }
     else if(us&!rw&!p){
-        kprintf("Segmentation Fault..Trying to read un-allocated memory..Killing the process..\n");
-        //need to write code here to kill it..
-        while(1);
+        kprintf("Segmentation Fault..Unauthorised access to meomry..Killing the process..\n");
+        exit(0);
     }
     else
     {
-        kprintf("Error");
-        while(1);
+        kprintf("Segmentation Fault..\n"");
+        exit(0);
     }
     
 }
