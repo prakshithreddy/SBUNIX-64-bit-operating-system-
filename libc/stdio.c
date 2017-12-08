@@ -30,8 +30,8 @@ char getchar(){
     syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
     return c;
 }
-/*
-int printf(const char *fmt, ...)
+
+/*int printf(const char *fmt, ...)
 {
     
     va_list valist;
