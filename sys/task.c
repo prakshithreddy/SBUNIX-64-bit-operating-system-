@@ -206,6 +206,14 @@ void pushInitialParamstoStack(Task* task)
         envStart+=0x1000;
         i+=1;
     }
+    
+    char* newPage = (char*)kmalloc();
+    k=0;
+    newPage[k] = '\0';
+    newPage-=get_kernbase();
+    mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    envStart+=0x1000;
+    
     i=envStart-0x1000;
 
     int z = 0x322000;
@@ -928,6 +936,15 @@ void* exec(void* path,void* args,void* envp)
         envStart+=0x1000;
         i+=1;
     }
+    
+    char* newPage = (char*)kmalloc();
+    k=0;
+    newPage[k] = '\0';
+    newPage-=get_kernbase();
+    mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    envStart+=0x1000;
+    
+    
     i=envStart-0x1000;
     
     int z = 0x322000;
