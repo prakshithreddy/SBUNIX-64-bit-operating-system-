@@ -383,69 +383,69 @@ void _rtc_intr_hndlr(){
 
 void _hndlr_isr0(registers_t regs){
     kprintf("0x0 divide by 0");
-    while(1);
+    exit(0);
 }
 void _hndlr_isr1(registers_t regs){
     kprintf("0x01    Single-step interrupt (see trap flag)");
-    while(1);
+    exit(0);
 }
 void _hndlr_isr2(registers_t regs){
     kprintf("0x02    NMI");
-    while(1);
+    exit(0);
 }
 void _hndlr_isr3(registers_t regs){
     kprintf("0x03    Breakpoint (callable by the special 1-byte instruction 0xCC, used by debuggers)");
-    while(1);
+    exit(0);
 }
 void _hndlr_isr4(registers_t regs){
     kprintf("0x04    Overflow");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr5(registers_t regs){
     kprintf("0x05    Bounds");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr6(registers_t regs){
     kprintf("0x06    Invalid Opcode");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr7(registers_t regs){
     kprintf("0x07    Coprocessor not available");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr8(registers_t regs){
     kprintf("0x08    Double fault");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr9(registers_t regs){
     kprintf("0x09    Coprocessor Segment Overrun (386 or earlier only)");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr10(registers_t regs){
     kprintf(" 0x0A    Invalid Task State Segment");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr11(registers_t regs){
     kprintf("0x0B    Segment not present");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr12(registers_t regs){
     kprintf("0x0C    Stack Fault");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr13(){
     kprintf("0x0D    General protection fault %d",errorCode);
     
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr14(){
@@ -469,7 +469,7 @@ void _hndlr_isr14(){
     if(errorCode!=0)
     {
         kprintf("Kill this bad guy..");
-        while(1);
+        exit(0);
     }
     if((us&rw&!p) || ((!us)&rw&(!p)))
     {
@@ -487,7 +487,7 @@ void _hndlr_isr14(){
 //            if(pNum==-1)
 //            {
 //                kprintf("ERROR");
-//                while(1);
+//                exit(0);
 //
 //            }
 //            makePageCopiesForChilden(pNum,runningThread);
@@ -511,7 +511,7 @@ void _hndlr_isr14(){
 //        if(pNum==-1)
 //        {
 //            kprintf("ERROR");
-//            while(1);
+//            exit(0);
 //
 //        }
 //        makePageCopiesForChilden(pNum,runningThread);
@@ -559,36 +559,36 @@ void _hndlr_isr14(){
 
 void _hndlr_isr15(registers_t regs){
     kprintf("0x0F    reserved");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr16(registers_t regs){
     kprintf("0x10    Math Fault");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr17(registers_t regs){
     kprintf("0x11    Alignment Check");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr18(registers_t regs){
     kprintf("0x12    Machine Check");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr19(registers_t regs){
     kprintf("0x13    SIMD Floating-Point Exception");
-    while(1);
+    exit(0);
 }
 
 void _hndlr_isr20(registers_t regs){
     kprintf("0x14    Virtualization Exception");
-    while(1);
+    exit(0);
 }
 void _hndlr_isr21(registers_t regs){
     kprintf("0x15 Control Protection Exception");
-    while(1);
+    exit(0);
 }
 
 void _isr0();
