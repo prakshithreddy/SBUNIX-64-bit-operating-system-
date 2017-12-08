@@ -79,19 +79,19 @@ static void multitaskMain() {
 }
 
 void initMultiTasking() {
-    __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(mainThread.regs.cr3)::"%rax");
-    __asm__ __volatile__("pushfq; movq (%%rsp), %%rax; movq %%rax, %0; popfq;":"=m"(mainThread.regs.rflags)::"%rax");
-    createThread(&otherThread, multitaskMain, mainThread.regs.rflags, (uint64_t*)mainThread.regs.cr3);
-    //mainThread.regs.rip=(uint64_t)start;
-    mainThread.next = &otherThread;
-    otherThread.next = &mainThread;
+//    __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(mainThread.regs.cr3)::"%rax");
+//    __asm__ __volatile__("pushfq; movq (%%rsp), %%rax; movq %%rax, %0; popfq;":"=m"(mainThread.regs.rflags)::"%rax");
+//    createThread(&otherThread, multitaskMain, mainThread.regs.rflags, (uint64_t*)mainThread.regs.cr3);
+//    //mainThread.regs.rip=(uint64_t)start;
+//    mainThread.next = &otherThread;
+//    otherThread.next = &mainThread;
     runningThread = &mainThread;
     //*****************
-    runningThread->fd_pointers[0]=(uint64_t)kmalloc();
-    runningThread->fd_count=5;
+//    runningThread->fd_pointers[0]=(uint64_t)kmalloc();
+//    runningThread->fd_count=5;
     //*******************
-    yield();
-    kprintf("Multitasking Success\n");
+//    yield();
+//    kprintf("Multitasking Success\n");
     //yield();
 }
 
@@ -1345,7 +1345,7 @@ void* exit(void* pid)
     Task* task = runningThread;
     if(runningThread->pid_t==1){
         //kprintf("killing sbush>> restartinmg");
-        runningThread = NULL;
+        initMultiTasking();
         initUserProcess();
         return 0;
     }
