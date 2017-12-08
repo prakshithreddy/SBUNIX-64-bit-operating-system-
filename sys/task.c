@@ -1292,7 +1292,7 @@ void* kill(void* pid)
     
     while(task->next!=runningThread && task->next->pid_t != (uint64_t)pid ) task=task->next;
     
-    if(task==runningThread || task->next->pid_t == 1) {
+    if(task->next==runningThread || task->next->pid_t == 1) {
         kprintf("Did not find any process with pid %d\n"+ (uint64_t)pid);
         return 0;
     }
