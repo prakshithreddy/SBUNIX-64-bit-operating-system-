@@ -1340,8 +1340,8 @@ void* exit(void* pid)
 //        initUserProcess();
         
         uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-        Task *userThread2 = (Task*)kmalloc();
-        uint64_t hello_entrypoint = (loadFile("/bin/sbush",(U2_cr3+get_kernbase()),userThread2));
+        Task *taskTemp = (Task*)kmalloc();
+        uint64_t hello_entrypoint = (loadFile("/bin/sbush",(U2_cr3+get_kernbase()),taskTemp));
         
         if(hello_entrypoint == 0) return;
         
@@ -1353,38 +1353,38 @@ void* exit(void* pid)
         
         while(temp[i] != '\0')
         {
-            userThread2->exeName[i] = temp[i];
+            taskTemp->exeName[i] = temp[i];
             i++;
         }
         
-        userThread2->exeName[i] = '\0';
+        taskTemp->exeName[i] = '\0';
         
         
-        createNewTask(userThread2,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+        createNewTask(taskTemp,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
         
-        userThread2->next = userThread2;
+        taskTemp->next = taskTemp;
         
-        userThread2->startHH = getCurHr();
-        userThread2->startMM = getCurMin();
-        userThread2->startSS = getCurSec();
+        taskTemp->startHH = getCurHr();
+        taskTemp->startMM = getCurMin();
+        taskTemp->startSS = getCurSec();
         
         
         uint64_t tssAddr=0;
-        if (temp->regs.count==0)
-        {    temp->regs.add=40;
-            temp->regs.count+=1;
-            tssAddr = temp->regs.kernelRsp;
+        if (taskTemp->regs.count==0)
+        {    taskTemp->regs.add=40;
+            taskTemp->regs.count+=1;
+            tssAddr = taskTemp->regs.kernelRsp;
         }
         else
         {
-            temp->regs.add=0;
-            tssAddr = temp->regs.kernelRsp +40;
+            taskTemp->regs.add=0;
+            tssAddr = taskTemp->regs.kernelRsp +40;
         }
         //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
         set_tss_rsp((void*)(tssAddr));
-        runningThread = (temp);
+        runningThread = (taskTemp);
         
-        _moveToNextProcess(&runningThread->regs, &userThread2->regs);
+        _moveToNextProcess(&runningThread->regs, &taskTemp->regs);
         
         
        // return 0;
