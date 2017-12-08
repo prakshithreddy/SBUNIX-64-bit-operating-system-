@@ -24,6 +24,14 @@ pid_t fork(){
     return (uint64_t)syscall((void*)(uint64_t)1,0,0,0,0,0,0);
 }
 
+pid_t getpid(){
+    return (uint64_t)syscall((void*)(uint64_t)66,0,0,0,0,0,0);
+}
+
+pid_t getppid(){
+    return (uint64_t)syscall((void*)(uint64_t)67,0,0,0,0,0,0);
+}
+
 int execve(const char *file, char *const argv[], char *const envp[])
 {
     return (ssize_t)syscall((void*)78,(void*)file,(void*)argv,(void*)envp,0,0,0);
