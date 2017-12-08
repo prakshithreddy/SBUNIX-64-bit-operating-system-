@@ -86,7 +86,7 @@ void boot(void)
   // note: function changes rsp, local stack variables can't be practically used
   register char *temp1, *temp2;
 
-  for(temp2 = (char*)0xb8001+160*24; temp2 < (char*)0xb8000+160*25; temp2 += 2) *temp2 = 14 /* white */;
+  for(temp2 = (char*)0xb8001; temp2 < (char*)0xb8000+160*25; temp2 += 2) *temp2 = 14 /* white */;
   __asm__ volatile (
     "cli;"
     "movq %%rsp, %0;"
@@ -104,9 +104,9 @@ void boot(void)
    
    
     
-  keypress_bar("Last Pressed: ",0XF0);
-  boot_time_bar(0,0,0,0XF0);
-  time_bar(0,0,0,0XF0);
+  keypress_bar("Last Pressed: ",14);
+  boot_time_bar(0,0,0,14);
+  time_bar(0,0,0,14);
   
 
   
