@@ -95,6 +95,9 @@ void* printMe(void* path,void* args,void* envp);
 void* waitpid(void* pid,void* status,void* flags);
 void* enableSleep();
 
+void* getPid();
+void* getPPid();
+
 void* getCounter();
 void* disableSleep();
 void* kill(void* pid);
