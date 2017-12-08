@@ -10,7 +10,6 @@
 
 static Task *runningThread;
 static Task mainThread;
-static Task otherThread;
 
 Task* deleteQueue = NULL;
 
@@ -69,14 +68,6 @@ void createThread(Task *task, void(*function)(), uint64_t rflags, uint64_t *pml4
     task->next=0;
 }
 
-static void multitaskMain() {
-    //while(1);
-    kprintf("Creating Kernel Threads..");
-    yield();
-    //  i+=1;
-    //  kprintf("%d",i);
-    //  yield();
-}
 
 void initMultiTasking() {
 //    __asm__ __volatile__("movq %%cr3, %%rax; movq %%rax, %0;":"=m"(mainThread.regs.cr3)::"%rax");
