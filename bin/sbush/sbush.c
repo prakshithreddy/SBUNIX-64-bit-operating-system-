@@ -364,8 +364,15 @@ int main(int argc, char *argv[], char *envp[]){
     while(1)
     {
         //read a input line
-        char *ps1="sbush>";
-        puts(ps1);
+        
+        char *ps1=getenv("PS1");
+        if(ps1==NULL){
+          puts("sbush>");
+        }
+        else{
+          puts(ps1);
+          puts(">");
+        }
         char *command = read_command();
         if(*command == '\0'){
           free(command);
