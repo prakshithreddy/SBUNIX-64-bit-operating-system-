@@ -1370,6 +1370,18 @@ void* clearScreen()
 }
 
 
+
+void* getPid(){
+    
+    return (void*)(uint64_t)runningThread->pid_t;
+    
+}
+void* getPPid()
+{
+    return (void*)(uint64_t)runningThread->ppid_t;
+}
+
+
 void initUserProcess()
 {
     
@@ -1409,5 +1421,7 @@ void initUserProcess()
     switchToUserMode();
     
 }
+
+
 
 

@@ -74,6 +74,8 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 53:   returnVal =  (void*)setenv((char *)paramA,(char *)paramB,(int64_t)paramC);break;
         case 54:   returnVal =  (void*)getenv((char *)paramA);break;
         case 55:   returnVal =  (void*)env((char **)paramA);break;
+        case 66:   returnVal =  (void*)getPid(); break;
+        case 67:   returnVal =  (void*)getPPid(); break;
         case 420:  returnVal =  (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC); break;
     }
     
