@@ -288,7 +288,7 @@ void identityMapping(){
   uint64_t endOfMemory = 0xFFFFFFFFFFFFF000 - kernbase;
   if(get_physend()>endOfMemory)
   {
-    vir_end = 0xFFFFFFFF88000000;
+    vir_end = 0xFFFFFFFF90000000;
   }
   else vir_end=kernbase+get_physend();
   

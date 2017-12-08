@@ -36,9 +36,9 @@ struct posix_header_ustar {
 
 void memcpy(void *src,void *dest,size_t n);
 uint64_t getDirEntries(int fd,char *buf,int count);
-uint64_t closeDir(int fd);
-struct dirent *readDir(int fd,char *buf,int count);
-int64_t openDirectory(char* dirName);
+int64_t closeDir(DIR *fd);
+struct dirent *readDir(DIR *fd);
+DIR *openDirectory(char* dirName);
 uint64_t closeFile(int fd);
 uint64_t readFile(int fd,char *buf,int count);
 uint64_t writeFile(int fd,char *buf,int count);
@@ -47,5 +47,8 @@ int64_t changeDirectory(char *buf);
 char *getCWD(char *dest,int count);
 void remove_dotslash(char *src,char *dest,int d);
 uint64_t get_file_address(char* file);
+int64_t setenv(char *name,char *value, int overwrite);
+char *getenv(char *name);
+int64_t env(char **com_args);
 
 #endif

@@ -477,6 +477,7 @@ int64_t openFile(char* file){
                    fd_array->start=start;
                    fd_array->offset=start;
                    fd_array->d_prev_dir[0]='\0';
+                   fd_array->d_dirp=0;
                    int file_fd = (5*page+fd);
                    kprintf("FD for above file: %d\n",file_fd);
                    return file_fd;
@@ -563,11 +564,11 @@ uint64_t writeFile(int fd,char *buf,int count){
     }
 }
 
-int64_t openDirectory(char* dir){
+DIR *openDirectory(char* dir){
     Task *currentTask=(Task *)getRunTask();
     if(*dir=='\0'){
         kprintf("Dir Name Empty...\n");
-        return -1;
+        return NULL;
     }
     char newDirName[256];
     char *dirName;
@@ -583,8 +584,9 @@ int64_t openDirectory(char* dir){
     }
     if(start==0){
         kprintf("Invalid Directory Specified..\n");
-        return -1;
+        return NULL;
     }
+    //DIR *dirp=kmalloc();
     for(int page=0;page<20;page++){
         uint64_t page_address = currentTask->fd_pointers[page];
         if(page_address==0){
@@ -600,9 +602,10 @@ int64_t openDirectory(char* dir){
                    fd_array->start=start;
                    fd_array->offset=start;
                    fd_array->d_prev_dir[0]='\0';
-                   int dir_fd = (5*page+fd);
-                   kprintf("FD for above file: %d\n",dir_fd);
-                   return dir_fd;
+                   fd_array->d_dirp=(uint64_t)fd_array;
+                   //int dir_fd = (5*page+fd);
+                   //kprintf("FD for above file: %d\n",dir_fd);
+                   return (DIR *)fd_array;
                    break; 
                 }
             }
@@ -610,7 +613,7 @@ int64_t openDirectory(char* dir){
         }
     }
     kprintf("Trying to open more than 100 FD's..My OS allows user to open only 100 FD's per process. :D\n");
-    return -1;
+    return NULL;
 }
 
 int get_sub_directory(char *parent,char *child,char *dbuf,int count){
@@ -757,22 +760,51 @@ int get_first_direntry(char *child,char *dbuf,int count){
   return 0;
 }
 
-struct dirent * readDir(int fd,char *buf,int count){
+int get_fd(uint64_t dirp){
+    Task *currentTask=(Task *)getRunTask();
+    int count=currentTask->fd_count;
+    int page_max=count/5;
+    for(int page=0;page<page_max;page++){
+        uint64_t page_address = currentTask->fd_pointers[page];
+        if(page_address==0){
+            return -1;
+        }
+        struct fileDescriptor *fd_array=(struct fileDescriptor *)page_address;
+        for(int fd=0;fd<5;fd++){
+            if(((5*page)+fd)>2){//checking if fd is not 0,1,2 because they are reserved.
+                if(fd_array->d_dirp==dirp){
+                   return 5*page+fd;
+                   break; 
+                }
+            }
+            fd_array++;
+        }
+    }
+    return -1;
+}
+
+struct dirent * readDir(DIR *dirp){
+    if(dirp==NULL){
+        return NULL;
+    }
+    int fd= get_fd((uint64_t)dirp);
     if(fd<0){
-        kprintf("Invalid FD provided..\n");
-        return 0;
+        kprintf("Invalid DIR * provided..\n");
+        return NULL;
     }
     //Task *currentTask=(Task *)getRunTask();
     uint64_t start;
     struct posix_header_ustar *tar_file_pointer;
     struct fileDescriptor *fd_struct=get_fd_address(fd);
-    struct dirent *dir=(struct dirent *)buf;
     if(fd_struct==NULL){
-        return 0;
+        return NULL;
     }
+    char *buf=(char *)malloc(sizeof(struct dirent));
+    struct dirent *dir=(struct dirent *)buf;
+    int count=4096;
     if(count<sizeof(struct dirent)){
       kprintf("Buffer size not sufficient for returning Dirent..");
-      return 0;
+      return NULL;
     }
     if(!strcmp(fd_struct->name,"/")){
             start = fd_struct->offset;
@@ -802,7 +834,7 @@ struct dirent * readDir(int fd,char *buf,int count){
                 start=start+size+512;
             }
             *buf='\0';
-            return 0;
+            return NULL;
     }
     else if(fd_struct->name[0] != '\0'){
         start = fd_struct->offset;
@@ -835,7 +867,7 @@ struct dirent * readDir(int fd,char *buf,int count){
           }
 		      else{
 			      *buf='\0';
-			      return 0;
+			      return NULL;
 		      }
           char *f_size=tar_file_pointer->size;
           int size = toInteger(f_size);
@@ -847,14 +879,18 @@ struct dirent * readDir(int fd,char *buf,int count){
         }
     }
     kprintf("Incorrect FD...\n");
-    return 0;
+    return NULL;
 }
 
-uint64_t closeDir(int fd){
+int64_t closeDir(DIR *dirp){
     //Task *currentTask=(Task *)getRunTask();
+    if(dirp==NULL){
+        return 0;
+    }
+    int fd= get_fd((uint64_t)dirp);
     if(fd<0){
-        kprintf("Invalid FD provided..\n");
-        return 1;
+        kprintf("Invalid DIR * provided..\n");
+        return 0;
     }
     struct fileDescriptor *fd_struct=get_fd_address(fd);
     if(fd_struct==NULL){
@@ -1150,20 +1186,111 @@ int64_t changeDirectory(char *buf){
     }
     return -1;
 }
-/*void full_path_builder(char *input,char *output){
-    char temp_output[256];
-    remove_dotslash(char *input,char *temp_output);
-    if(*input=='/'){
-        *output=*input;
-        input++;
-        output++;
-        while(*input!='/'){
-            *output=*input;
+
+
+char *getenv(char *name){
+    char *environ_main=(char *)0x302000;//WARNING: ENVP IS HARDCODED to 0.. So dont try to change it.. TODO:
+    int env_i =0;
+    char temp[256];
+    int arg_i=0;
+    char *env_entry;
+    while(*(environ_main+env_i) != '\0'){
+      arg_i=0;
+      env_entry=environ_main+env_i;
+      while(env_entry[arg_i] != '='){
+        temp[arg_i]=env_entry[arg_i];
+        arg_i++;
+      }
+      temp[arg_i]='\0';
+      arg_i++;
+      if(strcmp(temp,name) == 0){
+        return ((char *)env_entry+arg_i);
+      }
+      env_i+=0x1000;
+  }
+  return NULL;
+}
+
+int64_t setenv(char *name,char *value, int overwrite)
+{  
+  int found=0;
+  char *start = getenv(name);
+  char *value1 = value;
+  if(start!=NULL){
+    found =1;
+  }
+  if(found){
+    while(*value1!='\0'){
+        *start=*value1;
+        start++;
+        value1++;
+    }
+    *start='\0';
+    return 0;
+  }
+  else{
+    char *environ_main=(char *)0x302000;
+    int env_i=0;
+    while(*(environ_main+env_i)!='\0'){
+        env_i+=0x1000;
+    }
+    char *new_entry=environ_main+env_i;
+    char *name1=name;
+    while(*name1!='\0'){
+        *new_entry=*name1;
+        name1++;
+        new_entry++;
+    }
+    *new_entry='=';
+    new_entry++;
+    while(*value!='\0'){
+        *new_entry=*value1;
+        value1++;
+        new_entry++;
+    }
+    *new_entry='\0';
+    return 0;
+  }
+  return 0;
+}
+
+int64_t env(char **com_args){
+      char name[512];
+      int i=0;
+      while(com_args[1][i] != '='){
+        if(com_args[1][i] == '\0'){
+          return -1;
         }
-    
-    
-    }
-    else{
-    
-    }
-}*/
+        name[i]=com_args[1][i];
+        i++; 
+      }
+      name[i]='\0';
+      i++;
+      short int quotes_used = 0;
+      if(com_args[1][i] == '"'){
+        i++;
+        quotes_used = 1;
+      }
+      int j=0;
+      char value[512];
+      while(com_args[1][i] != '\0'){
+        value[j]=com_args[1][i];
+        i++;
+        j++;
+      }
+      if(com_args[1][i-1]== '"'){
+        if(quotes_used == 1){
+          if(j>0){
+            value[j-1]='\0';
+          }
+          else{
+            return -1;
+          }
+        }
+        else{
+          value[j]='\0';
+        }
+      }
+      setenv(name,value,1);
+      return 0;
+}

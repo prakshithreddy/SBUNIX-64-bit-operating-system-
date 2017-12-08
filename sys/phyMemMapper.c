@@ -17,7 +17,7 @@ void set_bitmap_rows(){
   MAX_BITMAP_ROWS/=64;
   MAX_BITMAP_ROWS+=1;
   kprintf("Max rows is %d\n",MAX_BITMAP_ROWS);*/
-  MAX_BITMAP_ROWS=512;
+  MAX_BITMAP_ROWS=1024;
 }
 
 uint64_t get_AHCI_PHYS(){
