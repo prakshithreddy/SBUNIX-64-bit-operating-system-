@@ -551,7 +551,7 @@ void _hndlr_isr14(){
     }
     else
     {
-        kprintf("Segmentation Fault..\n"");
+        kprintf("Segmentation Fault..\n");
         exit(0);
     }
     
