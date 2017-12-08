@@ -207,11 +207,11 @@ void pushInitialParamstoStack(Task* task)
         i+=1;
     }
     
-    char* newPage = (char*)kmalloc();
-    k=0;
-    newPage[k] = '\0';
-    newPage-=get_kernbase();
-    mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    char* tempNewPage = (char*)kmalloc();
+    int k=0;
+    tempNewPage[k] = '\0';
+    tempNewPage-=get_kernbase();
+    mapPageForUser(envStart,(uint64_t)tempNewPage,task->regs.cr3+get_kernbase());
     envStart+=0x1000;
     
     i=envStart-0x1000;
@@ -240,7 +240,7 @@ void pushInitialParamstoStack(Task* task)
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=0;
+    k=0;
     
    
     while(((char**)args)[i]!=NULL) i++;
@@ -937,11 +937,11 @@ void* exec(void* path,void* args,void* envp)
         i+=1;
     }
     
-    char* newPage = (char*)kmalloc();
-    k=0;
-    newPage[k] = '\0';
-    newPage-=get_kernbase();
-    mapPageForUser(envStart,(uint64_t)newPage,task->regs.cr3+get_kernbase());
+    char* tempNewPage = (char*)kmalloc();
+    int k=0;
+    tempNewPage[k] = '\0';
+    tempNewPage-=get_kernbase();
+    mapPageForUser(envStart,(uint64_t)tempNewPage,task->regs.cr3+get_kernbase());
     envStart+=0x1000;
     
     
@@ -971,7 +971,7 @@ void* exec(void* path,void* args,void* envp)
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=0;
+    k=0;
     
     
     while(((char**)args)[i]!=NULL) i++;
