@@ -1134,35 +1134,35 @@ void* free(void* ptr)
         
     }
     
-    int pageCount=1;
-    
-    //find the physical Address and check if the page is shared.
-    int64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
-    
-    if(phyAddr!=-1 && phyAddr!=0)
-    {
-        //before deleting the pagees we need to check if the page is shared
-        
-        
-        phyAddr&=FRAME;
-        
-        Task* tempTask = task->next;
-        
-        while(tempTask!=task)
-        {
-            int64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
-            if(tempPhy!=-1 && tempPhy!=0 && (tempPhy&FRAME)==phyAddr)
-                pageCount+=1; //how many cr3 contain this phy address,virtual address combo
-            tempTask=tempTask->next;
-        }
-        
-    }
-    
-    if(count==1&&pageCount==1)
-        pageDeAllocator((void*)(phyAddr&FRAME));
-    
-    
-    
+//    int pageCount=1;
+//    
+//    //find the physical Address and check if the page is shared.
+//    int64_t phyAddr = getPhysicalPageAddr(pageToDel,task->regs.cr3);
+//    
+//    if(phyAddr!=-1 && phyAddr!=0)
+//    {
+//        //before deleting the pagees we need to check if the page is shared
+//        
+//        
+//        phyAddr&=FRAME;
+//        
+//        Task* tempTask = task->next;
+//        
+//        while(tempTask!=task)
+//        {
+//            int64_t tempPhy = getPhysicalPageAddr(phyAddr,tempTask->regs.cr3);
+//            if(tempPhy!=-1 && tempPhy!=0 && (tempPhy&FRAME)==phyAddr)
+//                pageCount+=1; //how many cr3 contain this phy address,virtual address combo
+//            tempTask=tempTask->next;
+//        }
+//        
+//    }
+//    
+//    if(count==1&&pageCount==1)
+//        pageDeAllocator((void*)(phyAddr&FRAME));
+//    
+//    
+//    
     
     return 0;
 }
