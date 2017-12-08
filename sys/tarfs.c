@@ -1226,6 +1226,8 @@ int64_t setenv(char *name,char *value, int overwrite)
         value1++;
     }
     *start='\0';
+    start++;
+    *start='\0';
     return 0;
   }
   else{
@@ -1243,12 +1245,20 @@ int64_t setenv(char *name,char *value, int overwrite)
     }
     *new_entry='=';
     new_entry++;
-    while(*value!='\0'){
+    while(*value1!='\0'){
         *new_entry=*value1;
         value1++;
         new_entry++;
     }
     *new_entry='\0';
+    
+    char* tempNewPage = (char*)kmalloc();
+    int k=0;
+    tempNewPage[k] = '\0';
+    tempNewPage-=get_kernbase();
+    uint64_t cr3=getRunCr3();
+    mapPageForUser((uint64_t)environ_main+env_i+0x1000,(uint64_t)tempNewPage,cr3+get_kernbase());
+    
     return 0;
   }
   return 0;
@@ -1290,6 +1300,9 @@ int64_t env(char **com_args){
         else{
           value[j]='\0';
         }
+      }
+      else{
+        value[j]='\0';
       }
       setenv(name,value,1);
       return 0;

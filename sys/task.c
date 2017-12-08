@@ -166,7 +166,8 @@ void pushInitialParamstoStack(Task* task)
     
     envp[0] = (char*)"PWD=/";
     envp[1] = (char*)"PATH=/:/bin:/usr";
-    envp[2] = NULL;
+    envp[2] = NULL;//(char*)"PS1=sbush";
+    envp[3] = NULL;
     
     char** args = (char**)kmalloc();
     
@@ -1319,7 +1320,10 @@ void* kill(void* pid)
 void* exit(void* pid)
 {
     Task* task = runningThread;
-    
+    if(runningThread->pid_t==1){
+        kprintf("Cannot Kill SBUSH.");
+        return 0;
+    }
     
     task->state = 0;
     task->endHH = getCurHr();
