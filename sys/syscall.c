@@ -71,8 +71,11 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 50:   returnVal =  (void*)enableSleep(); break;
         case 51:   returnVal =  (void*)getCounter(); break;
         case 52:   returnVal =  (void*)disableSleep(); break;
-        case 55:   returnVal =  (void*)getPid(); break;
-        case 56:   returnVal =  (void*)getPPid(); break;
+        case 53:   returnVal =  (void*)setenv((char *)paramA,(char *)paramB,(int64_t)paramC);break;
+        case 54:   returnVal =  (void*)getenv((char *)paramA);break;
+        case 55:   returnVal =  (void*)env((char **)paramA);break;
+        case 66:   returnVal =  (void*)getPid(); break;
+        case 67:   returnVal =  (void*)getPPid(); break;
         case 420:  returnVal =  (void*)printMe((void*)paramA,(char*)paramB,(char*)paramC); break;
     }
     
