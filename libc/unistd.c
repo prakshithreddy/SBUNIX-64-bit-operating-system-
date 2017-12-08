@@ -63,5 +63,10 @@ unsigned int sleep(unsigned int seconds){
   while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)<=seconds);
     
   syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+  
+  return seconds;
 }
-pid_t wait(int *status);
+
+pid_t wait(int *status){
+  return (ssize_t)syscall((void*)88,(void*)(int64_t)-1,(void *)status,0,0,0,0);
+}

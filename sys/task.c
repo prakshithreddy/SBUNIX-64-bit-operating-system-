@@ -1060,9 +1060,18 @@ void* waitpid(void* pid,void* status,void* flags)
     
     Task* tempTask = runningThread->next;
     
+    int ppid = runningThread->ppid_t;
+    
     while(tempTask!=runningThread)
     {
-        if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
+        if((uint64_t)pid==-1){
+            if(tempTask->ppid_t==ppid && tempTask->state==1){
+                *temp=1;
+                return (void*)(uint64_t)tempTask->ppid_t;
+            }
+          
+        }
+        else if( tempTask->pid_t==(uint64_t)pid && tempTask->state == 1 )
         {
             *temp=1;
             return (void*)(uint64_t)pid;
@@ -1369,8 +1378,6 @@ void* clearScreen()
     
 }
 
-
-
 void* getPid(){
     
     return (void*)(uint64_t)runningThread->pid_t;
@@ -1380,6 +1387,7 @@ void* getPPid()
 {
     return (void*)(uint64_t)runningThread->ppid_t;
 }
+
 
 
 void initUserProcess()
@@ -1421,7 +1429,5 @@ void initUserProcess()
     switchToUserMode();
     
 }
-
-
 
 
