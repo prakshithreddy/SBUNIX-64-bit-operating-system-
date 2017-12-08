@@ -783,11 +783,25 @@ uint64_t malloc(uint64_t size)
     }
     else
     {
+        setNextFreed = 0;
         uint64_t end=0;
         while(temp->next!=NULL)
         {
             if(!temp->next->grows_down)
+            {
                 end = ((temp->next->v_end)>end?(temp->next->v_end):end);
+            }
+            if(temp->isNextFreed==1)
+            {
+                if(temp->next->start-temp->end>=size)
+                {
+                    if(temp->next->start-temp->end!=size)
+                    {
+                        setNextFreed = 1;
+                    }
+                    break;
+                }
+            }
             temp = temp->next;
         }
         
@@ -799,6 +813,7 @@ uint64_t malloc(uint64_t size)
         newVma->mmsz = size;
         newVma->v_flags = 0;
         newVma->grows_down = 0;
+        newVma->isNextFreed = setNextFreed;
         newVma->v_file = 0;
         newVma->next=NULL;
         newVma->v_offset=0;
@@ -1118,7 +1133,6 @@ void* free(void* ptr)
         vmaTemp = vmaTemp->next;
         
     }
-    
     
     int pageCount=1;
     
