@@ -104,10 +104,10 @@ void boot(void)
    
    
     
-//  keypress_bar("Last Pressed: ",0XF0);
-//  boot_time_bar(0,0,0,0XF0);
-//  time_bar(0,0,0,0XF0);
-//  
+  keypress_bar("Last Pressed: ",0XF0);
+  boot_time_bar(0,0,0,0XF0);
+  time_bar(0,0,0,0XF0);
+  
 
   
     //__asm__ __volatile__ ("int $0x10":::);
