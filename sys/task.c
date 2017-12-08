@@ -1343,7 +1343,7 @@ void* exit(void* pid)
         Task *taskTemp = (Task*)kmalloc();
         uint64_t hello_entrypoint = (loadFile("/bin/sbush",(U2_cr3+get_kernbase()),taskTemp));
         
-        if(hello_entrypoint == 0) return;
+        if(hello_entrypoint == 0) return 0;
         
         kprintf("Entry Point: %p\n",hello_entrypoint);
         char* temp = "/bin/sbush";
