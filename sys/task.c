@@ -1334,61 +1334,63 @@ void* kill(void* pid)
 void* exit(void* pid)
 {
     Task* task = runningThread;
-    if(runningThread->pid_t==1){
-        kprintf("killing sbush>> restartinmg");
-//        initMultiTasking();
-//        initUserProcess();
-        
-        uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
-        Task *taskTemp = (Task*)kmalloc();
-        uint64_t hello_entrypoint = (loadFile("/bin/sbush",(U2_cr3+get_kernbase()),taskTemp));
-        
-        if(hello_entrypoint == 0) return 0;
-        
-        kprintf("Entry Point: %p\n",hello_entrypoint);
-        char* temp = "/bin/sbush";
-        
-        
-        int i=0;
-        
-        while(temp[i] != '\0')
-        {
-            taskTemp->exeName[i] = temp[i];
-            i++;
-        }
-        
-        taskTemp->exeName[i] = '\0';
-        
-        
-        createNewTask(taskTemp,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
-        
-        taskTemp->next = taskTemp;
-        
-        taskTemp->startHH = getCurHr();
-        taskTemp->startMM = getCurMin();
-        taskTemp->startSS = getCurSec();
-        
-        
-        uint64_t tssAddr=0;
-        if (taskTemp->regs.count==0)
-        {    taskTemp->regs.add=40;
-            taskTemp->regs.count+=1;
-            tssAddr = taskTemp->regs.kernelRsp;
-        }
-        else
-        {
-            taskTemp->regs.add=0;
-            tssAddr = taskTemp->regs.kernelRsp +40;
-        }
-        //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
-        set_tss_rsp((void*)(tssAddr));
-        runningThread = (taskTemp);
-        
-        _moveToNextProcess(&runningThread->regs, &taskTemp->regs);
-        
-        
-       // return 0;
-    }
+//    if(runningThread->pid_t==1){
+//        kprintf("killing sbush>> restartinmg");
+////        initMultiTasking();
+////        initUserProcess();
+//        FreePageEntries(task);
+//        FreePageTables(task);
+//        
+//        uint64_t U2_cr3 = (uint64_t)getNewPML4ForUser();
+//        Task *taskTemp = (Task*)kmalloc();
+//        uint64_t hello_entrypoint = (loadFile("/bin/sbush",(U2_cr3+get_kernbase()),taskTemp));
+//        
+//        if(hello_entrypoint == 0) return 0;
+//        
+//        kprintf("Entry Point: %p\n",hello_entrypoint);
+//        char* temp = "/bin/sbush";
+//        
+//        
+//        int i=0;
+//        
+//        while(temp[i] != '\0')
+//        {
+//            taskTemp->exeName[i] = temp[i];
+//            i++;
+//        }
+//        
+//        taskTemp->exeName[i] = '\0';
+//        
+//        
+//        createNewTask(taskTemp,hello_entrypoint,mainThread.regs.rflags,U2_cr3);
+//        
+//        taskTemp->next = taskTemp;
+//        
+//        taskTemp->startHH = getCurHr();
+//        taskTemp->startMM = getCurMin();
+//        taskTemp->startSS = getCurSec();
+//        
+//        
+//        uint64_t tssAddr=0;
+//        if (taskTemp->regs.count==0)
+//        {    taskTemp->regs.add=40;
+//            taskTemp->regs.count+=1;
+//            tssAddr = taskTemp->regs.kernelRsp;
+//        }
+//        else
+//        {
+//            taskTemp->regs.add=0;
+//            tssAddr = taskTemp->regs.kernelRsp +40;
+//        }
+//        //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
+//        set_tss_rsp((void*)(tssAddr));
+//        runningThread = (taskTemp);
+//        
+//        _moveToNextProcess(&runningThread->regs, &taskTemp->regs);
+//        
+//        
+//       // return 0;
+//    }
     
     task->state = 0;
     task->endHH = getCurHr();
