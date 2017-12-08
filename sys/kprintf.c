@@ -177,7 +177,7 @@ void kprintf(const char *fmt, ...)
     char *next_line_adr = next_line_adrs;
     char **next_line_ptr = &next_line_adr;
     char **present_line_ptr = &vm_adr;
-    for(char * temp2 = (char*)(VGA_VIRTUAL_ADDRESS+0x1); temp2 < (char*)VGA_VIRTUAL_ADDRESS+160*25; temp2 += 2) *temp2 = 7; /* white */;
+    for(char * temp2 = (char*)(VGA_VIRTUAL_ADDRESS+0x1); temp2 < (char*)VGA_VIRTUAL_ADDRESS+160*24; temp2 += 2) *temp2 = 7; /* white */;
     va_list valist;
     va_start(valist, fmt);
     while(*fmt != '\0'){
