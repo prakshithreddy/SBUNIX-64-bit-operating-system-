@@ -237,7 +237,7 @@ void pushInitialParamstoStack(Task* task)
    
     while(((char**)args)[i]!=NULL) i++;
     
-    kprintf("ARGV COUNT %d",i);
+    //kprintf("ARGV COUNT %d",i);
     
     int count=i;
     
@@ -267,7 +267,7 @@ void pushInitialParamstoStack(Task* task)
     pushSomeArgsToUser(mainArgs,(void*)(uint64_t)count,task->regs.cr3);
     mainArgs-=8;
     
-    kprintf("%p %p\n\n",tempMainArgs,mainArgs);
+    //kprintf("%p %p\n\n",tempMainArgs,mainArgs);
     
     pushSomeArgsToUser(task->regs.userRsp,(void*)(uint64_t)0x301000-(tempMainArgs-mainArgs)-0x8,task->regs.cr3);
     task->regs.userRsp-=8;
@@ -1432,7 +1432,7 @@ void* exit(void* pid)
 void* clearScreen()
 {
     
-    for(int i=0;i<30;i++) kprintf("\n");
+    for(int i=0;i<9;i++) kprintf("\n");
     return 0;
     
 }
@@ -1458,7 +1458,7 @@ void initUserProcess()
     
     if(hello_entrypoint == 0) return;
     
-    kprintf("Entry Point: %p\n",hello_entrypoint);
+    //kprintf("Entry Point: %p\n",hello_entrypoint);
     char* temp = "/bin/sbush";
     
     
@@ -1484,7 +1484,7 @@ void initUserProcess()
     userThread2->startMM = getCurMin();
     userThread2->startSS = getCurSec();
    
-    //clearScreen();
+    clearScreen();
     switchToUserMode();
     
 }
