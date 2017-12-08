@@ -43,7 +43,10 @@ void start(uint32_t *modulep, void *physbase, void *physfree)
   enablePaging();
     
     
-  kprintf("***************************Paging Enabled***************************\n");
+  //kprintf("                            Paging Enabled                             \n");
+  kprintf("                             Starting Up..                             \n");
+  kprintf("                          Welcome to SBUNIX..                                 \n");
+
   //probeAHCI();
   //initUserMode();
   initTarfs();
