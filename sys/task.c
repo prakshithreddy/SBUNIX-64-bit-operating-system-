@@ -206,6 +206,14 @@ void pushInitialParamstoStack(Task* task)
         envStart+=0x1000;
         i+=1;
     }
+    
+    char* tempNewPage = (char*)kmalloc();
+    int k=0;
+    tempNewPage[k] = '\0';
+    tempNewPage-=get_kernbase();
+    mapPageForUser(envStart,(uint64_t)tempNewPage,task->regs.cr3+get_kernbase());
+    envStart+=0x1000;
+    
     i=envStart-0x1000;
 
     int z = 0x322000;
@@ -232,7 +240,7 @@ void pushInitialParamstoStack(Task* task)
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=0;
+    k=0;
     
    
     while(((char**)args)[i]!=NULL) i++;
@@ -928,6 +936,15 @@ void* exec(void* path,void* args,void* envp)
         envStart+=0x1000;
         i+=1;
     }
+    
+    char* tempNewPage = (char*)kmalloc();
+    int k=0;
+    tempNewPage[k] = '\0';
+    tempNewPage-=get_kernbase();
+    mapPageForUser(envStart,(uint64_t)tempNewPage,task->regs.cr3+get_kernbase());
+    envStart+=0x1000;
+    
+    
     i=envStart-0x1000;
     
     int z = 0x322000;
@@ -954,7 +971,7 @@ void* exec(void* path,void* args,void* envp)
     char* newPage = (char*)kmalloc();
     
     i=0;
-    int k=0;
+    k=0;
     
     
     while(((char**)args)[i]!=NULL) i++;
@@ -1265,17 +1282,30 @@ void FreePageTables(Task* task)
 
 void* kill(void* pid)
 {
+    if((uint64_t)pid == 1)
+    {
+        kprintf("cannot kill sbush\n");
+        return 0;
+    }
     
-    Task* task = runningThread->next;
-    while(task->next->pid_t!=(uint64_t)pid&&task!=runningThread) task=task->next;
+    Task* task = runningThread;
+    
+    while(task->next!=runningThread && task->next->pid_t != (uint64_t)pid ) task=task->next;
+    
+    if(task->next==runningThread || task->next->pid_t == 1) {
+        kprintf("Did not find any process with pid %d\n"+ (uint64_t)pid);
+        return 0;
+    }
     
     Task* toBeDel = task->next;
     
-    task->next = task->next->next;
-    
-    
     FreePageEntries(toBeDel);
     FreePageTables(toBeDel);
+    
+    task->next = task->next->next;
+    
+   
+    
     
     addToDeleteQueue(toBeDel);
         

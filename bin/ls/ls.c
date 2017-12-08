@@ -43,6 +43,7 @@ ssize_t write(int fd, const void *buf, size_t count){
 */
 int main(int argc,char* argv[],char* envp[])
 {
+    while(1);
     
         char* file_path;
     
