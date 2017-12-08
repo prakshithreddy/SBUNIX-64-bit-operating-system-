@@ -25,6 +25,7 @@ typedef struct vma_struct{
     uint64_t v_file;//mapped file, if any
     struct vma_struct  *next;//list of VMA's 
     uint64_t v_offset;//file offset
+    uint64_t isNextFreed;
     uint64_t pageNumber;
 }VMA;
 

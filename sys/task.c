@@ -1109,6 +1109,7 @@ void* free(void* ptr)
         if(vmaTemp->next->v_start==(uint64_t)ptr)
         {
             eTemp->next = vmaTemp->next->next;
+            eTemp->isNextFreed = 1;
             pageDeAllocator((void*)((uint64_t)(vmaTemp->next - get_kernbase())&FRAME));
             break;
         }
