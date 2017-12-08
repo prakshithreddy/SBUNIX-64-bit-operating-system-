@@ -39,7 +39,7 @@ void strcpy(char *src,char *dest){//Str Copy will be used only forcopying file n
     i++;
   }
   if(i==256){//TODO: Change this 256 if character count of a filename is increased.
-    kprintf("FileName/DirName Exceeded 256 characters...My OS Doesnt allow you to do that :D\n");
+    kprintf("FileName/DirName Exceeded 256 characters...This OS Doesnt allow you to do that \n");
   }
   if(i<255){
     *(dest+i)=*(src+i);
@@ -295,14 +295,14 @@ uint64_t loadFile(char *filename,uint64_t pml4,Task *uthread){
     char path[512];
     char *file=get_executable_path(filename,path);
     if(file==NULL){
-        kprintf("Warning: File %s not found..\n",filename);
+        //kprintf("Warning: File %s not found..\n",filename);
         return 0;
     }
-    kprintf("\nFiles Found in tarfs:\n");
+    //kprintf("\nFiles Found in tarfs:\n");
     int file_found=0;
     while(search_pointer<BINARY_TARFS_END){
         if (strcmp(tar_file_pointer->name,"")!=0){
-            kprintf("    *  %s, size: %s\n",tar_file_pointer->name,tar_file_pointer->size);
+            //kprintf("    *  %s, size: %s\n",tar_file_pointer->name,tar_file_pointer->size);
         }
         if (strcmp(tar_file_pointer->name,file)==0){
             file_found=1;
@@ -379,14 +379,14 @@ uint64_t get_file_address(char* file){
     char *f_size=tar_file_pointer->size;
     int size = toInteger(f_size);
     if(size>0 && file_found==1){
-        kprintf("File Found: %s\n",file);
+        //kprintf("File Found: %s\n",file);
         return (uint64_t)tar_file_pointer+512;
     }
     else if(size==0 && file_found==1){
-        kprintf("Dir Found: %s\n",file);
+        //kprintf("Dir Found: %s\n",file);
         return (uint64_t)tar_file_pointer;
     }
-    kprintf("Warning: File %s not found\n",file);
+    //kprintf("Warning: File %s not found\n",file);
     return 0;
 }
 
@@ -414,10 +414,10 @@ uint64_t get_dir_address(char* dir){
     char *f_size=tar_file_pointer->size;
     int size = toInteger(f_size);
     if(size==0 && dir_found==1){
-        kprintf("Dir Found: %s\n");
+        //kprintf("Dir Found: %s\n");
         return (uint64_t)tar_file_pointer;
     }
-    kprintf("Warning: Dir %s not found\n",dir);
+    //kprintf("Warning: Dir %s not found\n",dir);
     return 0;
 }
 
@@ -487,7 +487,7 @@ int64_t openFile(char* file){
             fd_array++;
         }
     }
-    kprintf("Trying to open more than 100 FD's..My OS allows user to open only 100 FD's per process.\n");
+    kprintf("Trying to open more than 100 FD's..This OS allows user to open only 100 FD's per process.\n");
     return -1;
 }
 
@@ -533,7 +533,7 @@ uint64_t readFile(int fd,char *buf,int count){
 
 uint64_t closeFile(int fd){
     if(fd<0){
-        kprintf("Invalid FD provided..\n");
+        //kprintf("Invalid FD provided..\n");
         return 1;
     }
     struct fileDescriptor *fd_struct=get_fd_address(fd);
@@ -559,7 +559,7 @@ uint64_t writeFile(int fd,char *buf,int count){
       return count;//TODO: For now returning the input count, but not the actual count.
     }
     else{
-      kprintf("Does not support write system call for now..");
+      kprintf("Does not support write system call for now.. Only stdout supported\n");
       return 0;
     }
 }
