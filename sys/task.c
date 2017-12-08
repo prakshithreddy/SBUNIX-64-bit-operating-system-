@@ -1369,12 +1369,12 @@ void* clearScreen()
 
 void* getPid(){
     
-    return (void*)runningThread->pid_t;
+    return (void*)(uint64_t)runningThread->pid_t;
     
 }
 void* getPPid()
 {
-    return (void*)runningThread->ppid_t;
+    return (void*)(uint64_t)runningThread->ppid_t;
 }
 
 
