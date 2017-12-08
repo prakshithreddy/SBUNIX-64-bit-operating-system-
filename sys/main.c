@@ -86,7 +86,7 @@ void boot(void)
   // note: function changes rsp, local stack variables can't be practically used
   register char *temp1, *temp2;
 
-  //for(temp2 = (char*)0xb8001; temp2 < (char*)0xb8000+160*25; temp2 += 2) *temp2 = 0xF0 /* white */;
+  for(temp2 = (char*)0xb8001+160*24; temp2 < (char*)0xb8000+160*25; temp2 += 2) *temp2 = 14 /* white */;
   __asm__ volatile (
     "cli;"
     "movq %%rsp, %0;"
