@@ -1169,7 +1169,7 @@ int64_t changeDirectory(char *buf){
     char dest[256];
     remove_dotslash(src,dest,1);
     if(check_if_directory_present(dest+1)==0){
-      kprintf(" %s Directory Not Found..",buf);
+      kprintf(" %s Directory Not Found..\n",buf);
       return -1;
     }
     else{
