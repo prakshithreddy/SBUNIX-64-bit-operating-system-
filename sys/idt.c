@@ -18,25 +18,25 @@ uint64_t switchRsi=0;
 uint64_t switchRdi=0;
 uint64_t switchRbp=0;
 
-int timeCounter = 0;
-int counterEnable =0;
-
-
-void enableCounter()
-{
-    counterEnable =1;
-}
-
-void disableCounter()
-{
-    timeCounter=0;
-    counterEnable =0;
-}
-
-int getTimeCounter()
-{
-    return timeCounter;
-}
+//int timeCounter = 0;
+//int counterEnable =0;
+//
+//
+//void enableCounter()
+//{
+//    counterEnable =1;
+//}
+//
+//void disableCounter()
+//{
+//    timeCounter=0;
+//    counterEnable =0;
+//}
+//
+//int getTimeCounter()
+//{
+//    return timeCounter;
+//}
 
 uint64_t errorCode;
 char *stdStart;
@@ -267,10 +267,53 @@ void _timer_intr_hdlr(){
         i = 0;
         seconds++;
         
-        if(counterEnable)
+//        if(counterEnable)
+//        {
+//            timeCounter++;
+//        }
+        
+        Task* temp = runningThread;
+        
+        if(temp->currAlarmCount >= 1)
         {
-            timeCounter++;
+            temp->currAlarmCount++;
         }
+        if(temp->currAlarmCount>temp->expectedAlarmCount)
+        {
+            temp->regs.rip=(uint64_t)temp->functionPointer;
+            temp->currentAlarmCount=0;
+        }
+        
+        if(temp->currSleepCount >= 1)
+        {
+            temp->currSleepCount++;
+        }
+        
+        temp = runningThread->next;
+        
+        while(temp!=runningTask)
+        {
+            
+            if(temp->currAlarmCount >= 1)
+            {
+                temp->currAlarmCount++;
+            }
+            
+            if(temp->currSleepCount >= 1)
+            {
+                temp->currSleepCount++;
+            }
+            
+            if(temp->currAlarmCount>temp->expectedAlarmCount)
+            {
+                temp->regs.rip=(uint64_t)temp->functionPointer;
+                temp->currentAlarmCount=0;
+                temp->expectedAlarmCount=0;
+            }
+            
+            temp=temp->next;
+        }
+        
         
         if(seconds%60==0) {
             seconds%=60;

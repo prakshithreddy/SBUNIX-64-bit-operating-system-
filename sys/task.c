@@ -1173,21 +1173,28 @@ void* ps()
     return 0;
 }
 
-void* enableSleep()
+void* setSleep((void*)seconds)
 {
-    enableCounter();
+    runningThread->currSleepCount=1;
+    runningThread->expectedSleepCount=(uint64_t)seconds;
     return 0;
 }
 
 void* getCounter()
 {
-    return (void*)(uint64_t)getTimeCounter();
+    if(runningThread->currSleepCount>runningThread->expectedSleepCount) {
+       
+        runningThread->currSleepCount=0;
+        runningThread->expectedSleepCount=0;
+        return 1;
+    }
+    else return 0;
 }
-void* disableSleep()
-{
-    disableCounter();
-    return 0;
-}
+//void* disableSleep()
+//{
+//    disableCounter();
+//    return 0;
+//}
 
 
 void FreePageEntries(Task* task)
@@ -1368,6 +1375,32 @@ void* getPid(){
 void* getPPid()
 {
     return (void*)(uint64_t)runningThread->ppid_t;
+}
+
+void* setAlarmFP(void* sigNum, void* functionPointer)
+{
+    if((uint64_t)sigNum!=14)
+    {
+        kprintf("This OS supports only SIGALRM (14) signal\n");
+        return 0;
+    }
+    runningThread.functionPointer = functionPointer;
+    
+    return 0;
+}
+
+void* setAlarm(void* seconds)
+{
+    if(runningThread->functionPointer==NULL)
+    {
+        kprintf("No Handler installed..");
+        return 0;
+    }
+    
+    runningThread.currAlarmCount = 1;
+    runningThread.expectedAlarmCount = (uint64_t)seconds;
+    
+    return 0;
 }
 
 

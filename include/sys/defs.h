@@ -20,6 +20,8 @@ typedef uint32_t id_t;
 
 typedef uint32_t pid_t;
 
+#define SIGALRM 14
+
 struct stat {
     unsigned int        st_dev;         /* Device.  */
     unsigned int        st_ino;         /* File serial number.  */

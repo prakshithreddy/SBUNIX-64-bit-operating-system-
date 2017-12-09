@@ -46,25 +46,33 @@ typedef struct mm_struct {
 
 typedef struct Task{
   /*int  priority;
-  int  state;*/  //TODO: these two variables might be used later	
-  int pid_t;
-  int ppid_t;
+   int  state;*/  //TODO: these two variables might be used later
+    int pid_t;
+    int ppid_t;
     int startHH;
     int startMM;
     int startSS;
-    
+
     int endHH;
     int endMM;
     int endSS;
+
+    uint64_t currAlarmCount;
+    uint64_t expectedAlarmCount;
+
+    uint64_t currSleepCount;
+    uint64_t expectedSleepCount;
+
     
     char exeName[15];
     
-  Registers regs;
-  struct Task *next;
-  uint64_t state;
-  struct mm_struct memMap;
-  uint64_t fd_pointers[20];//Each page contains 5 FD's.. Each entry of this page is the starting adress of the pages allocated for FD's. Initialize fd[0] with new page.
-  int fd_count;//Need to initialize this with 5. If user requests for 6th then, a page will be allocated and fd_pointers[1] will be filled with that adress.
+    Registers regs;
+    struct Task *next;
+    uint64_t state;
+    struct mm_struct memMap;
+    uint64_t fd_pointers[20];//Each page contains 5 FD's.. Each entry of this page is the starting adress of the pages allocated for FD's. Initialize fd[0] with new page.
+    int fd_count;//Need to initialize this with 5. If user requests for 6th then, a page will be allocated and fd_pointers[1] will be filled with that adress.
+    void* functionPointer;
 } Task;
 
 
@@ -95,6 +103,8 @@ void init_terminal();
 void* printMe(void* path,void* args,void* envp);
 void* waitpid(void* pid,void* status,void* flags);
 void* enableSleep();
+
+void* setAlarm(void* paramA, void* functionPointer);
 
 void* getPid();
 void* getPPid();
