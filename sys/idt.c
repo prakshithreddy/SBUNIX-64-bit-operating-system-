@@ -291,7 +291,7 @@ void _timer_intr_hdlr(){
         //runNextTask();
         
     }
-    else if (j%10==0)
+    else if (j%3==0)
     {
         j=0;
         outb(0x20,0x20);
@@ -502,12 +502,19 @@ void _hndlr_isr14(){
             
         }
         else if(us&rw&!p){
-            kprintf("%d\n",errorCode);
+            //kprintf("%d\n",errorCode);
             kprintf("Segmentation Fault..Unauthorised access to meomry..Killing the process..\n");
             //need to write code here to kill it..
             exit(0);
         } 
-        
+        else if((!us)&rw&(!p)){
+            //kprintf("%d\n",errorCode);
+            kprintf("\nPAGE FAULT AT : %p Error Code: %d\n",pagefaultAt,errorCode);
+            kprintf("Segmentation Fault..Please restart\n");
+            //need to write code here to kill it..
+            //exit(0);
+            while(1);
+        } 
         //Task *task=getRunningThread();
         //kprintf("\n*** %d ***\n",task->pid_t);
 //        kprintf("Handling page fault DONE ");
@@ -557,6 +564,11 @@ void _hndlr_isr14(){
         kprintf("%d",errorCode);
         kprintf("Segmentation Fault..Unauthorised access to meomry..Killing the process..\n");
         exit(0);
+    }
+    else if(!us&!rw&!p){
+        kprintf("%d",errorCode);
+        kprintf("Segmentation Fault..Please Restart.\n");
+        while(1);
     }
     else
     {  
