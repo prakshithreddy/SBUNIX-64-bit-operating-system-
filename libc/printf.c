@@ -1,34 +1,6 @@
 #include<stdio.h>
 #include<sys/syscall.h>
-
-int puts(const char *s)
-{
-  for( ; *s; ++s) if (putchar(*s) != *s) return EOF;
-  return 0;
-  return (putchar('\n') == '\n') ? 0 : EOF;
-}
-
-int putchar(int c){
-  int *buf=&c;
-  syscall((void*)(uint64_t)4,(void*)(uint64_t)1,(void*)buf,(void*)(uint64_t)1,0,0,0);
-  return c;
-}
-
-char *gets(char *s){
-  char *temp=s;
-  *temp=0;
-  while(*temp!='\0' && *temp!='\n'){
-    syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)temp,(void*)(uint64_t)1,0,0,0);
-    temp++;
-  }
-  return s;
-}
-
-char getchar(){
-    char c;
-    syscall((void*)(uint64_t)0,(void*)(uint64_t)0,(void*)&c,(void*)(uint64_t)1,0,0,0);
-    return c;
-}
+#include<stdarg.h>
 
 /*int printf(const char *fmt, ...)
 {
