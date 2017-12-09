@@ -1095,43 +1095,17 @@ void* waitpid(void* pid,void* status,void* flags)
 
 void* free(void* ptr)
 {
-    
-    //kprintf("PTR To Free\n",(uint64_t)ptr);
-    
-    uint64_t pageToDel = (uint64_t)ptr&FRAME;
-    
-    Task* task = runningThread;
-    
-    VMA* vmaTemp = task->memMap.mmap;
-    
-    int count=0;
-    
-    while(vmaTemp!=NULL)
-    {
-        if(vmaTemp->v_start>=pageToDel && vmaTemp->v_end<=(pageToDel+0x1000))
-            count+=1;
-        
-        vmaTemp=vmaTemp->next;
-        
-    }
-    
-    vmaTemp = task->memMap.mmap;
-    
-    if(vmaTemp->v_start==(uint64_t)ptr)
-        task->memMap.mmap = vmaTemp->next;
-    
-    VMA* eTemp = vmaTemp;
+    VMA* vmaTemp = runningThread->memMap.mmap;
     
     while(vmaTemp->next!=NULL)
     {
         if(vmaTemp->next->v_start==(uint64_t)ptr)
         {
-            eTemp->next = vmaTemp->next->next;
-            eTemp->isNextFreed = 1;
+            vmaTemp->next = vmaTemp->next->next;
+            vmaTemp->isNextFreed = 1;
             pageDeAllocator((void*)((uint64_t)(vmaTemp->next - get_kernbase())&FRAME));
             break;
         }
-        eTemp=vmaTemp->next;
         vmaTemp = vmaTemp->next;
         
     }
