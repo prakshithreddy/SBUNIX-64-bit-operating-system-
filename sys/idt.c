@@ -272,7 +272,7 @@ void _timer_intr_hdlr(){
 //            timeCounter++;
 //        }
         
-        Task* temp = runningThread;
+        Task* temp = getRunningThread();
         
         if(temp->currAlarmCount >= 1)
         {
@@ -291,7 +291,7 @@ void _timer_intr_hdlr(){
         
         temp = runningThread->next;
         
-        while(temp!=runningTask)
+        while(temp!=getRunningThread())
         {
             
             if(temp->currAlarmCount >= 1)
@@ -307,7 +307,7 @@ void _timer_intr_hdlr(){
             if(temp->currAlarmCount>temp->expectedAlarmCount)
             {
                 temp->regs.rip=(uint64_t)temp->functionPointer;
-                temp->currentAlarmCount=0;
+                temp->currAlarmCount=0;
                 temp->expectedAlarmCount=0;
             }
             

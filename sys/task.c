@@ -1397,10 +1397,14 @@ void* setAlarm(void* seconds)
         return 0;
     }
     
+    uint64_t returnValue = 0;
+    
+    if(runningThread->currAlarmCount !=0) returnValue = runningThread->expectedAlarmCount - runningThread->currAlarmCount;
+    
     runningThread->currAlarmCount = 1;
     runningThread->expectedAlarmCount = (uint64_t)seconds;
     
-    return 0;
+    return (void*)returnValue;
 }
 
 
