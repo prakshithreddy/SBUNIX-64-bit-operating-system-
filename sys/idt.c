@@ -454,7 +454,7 @@ void _hndlr_isr14(){
      uint64_t pagefaultAt;
     __asm__ __volatile__("movq %%cr2, %%rax; movq %%rax, %0;":"=m"(pagefaultAt)::"%rax");
     
-    if(pagefaultAt&FRAME == 0xFFFFFF7EFFFF5000)
+    if((pagefaultAt&FRAME) == 0xFFFFFF7EFFFF5000)
     {
         kprintf("Reached the stack border: Cannot allocate this page\n");
         exit(0);
