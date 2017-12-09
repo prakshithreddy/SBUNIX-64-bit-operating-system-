@@ -102,9 +102,10 @@ Task* getRunningThread();
 void init_terminal();
 void* printMe(void* path,void* args,void* envp);
 void* waitpid(void* pid,void* status,void* flags);
-void* enableSleep();
+void* setSleep(void* seconds);
 
-void* setAlarm(void* paramA, void* functionPointer);
+void* setAlarmFP(void* paramA, void* functionPointer);
+void* setAlarm(void* seconds);
 
 void* getPid();
 void* getPPid();
