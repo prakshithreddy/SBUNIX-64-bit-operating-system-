@@ -1384,7 +1384,7 @@ void* setAlarmFP(void* sigNum, void* functionPointer)
         kprintf("This OS supports only SIGALRM (14) signal\n");
         return 0;
     }
-    runningThread.functionPointer = functionPointer;
+    runningThread->functionPointer = functionPointer;
     
     return 0;
 }
@@ -1397,8 +1397,8 @@ void* setAlarm(void* seconds)
         return 0;
     }
     
-    runningThread.currAlarmCount = 1;
-    runningThread.expectedAlarmCount = (uint64_t)seconds;
+    runningThread->currAlarmCount = 1;
+    runningThread->expectedAlarmCount = (uint64_t)seconds;
     
     return 0;
 }
