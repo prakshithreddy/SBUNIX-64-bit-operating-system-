@@ -1173,7 +1173,7 @@ void* ps()
     return 0;
 }
 
-void* setSleep((void*)seconds)
+void* setSleep(void* seconds)
 {
     runningThread->currSleepCount=1;
     runningThread->expectedSleepCount=(uint64_t)seconds;
