@@ -110,6 +110,10 @@ void* setAlarm(void* seconds);
 void* getPid();
 void* getPPid();
 
+int getforegroundPid();
+void setforegroundPid(int pid);
+void* exitpid(int pid);
+
 void* getCounter();
 void* disableSleep();
 void* kill(void* pid);

@@ -23,7 +23,7 @@ uint64_t toInteger(char *s){
 int main(int argc, char *argv[], char *envp[]){
     
     uint64_t sleep_seconds=0;
-    
+    while(1);
     if(argc==1){
         return 0;
     }

@@ -16,6 +16,8 @@ Task* deleteQueue = NULL;
 static int pidCount = 0;
 static int pageNum = 0;
 
+int foregroundPid=0;
+
 Task *userThread1;
 
 //Task *userThread3;
@@ -34,6 +36,14 @@ uint64_t currentRIP;
 uint64_t* getRunKRsp()
 {
     return (uint64_t*)runningThread->regs.kernelRsp;
+}
+
+int getforegroundPid(){
+    return foregroundPid;
+}
+
+void setforegroundPid(int pid){
+    foregroundPid=pid;
 }
 
 Task* getRunningThread()
@@ -341,6 +351,7 @@ void createNewTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
 void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr3){
     
     task->pid_t = runningThread->pid_t;
+    foregroundPid=task->pid_t;
     pidCount+=1; //next process takes the next id
     task->ppid_t = 0; //setting the Pid of the parent for COW
     task->regs.rax=0;
@@ -1335,7 +1346,6 @@ void* exit(void* pid)
         kprintf("killing sbush.... restarting....\n");
         return 0;
     }
-    
     task->state = 0;
     task->endHH = getCurHr();
     task->endMM = getCurMin();
@@ -1346,6 +1356,59 @@ void* exit(void* pid)
     Task* temp = runningThread;
     
     while(temp->next!=runningThread) temp = temp->next;
+    
+    temp->next = temp->next->next;
+    
+    temp = temp->next;
+    
+    addToDeleteQueue(task);
+    
+    uint64_t tssAddr=0;
+    if (temp->regs.count==0)
+    {    temp->regs.add=40;
+        temp->regs.count+=1;
+        tssAddr = temp->regs.kernelRsp;
+    }
+    else
+    {
+        temp->regs.add=0;
+        tssAddr = temp->regs.kernelRsp +40;
+    }
+    //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
+    set_tss_rsp((void*)(tssAddr));
+    runningThread = (temp);
+    
+    _moveToNextProcess(&runningThread->regs, &temp->regs);
+    
+    return 0;
+}
+
+void* exitpid(int pid)
+{
+    
+    if(pid==1){
+        //kprintf("killing sbush.... restarting....\n");
+        return 0;
+    }
+    Task* task = runningThread;
+    Task* temp2=runningThread->next;
+    while(temp2->pid_t!=pid && temp2!=task){
+        temp2=temp2->next;
+    }
+    if(temp2->pid_t!=pid){
+        return 0;
+    }
+    task=temp2;
+    task->state = 0;
+    task->endHH = getCurHr();
+    task->endMM = getCurMin();
+    task->endSS = getCurSec();
+    FreePageEntries(task);
+    FreePageTables(task);
+    
+    Task* temp = task;
+    
+    while(temp->next!=task) temp = temp->next;
     
     temp->next = temp->next->next;
     

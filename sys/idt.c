@@ -224,6 +224,15 @@ void _key_press_handler(registers_t regs){
                     if(CAPS_kbdus[a]=='H'){
                       handleBackspace();
                     }
+                    if(CAPS_kbdus[a]=='C'){
+                      int pid = getforegroundPid();
+                      if(pid!=0){
+                        setforegroundPid(0);
+                        outb(0x20,0x20);
+                        outb(0x20,0xA0);
+                        exitpid(pid);
+                      }
+                    }
                 }
                 else
                 {
