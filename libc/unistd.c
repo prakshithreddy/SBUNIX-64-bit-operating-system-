@@ -58,11 +58,11 @@ char *getcwd(char *buf, size_t size){
 
 unsigned int sleep(unsigned int seconds){
   
-  syscall((void*)50,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+  syscall((void*)50,(void*)(uint64_t)seconds,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     
-  while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)<=seconds);
+  while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)==0);
     
-  syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+ // syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
   
   return seconds;
 }
