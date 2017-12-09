@@ -1386,7 +1386,7 @@ void* setAlarmFP(void* sigNum, void* functionPointer)
     }
     runningThread->functionPointer = functionPointer;
     
-    return 0;
+    return functionPointer;
 }
 
 void* setAlarm(void* seconds)
