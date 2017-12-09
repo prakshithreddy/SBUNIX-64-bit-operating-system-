@@ -281,7 +281,7 @@ void _timer_intr_hdlr(){
         if(temp->currAlarmCount>temp->expectedAlarmCount)
         {
             temp->regs.rip=(uint64_t)temp->functionPointer;
-            temp->currentAlarmCount=0;
+            temp->currAlarmCount=0;
         }
         
         if(temp->currSleepCount >= 1)
@@ -289,7 +289,7 @@ void _timer_intr_hdlr(){
             temp->currSleepCount++;
         }
         
-        temp = runningThread->next;
+        temp = getRunningThread()->next;
         
         while(temp!=getRunningThread())
         {
