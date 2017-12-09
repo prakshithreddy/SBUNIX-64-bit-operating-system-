@@ -39,7 +39,7 @@ void strcpy(char *src,char *dest){//Str Copy will be used only forcopying file n
     i++;
   }
   if(i==256){//TODO: Change this 256 if character count of a filename is increased.
-    kprintf("FileName/DirName Exceeded 256 characters...This OS Doesnt allow you to do that \n");
+    kprintf("FileName/DirName Exceeded 256 characters...This OS Doesnt allow you to do that.\n");
   }
   if(i<255){
     *(dest+i)=*(src+i);
@@ -113,7 +113,7 @@ uint64_t map_elf_file(Elf64_Ehdr *elf_file,Elf64_Phdr *elf_p_hdr,uint64_t pml4,T
     //uint64_t p_paddr=elf_p_hdr->p_paddr; //TODO:Not sure which one to use between p_vaddr and p_paddr
     
     if(p_memsz<p_filesz){
-        kprintf("MemSize of file is less than File Size.. Something wrong..\n");
+        kprintf("MemSize of file is less than File Size.. Something wrong.\n");
         return 0;
     }
     
@@ -318,7 +318,7 @@ uint64_t loadFile(char *filename,uint64_t pml4,Task *uthread){
         tar_file_pointer = (struct posix_header_ustar *)search_pointer;
     }
     if (file_found==0){
-        kprintf("Warning: File %s not found...\n",file);
+        kprintf("Warning: File %s not found.\n",file);
         return 0;
     }
     
@@ -334,19 +334,19 @@ uint64_t loadFile(char *filename,uint64_t pml4,Task *uthread){
         return 0;
     }
     if(elf_file_end<((elf_file->e_phoff)+((elf_file->e_phnum)*sizeof(Elf64_Phdr)))){
-        kprintf("Something Wrong with the file, Program Header is out of file range\n");
+        kprintf("Something Wrong with the file, Program Header is out of file range.\n");
         return 0;
     }//TODO: May need to include some checks, TA's might check some cases by loading a file here.. This can possibly crash the system
     int counter=0;
     for(int i=0;i<psegments_count;i++){
         if(counter>100){
-            kprintf("Already loaded 100 program sections into memory.. Not proceeding further as this might crash system..\n");
+            kprintf("Already loaded 100 program sections into memory.. Not proceeding further as this might crash system.\n");
             return 0;
         }
         if((elf_program_hdr+i)->p_type == ELF_PT_LOAD){
             counter+=1;
             if (!(map_elf_file(elf_file,elf_program_hdr+i,pml4,uthread))){
-                kprintf("Error while loading program into memory..\n");
+                kprintf("Error while loading program into memory.\n");
                 return 0;
             }
         }
@@ -438,7 +438,7 @@ struct fileDescriptor* get_fd_address(int fd){
 int64_t openFile(char* file){
     Task *currentTask=(Task *)getRunTask();
     if(*file=='\0'){
-        kprintf("File Name Empty..\n");
+        kprintf("File Name Empty.\n");
         return -1;
     }
     char newFileName[256];
@@ -459,7 +459,7 @@ int64_t openFile(char* file){
         start=get_file_address(fileName);
     }
     if(start==0){
-        kprintf("Invalid File Specified..\n");
+        kprintf("Invalid File Specified.\n");
         return -1;
     }
     for(int page=0;page<20;page++){
@@ -493,7 +493,7 @@ int64_t openFile(char* file){
 
 uint64_t readFile(int fd,char *buf,int count){
     if(fd<0){
-        kprintf("Invalid FD provided..\n");
+        kprintf("Invalid FD provided.\n");
         return -1;
     }
     if(fd==0){
@@ -523,7 +523,7 @@ uint64_t readFile(int fd,char *buf,int count){
         start = fd_struct->offset;
     }
     else{
-        kprintf("Incorrect File Descriptor..");
+        kprintf("Incorrect File Descriptor.");
         return -1;
     }
     int val=memread((char *)start,buf,count);
@@ -544,7 +544,7 @@ uint64_t closeFile(int fd){
         fd_struct->name[0]='\0';
     }
     else{
-        kprintf("Err: Trying to close an unopened file\n");
+        kprintf("Err: Trying to close an unopened file.\n");
     }
     return 0;
 }
@@ -559,7 +559,7 @@ uint64_t writeFile(int fd,char *buf,int count){
       return count;//TODO: For now returning the input count, but not the actual count.
     }
     else{
-      kprintf("Does not support write system call for now.. Only stdout supported\n");
+      kprintf("Does not support write system call for now.. Only stdout supported.\n");
       return 0;
     }
 }
@@ -567,7 +567,7 @@ uint64_t writeFile(int fd,char *buf,int count){
 DIR *openDirectory(char* dir){
     Task *currentTask=(Task *)getRunTask();
     if(*dir=='\0'){
-        kprintf("Dir Name Empty...\n");
+        kprintf("Err: Dir Name Empty.\n");
         return NULL;
     }
     char newDirName[256];
@@ -583,7 +583,7 @@ DIR *openDirectory(char* dir){
       start=get_dir_address(dirName);
     }
     if(start==0){
-        kprintf("Invalid Directory Specified..\n");
+        kprintf("Invalid Directory Specified.\n");
         return NULL;
     }
     //DIR *dirp=kmalloc();
@@ -612,7 +612,7 @@ DIR *openDirectory(char* dir){
             fd_array++;
         }
     }
-    kprintf("Trying to open more than 100 FD's..My OS allows user to open only 100 FD's per process. :D\n");
+    kprintf("Trying to open more than 100 FD's..This OS allows user to open only 100 FD's per process.\n");
     return NULL;
 }
 
@@ -789,7 +789,7 @@ struct dirent * readDir(DIR *dirp){
     }
     int fd= get_fd((uint64_t)dirp);
     if(fd<0){
-        kprintf("Invalid DIR * provided..\n");
+        kprintf("Invalid DIR * provided.\n");
         return NULL;
     }
     //Task *currentTask=(Task *)getRunTask();
@@ -803,7 +803,7 @@ struct dirent * readDir(DIR *dirp){
     struct dirent *dir=(struct dirent *)buf;
     int count=4096;
     if(count<sizeof(struct dirent)){
-      kprintf("Buffer size not sufficient for returning Dirent..");
+      kprintf("Buffer size not sufficient for returning Dirent.\n");
       return NULL;
     }
     if(!strcmp(fd_struct->name,"/")){
@@ -878,7 +878,7 @@ struct dirent * readDir(DIR *dirp){
           start=start+size+512;
         }
     }
-    kprintf("Incorrect FD...\n");
+    kprintf("Incorrect FD.\n");
     return NULL;
 }
 
@@ -889,7 +889,7 @@ int64_t closeDir(DIR *dirp){
     }
     int fd= get_fd((uint64_t)dirp);
     if(fd<0){
-        kprintf("Invalid DIR * provided..\n");
+        kprintf("Invalid DIR * provided.\n");
         return 0;
     }
     struct fileDescriptor *fd_struct=get_fd_address(fd);
@@ -900,14 +900,14 @@ int64_t closeDir(DIR *dirp){
         fd_struct->name[0]='\0';
     }
     else{
-        kprintf("Err: Trying to close an unopened Directory FD\n");
+        kprintf("Err: Trying to close an unopened Directory FD.\n");
     }
     return 0;
 }
 
 uint64_t getDirEntries(int fd,char *buf,int count){
     if(fd<0){
-        kprintf("Invalid FD provided..\n");
+        kprintf("Invalid FD provided.\n");
         return 0;
     }
     int y=count;
@@ -1169,7 +1169,7 @@ int64_t changeDirectory(char *buf){
     char dest[256];
     remove_dotslash(src,dest,1);
     if(check_if_directory_present(dest+1)==0){
-      kprintf(" %s Directory Not Found..\n",buf);
+      kprintf(" %s : No Such Directory.\n",buf);
       return -1;
     }
     else{

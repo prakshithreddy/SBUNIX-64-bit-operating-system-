@@ -50,7 +50,7 @@ int main(int argc, char*argv[],char* envp[])
     if(fd==-1){
         write(1,"cat: ",10);
         write(1,argv[1],256);
-        write(1," File Not Found..",10);
+        write(1," File Not Found\n",10);
         return 0;
     }
     int l_cou=1;

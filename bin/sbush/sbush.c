@@ -154,7 +154,7 @@ char *token(char *command, int x,int y){
 
 int change_directory(char **com_args){
   if(*(com_args+1) == '\0'){
-    //dedeprintf("Error: expected argument to \"cd\"\n");
+    puts("Error: expected argument to \"cd\"\n");
     return -1;
   }
   else{
@@ -365,8 +365,9 @@ int main(int argc, char *argv[], char *envp[]){
     {
         //read a input line
         
-        //char *ps1=getenv("PS1");
-        char *ps1=NULL;
+        char *ps1=getenv("PS1");
+        //printf("Hi.. :D\n");
+        //char *ps1=NULL;
         if(ps1==NULL){
           puts("sbush>");
         }
