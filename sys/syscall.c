@@ -72,7 +72,7 @@ void* syscallHandler(uint64_t paramA,uint64_t paramB,uint64_t paramC,uint64_t pa
         case 51:   returnVal =  (void*)getCounter(); break;
 //        case 52:   returnVal =  (void*)disableSleep(); break;
         case 53:   returnVal =  (void*)setenv((char *)paramA,(char *)paramB,(int64_t)paramC);break;
-        case 155:  returnVal =  (void*)setAlarmFP((void*)paramA,(void*)functionPointer);break;
+        case 155:  returnVal =  (void*)setAlarmFP((void*)paramA,(void*)paramB);break;
         case 156:  returnVal =  (void*)setAlarm((void*)paramA);break;
         case 54:   returnVal =  (void*)getenv((char *)paramA);break;
         case 55:   returnVal =  (void*)env((char **)paramA);break;
