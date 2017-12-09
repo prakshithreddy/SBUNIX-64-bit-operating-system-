@@ -1186,7 +1186,7 @@ void* getCounter()
        
         runningThread->currSleepCount=0;
         runningThread->expectedSleepCount=0;
-        return 1;
+        return (void*)1;
     }
     else return 0;
 }
