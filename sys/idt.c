@@ -278,11 +278,11 @@ void _timer_intr_hdlr(){
         {
             temp->currAlarmCount++;
         }
-        if(temp->currAlarmCount>temp->expectedAlarmCount)
+        /*if(temp->currAlarmCount>temp->expectedAlarmCount)
         {
             temp->regs.rip=(uint64_t)temp->functionPointer;
             temp->currAlarmCount=0;
-        }
+        }*/
         
         if(temp->currSleepCount >= 1)
         {
@@ -304,12 +304,12 @@ void _timer_intr_hdlr(){
                 temp->currSleepCount++;
             }
             
-            if(temp->currAlarmCount>temp->expectedAlarmCount)
+            /*if(temp->currAlarmCount>temp->expectedAlarmCount)
             {
                 temp->regs.rip=(uint64_t)temp->functionPointer;
                 temp->currAlarmCount=0;
                 temp->expectedAlarmCount=0;
-            }
+            }*/
             
             temp=temp->next;
         }

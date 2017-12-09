@@ -26,6 +26,10 @@ Task *userThread1;
 
 uint64_t* currentRSP = 0; // keep a current RSP
 uint64_t currentRAX;
+uint64_t currentCS;
+uint64_t currentRFlags;
+uint64_t currentURSP;
+uint64_t currentRIP;
 
 uint64_t* getRunKRsp()
 {
@@ -367,6 +371,7 @@ void createNewExecTask(Task *task,uint64_t function, uint64_t rflags,uint64_t cr
 
 void _switchToRingThree(Registers *from, Registers *to);
 void _moveToNextProcess(Registers* prev,Registers* next);
+void _changeToAlarmFunction(uint64_t fp,Registers *nextTask);
 
 void runNextTask()
 {
@@ -401,6 +406,15 @@ void runNextTask()
     }
     //uint64_t tssAddr = runningThread->regs.kernelRsp +40; NOTE: Moved into if else block, to make sure it does cross above the allocated page.
     set_tss_rsp((void*)(tssAddr));
+    if(runningThread->currAlarmCount>runningThread->expectedAlarmCount)
+    {
+            _changeToAlarmFunction((uint64_t)runningThread->functionPointer,&runningThread->regs);
+            //runningThread->regs.rip=(uint64_t)temp->functionPointer;
+            runningThread->functionPointer=NULL;
+            //runningThread->regs.userRsp-=8;
+            runningThread->currAlarmCount=0;
+            runningThread->expectedAlarmCount=0;
+    }
     _moveToNextProcess(&prev->regs, &runningThread->regs);
 }
 

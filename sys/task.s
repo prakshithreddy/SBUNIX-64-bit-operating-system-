@@ -1,9 +1,13 @@
 .section .text
 
-.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack,_moveToNextProcess,_pushVal
+.global _switchThread_,_switchToRingThree,_prepareInitialKernelStack,_moveToNextProcess,_pushVal,_changeToAlarmFunction
 
 .global currentRSP
 .global currentRAX
+.global currentCS
+.global currentRFlags
+.global currentURSP
+.global currentRIP
 .global mutex
 
 _switchThread_:
@@ -191,5 +195,33 @@ _pushVal:
     movq currentRSP,%rsp //restore stack pointer
     retq
 
-    
+_changeToAlarmFunction:
+	movq %rsp,currentRSP
+	movq %rax,currentRAX
+	movq 88(%rsi),%rsp
+	popq %rax
+	movq %rax,currentRIP
+	popq %rax
+	movq %rax,currentCS
+	popq %rax
+	movq %rax,currentRFlags
+	popq %rax
+	movq %rax,currentURSP
+	subq $8,%rax
+	pushq %rax
+	movq currentRFlags,%rax
+	pushq %rax
+	movq currentCS,%rax
+	pushq %rax
+	pushq %rdi
+	movq 80(%rsi),%rax
+    movq %rax, %cr3
+	movq currentURSP,%rsp
+	movq currentRIP,%rax
+	pushq %rax
+	movq currentRAX,%rax
+	movq currentRSP,%rsp
+	retq
+	
+	
 

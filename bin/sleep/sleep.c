@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
-
+#include<unistd.h>
+#include<signal.h>
 
 void* syscall(void* syscallNum,void* param1,void* param2,void* param3,void* param4,void* param5,void* param6) {
     void* returnValue;
@@ -22,17 +23,20 @@ uint64_t toInteger(char *s){
 int main(int argc, char *argv[], char *envp[]){
     
     uint64_t sleep_seconds=0;
+    
     if(argc==1){
         return 0;
     }
     else if (argc>1){
         sleep_seconds=toInteger(argv[1]);
     }
-    syscall((void*)50,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+    //sleep(sleep_seconds);
     
-    while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)<=sleep_seconds);
+    syscall((void*)50,(void*)(int64_t)sleep_seconds,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     
-    syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
+    while((uint64_t)syscall((void*)51,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0)==0);
+    
+    //syscall((void*)52,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0,(void*)0);
     
     return 0;
 }
