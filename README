@@ -1,8 +1,3 @@
-References Used :-
-1. Osdevwiki and Forum
-2. AMD64 Architecture Programmer's Manual Volume 2: System Programming
-3. BROKENTHORN
-
 Features :-
 1. Warm up:- Kernel printf, Timer, Keyboard, GDT, IDT, handlers, 64-bit OS
 2. Physical Memory, Virtual Memory, Mapping
@@ -12,6 +7,13 @@ Features :-
 6. System Calls: read, write, sbrk, exit, sleep, fork, wait, waiting_with_pid, exec
 7. Binaries: ls, pwd, sleep, shell 
 8. FileSystems :-  PCI and AHCI initialization..
+
+References Used :-
+1. Osdevwiki and Forum
+2. AMD64 Architecture Programmer's Manual Volume 2: System Programming
+3. BROKENTHORN
+
+Special Thanks to Professor Mike Ferdman, Stony Brook University.
 
 * The provided Makefile:
   1) builds a kernel
